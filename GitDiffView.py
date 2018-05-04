@@ -1,64 +1,72 @@
 import sublime
 import sublime_plugin
 
-class Views:
-    previous_views = {} 
+
+class ViewsManager:
+    # {'window_id' : [ views ]}
+    previous_views = {}
+    # { 'window_id' : view }
     last_active_view = {}
 
-    @staticmethod
-    def get_views(window_id):
-        return Views.previous_views.get(window_id)
+    def __init__(self, window):
+        self.window = window
 
-    @staticmethod
-    def get_last_active_view(window_id):
-        return Views.last_active_view.get(window_id)
+    def reopen(self, views):
+        for file_name in views:
+                self.window.open_file(file_name)
 
-    @staticmethod
-    def set_last_active_view(window, file_name):
-        Views.last_active_view[window.id()] = file_name
+        self.window.open_file(self._get_last_active_view())
+        self._clear_state()
 
-    @staticmethod
-    def set_views(window, views):
-        Views.previous_views[window.id()] = []
+    def save_for_later(self):
+        last_active_view = self.window.active_view().file_name()
+        self._save_last_active_view(last_active_view)
+        self._save_views(self.window.views())
+
+    def get_views(self):
+        return self.previous_views.get(self.window.id())
+
+    def _get_last_active_view(self):
+        return self.last_active_view.get(self.window.id())
+
+    def _save_last_active_view(self, file_name):
+        self.last_active_view[self.window.id()] = file_name
+
+    def _save_views(self, views):
+        self.previous_views[self.window.id()] = []
 
         for view in views:
-                Views.previous_views[window.id()].append(view.file_name())
-                window.focus_view(view)
-                window.run_command('close_file')
+                self.previous_views[self.window.id()].append(view.file_name())
+                self.window.focus_view(view)
+                self.window.run_command('close_file')
 
-    @staticmethod
-    def clear_views(window):
-        Views.previous_views[window.id()] = []
-        Views.last_active_view[window.id()] = ''
+    def _clear_state(self):
+        self.previous_views[self.window.id()] = []
+        self.last_active_view[self.window.id()] = ''
 
 
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        active_window = sublime.active_window()
+        window = sublime.active_window()
 
-        # If we retrive views from our state
-        # assume that the GitDiffView is open
-        views = Views.get_views(active_window.id())
+        # If we have views
+        # than assume that the GitDiffView is open
+        views_manager = ViewsManager(window)
+        views = views_manager.get_views()
+
         if views:
-            for file_name in views:
-                active_window.open_file(file_name)
+            views_manager.reopen(views)
 
-            active_window.open_file(
-                Views.get_last_active_view(active_window.id())
-            )
-
-            Views.clear_views(active_window)
-
-        # We dont have any views from our state
-        # so we assume that the GitDiffView is closed
+        # We dont have any views
+        # than we assume that the GitDiffView is closed
         else:
-            last_active_view = active_window.active_view().file_name()
-            Views.set_last_active_view(active_window, last_active_view)
-            Views.set_views(active_window, active_window.views())
+            views_manager.save_for_later()
+
+            print('test', 'delete')
+            print(views_manager.previous_views[window.id()])
+            print(views_manager.last_active_view[window.id()])
+         
             
-            print('test')
-            print(Views.state[active_window.id()])
-            print(Views.last_active_view[active_window.id()])
 
 
 
