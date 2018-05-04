@@ -1,5 +1,7 @@
 import sublime
 import sublime_plugin
+import subprocess
+
 from .core.ViewsManager import ViewsManager
 
 
@@ -11,6 +13,9 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
         # than assume that the GitDiffView is open
         views_manager = ViewsManager(window)
 
+        # print('rezultat')
+        # print(dir(res))
+
         grid = {
             "cols": [0.0, 1.0],
             "rows": [0.0, 1.0],
@@ -18,22 +23,12 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
         }
 
         window.run_command('set_layout', grid)
-
-        views = window.views()
-        print('views')
-        print(views)
-        if len(views) > 0:
-            print('uslo')
-            for view in views:
-                print('ime')
-                print(view.name())
-                print(view.name() in ["Git Status", "Git Diff View"])
+        
+        if ViewsManager.toggle_view():
+            for view in window.views():
                 if view.name() in ["Git Status", "Git Diff View"]:
                     window.focus_view(view)
                     window.run_command('close_file')
-
-        
-        if ViewsManager.toggle_view():
             views_manager.reopen()
 
         # We dont have any views
@@ -50,14 +45,12 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
 
             group = window.active_group()
-            print('grupa')
-            print(group)
 
             view = window.new_file()
             view.settings().set("plist.interface", 'plist')
             view.settings().set('highlight_line', True)
             view.settings().set("line_numbers", False)
-            view.settings().set("font_size", 12)
+            # view.settings().set("font_size", 12)
             view.settings().set("scroll_past_end", False)
             view.settings().set("draw_centered", False)
             view.settings().set("line_padding_bottom", 2)
@@ -78,6 +71,28 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
             window.set_view_index(view2, 1, 0)
 
+            # git 
+            root = window.extract_variables()['folder']
+            print('root')
+            print(root)
+            cmd = ['git status --porcelain']
+            p = subprocess.Popen(cmd,
+                                 bufsize = -1,
+                                 cwd = root,
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE,
+                                 shell=True)
+            output, stderr = p.communicate()
+            if (stderr):
+                print(stderr)
+            git_status = (output)
+            print(git_status)
+
+            view.run_command("insert",{"characters": git_status.decode('ascii')})
+            # jobEdit = view.begin_edit()
+            # view.insert(jobEdit, 0, 'Hello')
+            # view.end_edit(jobEdit)
             # print('test', 'delete')
             # print(views_manager.previous_views[window.id()])
             # print(views_manager.last_active_view[window.id()])
