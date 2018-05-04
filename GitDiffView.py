@@ -23,11 +23,3 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
             print('test', 'delete')
             print(views_manager.previous_views[window.id()])
             print(views_manager.last_active_view[window.id()])
-         
-            
-
-
-
-
-
-
