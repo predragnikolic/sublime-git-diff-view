@@ -4,14 +4,25 @@ class ViewsManager:
     # { 'window_id' : view }
     last_active_view = {}
 
+    isOpen = False
+
     def __init__(self, window):
         self.window = window
 
-    def reopen(self, views):
+    @staticmethod
+    def toggle_view():
+        isOpen = ViewsManager.isOpen
+        ViewsManager.isOpen = not ViewsManager.isOpen
+        return isOpen
+
+    def reopen(self):
+        views = self.get_views()
         for file_name in views:
                 self.window.open_file(file_name)
 
-        self.window.open_file(self._get_last_active_view())
+        last_active_view = self._get_last_active_view()
+        if last_active_view:
+            self.window.open_file(last_active_view)
         self._clear_state()
 
     def save_for_later(self):
