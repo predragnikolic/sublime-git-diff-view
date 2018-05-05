@@ -1,4 +1,6 @@
 class ViewsManager:
+    '''Responsible for storing views and reopening them later'''
+
     # {'window_id' : [ views ]}
     previous_views = {}
     # { 'window_id' : view }
@@ -25,7 +27,7 @@ class ViewsManager:
             self.window.open_file(last_active_view)
         self._clear_state()
 
-    def save_for_later(self):
+    def save_views_for_later(self):
         last_active_view = self.window.active_view().file_name()
         self._save_last_active_view(last_active_view)
         self._save_views(self.window.views())
