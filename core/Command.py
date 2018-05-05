@@ -4,13 +4,13 @@ import subprocess
 class Command:
     def __init__(self, window):
         self.window = window
+        self.project_root = window.extract_variables()['folder']
 
     def git_status_output(self):
-        root = self.window.extract_variables()['folder']
         cmd = ['git status --porcelain']
         p = subprocess.Popen(cmd,
                              bufsize=-1,
-                             cwd=root,
+                             cwd=self.project_root,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
