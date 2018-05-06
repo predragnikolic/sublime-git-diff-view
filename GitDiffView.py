@@ -4,6 +4,7 @@ import sublime_plugin
 from .core.ViewsManager import ViewsManager
 from .core.Layout import Layout
 from .core.GitView import GitView
+from .core.GitStatusView import GitStatusView
 
 
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
@@ -12,7 +13,7 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         views_manager = ViewsManager(window)
         layout = Layout(window)
-        git_view = GitView(window, layout)
+        git_view = GitView(window, layout, edit)
 
         # STATE: GitView is open, will be closed
         if ViewsManager.toggle_view():
@@ -25,3 +26,5 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
             views_manager.save_views_for_later()
             layout.two_columns()
             git_view.open()
+
+
