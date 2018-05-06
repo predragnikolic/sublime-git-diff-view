@@ -1,7 +1,7 @@
 # Git Diff View - sublime plugin
 
 ![Example](/img/showcase.gif)
-in this example, sublime (git)[https://github.com/kemayo/sublime-text-git] plugin is used to add files to the staging area 
+in this example, sublime [git](https://github.com/kemayo/sublime-text-git) plugin is used to add files to the staging area 
 
 ### Features
 - Show all modified files(Git Status) in the left
@@ -18,5 +18,3 @@ in this example, sublime (git)[https://github.com/kemayo/sublime-text-git] plugi
     { "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"}
 ```
 * Done. :wink:
-
-Here is a line that will be deleted
