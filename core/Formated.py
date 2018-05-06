@@ -23,4 +23,12 @@ class Formated:
                 status['file_name']
             ))
 
+        help = [
+            "-------------------------------",
+            "[a] - stage/unstage a file",
+            "[d] - dismiss changes to a file"
+        ]
+        for option in help:
+            formated_output.append(option)
+
         return '\n'.join(formated_output)
