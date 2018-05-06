@@ -25,14 +25,13 @@ class GitView:
         # array of dict that holds information about
         # the file, type of modification, and if the file is staged
         git_statuses = self.command.git_status_dict()
-        self.data = git_statuses
         # git status view
         git_status_view = self.git_status_view.generate(git_statuses)
         self.layout.insert_into_first_column(git_status_view)
 
         git_diff_view = self.git_diff_view.generate()
         self.layout.insert_into_second_column(git_diff_view)
-        # # # view2.insert(self.edit, 0, diff_output)
+        self.update_diff_view(git_diff_view, 0)
 
         Event.listen('git_status.update_diff_view', lambda line:
                      self.update_diff_view(git_diff_view, line))
@@ -41,17 +40,15 @@ class GitView:
         sel.clear()
         sel.add(sublime.Region(0, 0))
 
-    def update_diff_view(self, view2, line):
-        file_name = self.data[line]['file_name']
+    def update_diff_view(self, view, line):
+        git_statuses = self.command.git_status_dict()
+        file_name = git_statuses[line]['file_name']
         diff_output = ''
-        if 'D' not in self.data[line]['modification_type']:
+
+        if 'D' not in git_statuses[line]['modification_type']:
             diff_output = self.command.git_diff_file(file_name)
-        else:
-            print('ipak je d')
-        view = view2
-        view2.run_command("update_diff_view", {"line": line, 'diff_output': diff_output})
-        # view2.insert(self.xedit, 0, diff_output)
-        print(file_name)
+
+        view.run_command("update_diff_view", {"line": line, 'diff_output': diff_output})
 
 
 

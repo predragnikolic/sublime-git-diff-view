@@ -57,9 +57,14 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output):
         window = sublime.active_window()
-        group = window.active_group()
         views = sublime.active_window().views_in_group(1)
-        gid_diff_view = list(filter(lambda view: view.name() ==  "Git Diff View", views))[0]
-        gid_diff_view.run_command("select_all")
-        gid_diff_view.run_command("right_delete")
-        gid_diff_view.insert(edit, 0, diff_output)
+        git_diff_view = list(filter(lambda view: view.name() == "Git Diff View", views))[0]
+        git_diff_view.set_read_only(False)
+        git_diff_view.run_command("select_all")
+        git_diff_view.run_command("right_delete")
+        git_diff_view.insert(edit, 0, diff_output)
+        git_diff_view.set_read_only(True)
+
+        sel = git_diff_view.sel()
+        sel.clear()
+        sel.add(sublime.Region(0, 0))

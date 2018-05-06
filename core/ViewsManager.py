@@ -20,7 +20,8 @@ class ViewsManager:
     def reopen(self):
         views = self.get_views()
         for file_name in views:
-                self.window.open_file(file_name)
+                if file_name:
+                    self.window.open_file(file_name)
 
         last_active_view = self._get_last_active_view()
         if last_active_view:
