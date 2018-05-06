@@ -5,8 +5,10 @@ from .core.ViewsManager import ViewsManager
 from .core.Layout import Layout
 from .core.GitView import GitView
 from .core.GitStatusView import GitStatusView
+from .core.GitDiffView import GitDiffView
 from .core.Event import Event
 from .core.Command import Command
+
 
 
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
@@ -66,7 +68,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output):
         window = sublime.active_window()
         views = window.views_in_group(1)
-        git_diff_view = list(filter(lambda view: view.name() == "Git Diff View", views))[0]
+        git_diff_view = list(filter(lambda view: view.name() == GitDiffView.view_name, views))[0]
         git_diff_view.set_read_only(False)
         git_diff_view.run_command("select_all")
         git_diff_view.run_command("right_delete")

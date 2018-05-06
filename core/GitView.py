@@ -18,7 +18,7 @@ class GitView:
 
     def close(self):
         for view in self.window.views():
-            if view.name() in [GitStatusView.view_name, "Git Diff View"]:
+            if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
                 self.window.focus_view(view)
                 self.window.run_command('close_file')
 
