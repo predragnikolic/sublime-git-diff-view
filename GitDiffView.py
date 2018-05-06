@@ -40,11 +40,10 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
         if not cursor_pos:
             return
-
         current_line = view.rowcol(cursor_pos)[0]
         on_same_line = current_line == self.previus_line
 
-        if self._is_git_status_view(view) or on_same_line: 
+        if self._is_git_status_view(view) or on_same_line:
             return
 
         self.previus_line = current_line
@@ -57,7 +56,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output):
         window = sublime.active_window()
-        views = sublime.active_window().views_in_group(1)
+        views = window.views_in_group(1)
         git_diff_view = list(filter(lambda view: view.name() == "Git Diff View", views))[0]
         git_diff_view.set_read_only(False)
         git_diff_view.run_command("select_all")
@@ -65,6 +64,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         git_diff_view.insert(edit, 0, diff_output)
         git_diff_view.set_read_only(True)
 
-        sel = git_diff_view.sel()
-        sel.clear()
-        sel.add(sublime.Region(0, 0))
+        views = sublime.active_window().views_in_group(0)
+        git_status_view = list(filter(lambda view: view.name() == GitStatusView.view_name, views))[0]
+
+        window.focus_view(git_status_view)

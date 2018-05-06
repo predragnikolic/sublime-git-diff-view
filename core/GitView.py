@@ -4,6 +4,7 @@ from .Command import Command
 from .Event import Event
 import sublime
 
+
 class GitView:
     ''' Shows the git status and git diff'''
 
@@ -39,6 +40,7 @@ class GitView:
         sel = git_status_view.sel()
         sel.clear()
         sel.add(sublime.Region(0, 0))
+
 
     def update_diff_view(self, view, line):
         git_statuses = self.command.git_status_dict()
