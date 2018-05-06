@@ -12,7 +12,8 @@ class Command:
         # array of staged files
         staged_files = self.git_staged_files().splitlines()
         git_status_output = self.git_status_output()
-        
+
+        # normalize git status output
         files_changed = git_status_output.splitlines()
         files_changed = list(map(lambda file: file.strip(), files_changed))
         for file in files_changed:

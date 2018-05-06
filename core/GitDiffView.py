@@ -1,7 +1,7 @@
 class GitDiffView:
     view_name = "Git Diff View"
 
-    def __init__ (self, window):
+    def __init__(self, window):
         self.window = window
 
     def generate(self):
