@@ -44,38 +44,49 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
     previus_line = None
 
     def on_selection_modified_async(self, view):
-
-        if len(view.sel()) < 1:
-            return
         cursor_pos = view.sel()[0].begin()
-
         if not cursor_pos:
             return
+
         current_line = view.rowcol(cursor_pos)[0]
         on_same_line = current_line == self.previus_line
 
-        if self._is_git_status_view(view) or on_same_line:
+        # return if the git status view is not in focus
+        if not self._is_git_status_view_in_focus(view) or on_same_line:
             return
 
         self.previus_line = current_line
         Event.fire('git_status.update_diff_view', current_line)
 
-    def _is_git_status_view(self, view):
-        return view.name() != GitStatusView.view_name
+    def _is_git_status_view_in_focus(self, view):
+        return view.name() == GitStatusView.view_name
 
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output):
         window = sublime.active_window()
+        # get all views in the left column
         views = window.views_in_group(1)
-        git_diff_view = list(filter(lambda view: view.name() == GitDiffView.view_name, views))[0]
+        git_diff_view = self.get_view(views, GitDiffView.view_name)
+
+        # enable editing the file for editing
         git_diff_view.set_read_only(False)
-        git_diff_view.run_command("select_all")
-        git_diff_view.run_command("right_delete")
+        self.delete_content(git_diff_view)
         git_diff_view.insert(edit, 0, diff_output)
+        # disable editing the file for showing
         git_diff_view.set_read_only(True)
 
-        views = sublime.active_window().views_in_group(0)
-        git_status_view = list(filter(lambda view: view.name() == GitStatusView.view_name, views))[0]
+        # get all views in the right column
+        views = window.views_in_group(0)
+        git_status_view = self.get_view(views, GitStatusView.view_name)
 
         window.focus_view(git_status_view)
+
+    def delete_content(self, view):
+        view.run_command("select_all")
+        view.run_command("right_delete")
+
+    def get_view(self, views, view_name):
+        return list(
+            filter(lambda view: view.name() == view_name, views)
+        )[0]
