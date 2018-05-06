@@ -17,3 +17,5 @@
     { "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"}
 ```
 * Done. :wink:
+
+Here is a line that will be deleted

@@ -2,6 +2,9 @@ class Layout:
     '''Resposible for the layout'''
     def __init__(self, window):
         self.window = window
+        
+    def something_to_show_of():
+        pass
 
     def one_column(self):
         grid = {
