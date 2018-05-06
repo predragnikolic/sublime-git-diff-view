@@ -50,8 +50,10 @@ class GitView:
         if 'D' not in git_statuses[line]['modification_type']:
             diff_output = self.command.git_diff_file(file_name)
 
-        view.run_command("update_diff_view", {"line": line, 'diff_output': diff_output})
+        if self._have_a_diff_to_show(line, git_statuses):
+            view.run_command("update_diff_view", {"line": line, 'diff_output': diff_output})
 
-
+    def _have_a_diff_to_show(self, line, git_statuses):
+        return line <= len(git_statuses)
 
         
