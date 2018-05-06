@@ -1,33 +1,22 @@
-from .Command import Command
-
+from .GitStatusView import GitStatusView
 
 class GitView:
+    ''' Shows the git status and git diff'''
+
     def __init__(self, window, layout):
         self.window = window
         self.layout = layout
-        self.command = Command(window)
+        self.git_status_view = GitStatusView(self.window)
 
     def close(self):
         for view in self.window.views():
-            if view.name() in ["Git Status", "Git Diff View"]:
+            if view.name() in [GitStatusView.view_name, "Git Diff View"]:
                 self.window.focus_view(view)
                 self.window.run_command('close_file')
 
     def open(self):
-        view = self.window.new_file()
-        view.settings().set("plist.interface", 'plist')
-        view.settings().set('highlight_line', True)
-        view.settings().set("line_numbers", False)
-        # view.settings().set("font_size", 12)
-        view.settings().set("scroll_past_end", False)
-        view.settings().set("draw_centered", False)
-        view.settings().set("tab_size", 4)
-        view.settings().set("show_minimap", False)
-        view.settings().set("word_wrap", False)
-        view.set_name("Git Status")
-        view.set_scratch(True)
-
-        self.layout.insert_into_first_column(view)
+        git_status_view = self.git_status_view.generate()
+        self.layout.insert_into_first_column(git_status_view)
 
         view2 = self.window.new_file()
         view2.set_name("Git Diff View")
@@ -35,6 +24,3 @@ class GitView:
         view2.set_scratch(True)
 
         self.layout.insert_into_second_column(view2)
-        git_status = self.command.git_status_output()
-
-        view.run_command("insert", {"characters": git_status})
