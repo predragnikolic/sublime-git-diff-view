@@ -39,7 +39,7 @@ class Command:
         return self.run(cmd)
 
     def git_diff_file(self, file):
-        cmd = ['git diff --no-color HEAD^ {}'.format(file)]
+        cmd = ['git diff --no-color HEAD {}'.format(file)]
         return self.run(cmd)
 
     def run(self, cmd):
