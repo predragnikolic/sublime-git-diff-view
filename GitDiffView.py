@@ -10,7 +10,6 @@ from .core.Event import Event
 from .core.Command import Command
 
 
-
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = sublime.active_window()
@@ -44,10 +43,10 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
     previus_line = None
 
     def on_selection_modified_async(self, view):
-        cursor_pos = view.sel()[0].begin()
-        if not cursor_pos:
+        if not self._have_selection_in(view):
             return
 
+        cursor_pos = view.sel()[0].begin()
         current_line = view.rowcol(cursor_pos)[0]
         on_same_line = current_line == self.previus_line
 
@@ -61,12 +60,14 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
     def _is_git_status_view_in_focus(self, view):
         return view.name() == GitStatusView.view_name
 
+    def _have_selection_in(self, view):
+        return len(view.sel()) > 0
+
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output):
         window = sublime.active_window()
-        # get all views in the left column
-        views = window.views_in_group(1)
+        views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
 
         # enable editing the file for editing
@@ -76,10 +77,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         # disable editing the file for showing
         git_diff_view.set_read_only(True)
 
-        # get all views in the right column
-        views = window.views_in_group(0)
         git_status_view = self.get_view(views, GitStatusView.view_name)
-
         window.focus_view(git_status_view)
 
     def delete_content(self, view):
