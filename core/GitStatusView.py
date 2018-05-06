@@ -1,29 +1,24 @@
-from .Command import Command
-from .Format import Format
+from .Formated import Formated
+
 
 class GitStatusView:
     view_name = "Git Status"
 
     def __init__(self, window):
         self.window = window
-        self.command = Command(window)
+        self.formated = Formated(window)
 
     def generate(self):
         view = self.window.new_file()
-        staged_files = self.command.git_staged_files()
-        print('staged files')
-        print(staged_files)
-        git_status_output = self.command.git_status_output()
 
-        git_status_dic = Format.git_status(git_status_output)
+        formated_git_status = self.formated.git_status()
         print('dictornary')
-        print(git_status_dic)
-        self._insert_text(view, git_status_output)
+        print(formated_git_status)
+        self._insert_text(view, formated_git_status)
         self._configure_view(view)
         return view
 
     def _insert_text(self, view, output):
-        # output = self._format(output)
         view.run_command("insert", {"characters": output})
 
     def _configure_view(self, view):

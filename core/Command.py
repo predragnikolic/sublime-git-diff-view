@@ -29,4 +29,4 @@ class Command:
         output, stderr = p.communicate()
         if (stderr):
             print('Error in Command.py:', stderr)
-        return output.decode('ascii')
+        return output.decode('utf-8')
