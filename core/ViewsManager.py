@@ -1,7 +1,3 @@
-from .GitDiffView import GitDiffView
-from .GitStatusView import GitStatusView
-
-
 class ViewsManager:
     '''Responsible for storing views and reopening them later'''
 
