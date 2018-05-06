@@ -1,3 +1,7 @@
+from .GitDiffView import GitDiffView
+from .GitStatusView import GitStatusView
+
+
 class ViewsManager:
     '''Responsible for storing views and reopening them later'''
 
@@ -6,16 +10,16 @@ class ViewsManager:
     # { 'window_id' : view }
     last_active_view = {}
 
-    isOpen = False
+    is_open = False
 
     def __init__(self, window):
         self.window = window
 
     @staticmethod
     def toggle_view():
-        isOpen = ViewsManager.isOpen
-        ViewsManager.isOpen = not ViewsManager.isOpen
-        return isOpen
+        is_open = ViewsManager.is_open
+        ViewsManager.is_open = not ViewsManager.is_open
+        return is_open
 
     def reopen(self):
         views = self.get_views()
