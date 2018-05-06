@@ -1,7 +1,8 @@
 from .GitStatusView import GitStatusView
+from .GitDiffView import GitDiffView
 from .Command import Command
 from .Event import Event
-
+import sublime
 
 class GitView:
     ''' Shows the git status and git diff'''
@@ -9,7 +10,8 @@ class GitView:
     def __init__(self, window, layout, edit):
         self.window = window
         self.layout = layout
-        self.git_status_view = GitStatusView(self.window)
+        self.git_status_view = GitStatusView(window)
+        self.git_diff_view = GitDiffView(window)
         self.command = Command(window)
         self.edit = edit
 
@@ -28,26 +30,18 @@ class GitView:
         git_status_view = self.git_status_view.generate(git_statuses)
         self.layout.insert_into_first_column(git_status_view)
 
-        diff_output = ''
-        if len(git_statuses) > 0:
-            if 'D' not in git_statuses[0]['modification_type']:
-                diff_output = self.command.git_diff_file(git_statuses[0]['file_name'])
-            else: 
-                print('ipak je d')
-        view2 = self.window.new_file()
-        view2.set_name("Git Diff View")
-        view2.settings().set("line_numbers", False)
-        view2.set_scratch(True)
-        view2.insert(self.edit, 0, diff_output)
-        # view2.run_command("insert", {"characters": diff_output})
-        view2.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-        self.layout.insert_into_second_column(view2)
+        git_diff_view = self.git_diff_view.generate()
+        self.layout.insert_into_second_column(git_diff_view)
+        # # # view2.insert(self.edit, 0, diff_output)
 
         Event.listen('git_status.update_diff_view', lambda line:
-                     self.update_diff_view(view2, line))
+                     self.update_diff_view(git_diff_view, line))
+
+        sel = git_status_view.sel()
+        sel.clear()
+        sel.add(sublime.Region(0, 0))
 
     def update_diff_view(self, view2, line):
-        print('ovo je ona linija', view2.name())
         file_name = self.data[line]['file_name']
         diff_output = ''
         if 'D' not in self.data[line]['modification_type']:
