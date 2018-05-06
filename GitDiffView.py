@@ -9,18 +9,14 @@ from .core.Event import Event
 from .core.Command import Command
 
 
-
-
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = sublime.active_window()
+        self.command = Command(window)
 
         views_manager = ViewsManager(window)
         layout = Layout(window)
         git_view = GitView(window, layout, edit)
-        command = Command(window)
-
-        git_statuses = command.git_status_dict()
 
         # STATE: GitView is open, will be closed
         if ViewsManager.toggle_view():
@@ -30,12 +26,16 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         # STATE: GitView is closed, will be opended
         else:
-            if len(git_statuses) < 1:
+            if self._no_git_output():
                 window.status_message('No git changes to show.')
                 return
             views_manager.save_views_for_later()
             layout.two_columns()
             git_view.open()
+
+    def _no_git_output(self):
+        git_statuses = self.command.git_status_dict()
+        return len(git_statuses) < 1
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
