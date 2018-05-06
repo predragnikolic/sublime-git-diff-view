@@ -1,5 +1,5 @@
 from .Formated import Formated
-import sublime_plugin
+
 
 class GitStatusView:
     view_name = "Git Status"
@@ -31,23 +31,3 @@ class GitStatusView:
         view.set_scratch(True)
         # disable editing of the view
         view.set_read_only(True)
-
-
-class SelectionChangedEvent(sublime_plugin.EventListener):
-    previus_line = None
-
-    def on_selection_modified_async(self, view):
-        cursor = view.sel()[0].begin()
-        new_line = view.rowcol(cursor)[0]
-
-        on_same_line = new_line == self.previus_line
-
-        if self.is_git_status_view(view) or on_same_line: 
-            print('ovaj prikaz ne moze')
-            return
-
-        self.previus_line = new_line
-        print('ovo je ono sto trazim', new_line)
-
-    def is_git_status_view(self, view):
-        return view.name() != GitStatusView.view_name

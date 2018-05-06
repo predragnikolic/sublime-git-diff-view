@@ -5,6 +5,7 @@ from .core.ViewsManager import ViewsManager
 from .core.Layout import Layout
 from .core.GitView import GitView
 from .core.GitStatusView import GitStatusView
+from .core.Event import Event
 
 
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
@@ -28,3 +29,37 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
             git_view.open()
 
 
+class SelectionChangedEvent(sublime_plugin.EventListener):
+    previus_line = None
+
+    def on_selection_modified_async(self, view):
+
+        if len(view.sel()) < 1:
+            return
+        cursor_pos = view.sel()[0].begin()
+
+        if not cursor_pos:
+            return
+
+        current_line = view.rowcol(cursor_pos)[0]
+        on_same_line = current_line == self.previus_line
+
+        if self._is_git_status_view(view) or on_same_line: 
+            return
+
+        self.previus_line = current_line
+        Event.fire('git_status.update_diff_view', current_line)
+
+    def _is_git_status_view(self, view):
+        return view.name() != GitStatusView.view_name
+
+
+class UpdateDiffViewCommand(sublime_plugin.TextCommand):
+    def run(self, edit, line, diff_output):
+        window = sublime.active_window()
+        group = window.active_group()
+        views = sublime.active_window().views_in_group(1)
+        gid_diff_view = list(filter(lambda view: view.name() ==  "Git Diff View", views))[0]
+        gid_diff_view.run_command("select_all")
+        gid_diff_view.run_command("right_delete")
+        gid_diff_view.insert(edit, 0, diff_output)
