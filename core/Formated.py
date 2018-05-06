@@ -41,9 +41,10 @@ class Formated:
             ))
 
         print('first diff')
-        if 'D' not in files[0]['modification_type']:
-            print(self.command.git_diff_file(files[0]['name']))
-        else: 
-            print('ipak je d')
+        if len(files) > 0:
+            if 'D' not in files[0]['modification_type']:
+                print(self.command.git_diff_file(files[0]['name']))
+            else: 
+                print('ipak je d')
 
         return '\n'.join(formated_output)
