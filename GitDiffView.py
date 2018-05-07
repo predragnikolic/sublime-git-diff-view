@@ -17,7 +17,7 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         views_manager = ViewsManager(window)
         layout = Layout(window)
-        git_view = GitView(window, layout, edit)
+        git_view = GitView(window, layout)
 
         # STATE: GitView is open, will be closed
         if ViewsManager.toggle_view():

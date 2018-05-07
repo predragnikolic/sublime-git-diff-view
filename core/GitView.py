@@ -8,13 +8,12 @@ import sublime
 class GitView:
     ''' Shows the git status and git diff'''
 
-    def __init__(self, window, layout, edit):
+    def __init__(self, window, layout):
         self.window = window
         self.layout = layout
         self.git_status_view = GitStatusView(window)
         self.git_diff_view = GitDiffView(window)
         self.command = Command(window)
-        self.edit = edit
 
     def close(self):
         for view in self.window.views():
