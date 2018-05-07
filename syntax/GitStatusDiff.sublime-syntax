@@ -10,3 +10,10 @@ contexts:
   main:
     - match: \b(M|MM)\b
       scope: constant.numeric
+
+    - match: \b(A)\b
+      scope: string
+
+    - match: \b(D)\b
+      scope: entity.name.tag
+
