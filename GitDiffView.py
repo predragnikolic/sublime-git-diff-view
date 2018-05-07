@@ -42,6 +42,11 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 class SelectionChangedEvent(sublime_plugin.EventListener):
     previus_line = None
 
+    def on_close(self, view):
+        if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
+            ViewsManager.is_open = True
+            view.run_command('git_diff_toggle_view')
+
     def on_selection_modified_async(self, view):
         if not self._have_selection_in(view):
             return
