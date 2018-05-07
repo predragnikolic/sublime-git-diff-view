@@ -16,6 +16,19 @@ class GitStatusView:
         self._configure_view(view)
         return view
 
+    def update(self, view, git_statuses, cursor_pos):
+        formated_git_status = self.formated.git_status(git_statuses)
+        view.set_read_only(False)
+        view.run_command("select_all")
+        view.run_command("right_delete")
+        self._insert_text(view, formated_git_status)
+        view.set_read_only(True)
+
+        sel = view.sel()
+        sel.clear()
+        sel.add(cursor_pos)
+
+
     def _insert_text(self, view, output):
         view.run_command("insert", {"characters": output})
 

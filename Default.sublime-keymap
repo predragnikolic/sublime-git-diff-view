@@ -1,0 +1,11 @@
+[
+	{
+		"keys": ["a"],
+		"command": "stage_unstage",
+		"context": [{"key": "selector", "operator": "equal", "operand": "text.sgits"}]
+	}, {
+		"keys": ["d"],
+		"command": "dismiss_changes",
+		"context": [{"key": "selector", "operator": "equal", "operand": "text.sgits"}]
+	}
+]

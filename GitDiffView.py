@@ -93,3 +93,32 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         return list(
             filter(lambda view: view.name() == view_name, views)
         )[0]
+
+
+class StageUnstageCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        window = sublime.active_window()
+        command = Command(window)
+        git_status_view = GitStatusView(window)
+        git_statuses = command.git_status_dict()
+
+        cursor_pos = self.view.sel()[0].begin()
+        current_line = self.view.rowcol(cursor_pos)[0]
+        if self._have_a_diff_to_show(current_line, git_statuses):
+            file = git_statuses[current_line]
+            if file["is_staged"]:
+                command.git_unstage(file["file_name"])
+            else:
+                command.git_stage(file["file_name"])
+
+            git_statuses = command.git_status_dict()
+            git_status_view.update(self.view, git_statuses, cursor_pos)
+
+    def _have_a_diff_to_show(self, line, git_statuses):
+        return line < len(git_statuses)
+
+
+
+class DismissChangesCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        print('d is pressed')

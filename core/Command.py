@@ -42,6 +42,14 @@ class Command:
         cmd = ['git diff --no-color HEAD {}'.format(file)]
         return self.run(cmd)
 
+    def git_stage(self, file_name):
+        cmd = ['git add {}'.format(file_name)]
+        return self.run(cmd)
+
+    def git_unstage(self, file_name):
+        cmd = ['git reset {}'.format(file_name)]
+        return self.run(cmd)
+
     def run(self, cmd):
         p = subprocess.Popen(cmd,
                              bufsize=-1,

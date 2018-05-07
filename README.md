@@ -6,7 +6,7 @@ in this example, sublime [git](https://github.com/kemayo/sublime-text-git) plugi
 ### Features
 - Show all modified files(Git Status) in the left
 - Show the diff view for a file in the right
-- Stage/Unstage files (not implemented)
+- Stage/Unstage files _NEW_
 - Dismiss changes for a file (not implemented)
 
 ### Installation
