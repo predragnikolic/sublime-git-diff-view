@@ -50,6 +50,10 @@ class Command:
         cmd = ['git reset {}'.format(file_name)]
         return self.run(cmd)
 
+    def git_dismis_changes(self, file_name):
+        cmd = ['git checkout {}'.format(file_name)]
+        return self.run(cmd)
+
     def run(self, cmd):
         p = subprocess.Popen(cmd,
                              bufsize=-1,

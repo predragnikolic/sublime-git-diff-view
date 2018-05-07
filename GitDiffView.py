@@ -118,7 +118,24 @@ class StageUnstageCommand(sublime_plugin.TextCommand):
         return line < len(git_statuses)
 
 
-
 class DismissChangesCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        print('d is pressed')
+        window = sublime.active_window()
+        command = Command(window)
+        git_status_view = GitStatusView(window)
+        git_statuses = command.git_status_dict()
+
+        cursor_pos = self.view.sel()[0].begin()
+        current_line = self.view.rowcol(cursor_pos)[0]
+        if self._have_a_diff_to_show(current_line, git_statuses):
+            file = git_statuses[current_line]
+            message = "Warning: this will dismiss all changes to the file \"{}.\""
+            message = message.format(file["file_name"])
+            should_dismiss = sublime.ok_cancel_dialog(message, 'Dismiss')
+            if should_dismiss:
+                command.git_dismis_changes(file["file_name"])
+                git_statuses = command.git_status_dict()
+                git_status_view.update(self.view, git_statuses, cursor_pos)
+
+    def _have_a_diff_to_show(self, line, git_statuses):
+        return line < len(git_statuses)
