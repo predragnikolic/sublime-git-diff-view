@@ -1,4 +1,5 @@
 [
+	{ "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"},
 	{
 		"keys": ["a"],
 		"command": "stage_unstage",
