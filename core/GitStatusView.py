@@ -20,6 +20,8 @@ class GitStatusView:
         view.run_command("insert", {"characters": output})
 
     def _configure_view(self, view):
+        view.set_syntax_file(
+            'Packages/GitDiffView/syntax/GitStatusDiff.sublime-syntax')
         view.settings().set('highlight_line', True)
         view.settings().set("line_numbers", False)
         view.settings().set("scroll_past_end", False)

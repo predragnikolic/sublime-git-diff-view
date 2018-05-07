@@ -1,0 +1,12 @@
+%YAML 1.2
+---
+name: GitStatusDiff
+hidden: true
+file_extensions: 
+  - sgits
+scope: text.sgits
+
+contexts:
+  main:
+    - match: \b(M|MM)\b
+      scope: constant.numeric
