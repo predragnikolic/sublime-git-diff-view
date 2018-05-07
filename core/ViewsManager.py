@@ -52,4 +52,3 @@ class ViewsManager:
 
     def _clear_state(self):
         self.previous_views[self.window.id()] = []
-        self.last_active_view[self.window.id()] = ''
