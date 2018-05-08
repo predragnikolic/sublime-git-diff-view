@@ -51,7 +51,7 @@ class Command:
         return self.run(cmd)
 
     def git_dismis_changes(self, file_name):
-        cmd = ['git checkout -- {}'.format(file_name)]
+        cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
     def run(self, cmd):
