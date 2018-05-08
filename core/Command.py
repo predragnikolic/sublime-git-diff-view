@@ -1,4 +1,5 @@
 import subprocess
+import re
 
 
 class Command:
@@ -17,7 +18,13 @@ class Command:
         files_changed = git_status_output.splitlines()
         files_changed = list(map(lambda file: file.strip(), files_changed))
         for file in files_changed:
-            modification_type, file = file.split()
+            modification_type, file = re.search(
+                r"(.{0,2})\s+(.+)",
+                file
+            ).groups()
+            # if file contains spaces the name will
+            # be wraped with quotes, so we strip them
+            file = file.strip("\"")
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
@@ -38,22 +45,29 @@ class Command:
         cmd = ['git diff --name-only --cached']
         return self.run(cmd)
 
-    def git_diff_file(self, file):
-        cmd = ['git diff --no-color HEAD {}'.format(file)]
+    def git_diff_file(self, file_name):
+        file_name = self.escape_spaces(file_name)
+        cmd = ['git diff --no-color HEAD {}'.format(file_name)]
         return self.run(cmd)
 
     def git_stage(self, file_name):
+        file_name = self.escape_spaces(file_name)
         cmd = ['git add {}'.format(file_name)]
         return self.run(cmd)
 
     def git_unstage(self, file_name):
+        file_name = self.escape_spaces(file_name)
         cmd = ['git reset HEAD {}'.format(file_name)]
         return self.run(cmd)
 
     def git_dismis_changes(self, file_name):
+        file_name = self.escape_spaces(file_name)
         cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
+    def escape_spaces(self, file_name):
+        return file_name.replace(' ', '\ ')
+    
     def run(self, cmd):
         p = subprocess.Popen(cmd,
                              bufsize=-1,
