@@ -53,12 +53,12 @@ class Command:
         cmd = ['git diff --no-color HEAD {}'.format(file_name)]
         return self.run(cmd)
 
-    def show_file_content(self, file_name):
+    def show_added_file(self, file_name):
         file_name = self.escape_spaces(file_name)
         cmd = ['cat {}'.format(file_name)]
         return self.run(cmd)
 
-    def show_deleted_files(self, file_name):
+    def show_deleted_file(self, file_name):
         file_name = self.escape_spaces(file_name)
         cmd = ['git show HEAD^:{}'.format(file_name)]
         return self.run(cmd)
