@@ -133,6 +133,9 @@ class DismissChangesCommand(sublime_plugin.TextCommand):
             message = message.format(file["file_name"])
             should_dismiss = sublime.ok_cancel_dialog(message, 'Dismiss')
             if should_dismiss:
+                if file["is_staged"]:
+                    command.git_unstage(file["file_name"])
+
                 command.git_dismis_changes(file["file_name"])
                 git_statuses = command.git_status_dict()
                 git_status_view.update(self.view, git_statuses, cursor_pos)
