@@ -19,10 +19,6 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
         layout = Layout(window)
         git_view = GitView(window, layout)
 
-        if self._no_git_output():
-            window.status_message('No git changes to show.')
-            return
-
         # STATE: GitView is open, will be closed
         if ViewsManager.is_git_view_open():
             git_view.close()
@@ -31,6 +27,9 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         # STATE: GitView is closed, will be opended
         else:
+            if self._no_git_output():
+                window.status_message('No git changes to show.')
+                return
             views_manager.save_views_for_later()
             layout.two_columns()
             git_view.open()
