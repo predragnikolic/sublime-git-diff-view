@@ -24,7 +24,7 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
             return
 
         # STATE: GitView is open, will be closed
-        if ViewsManager.toggle_view():
+        if ViewsManager.is_git_view_open():
             git_view.close()
             layout.one_column()
             views_manager.reopen()

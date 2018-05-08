@@ -12,13 +12,13 @@ class ViewsManager:
         self.window = window
 
     @staticmethod
-    def toggle_view():
+    def is_git_view_open():
         is_open = ViewsManager.is_open
         ViewsManager.is_open = not ViewsManager.is_open
         return is_open
 
     def reopen(self):
-        views = self.get_views()
+        views = self.get_views() or []
         for file_name in views:
                 if file_name:
                     self.window.open_file(file_name)
