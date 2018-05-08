@@ -58,6 +58,11 @@ class Command:
         cmd = ['cat {}'.format(file_name)]
         return self.run(cmd)
 
+    def show_deleted_files(self, file_name):
+        file_name = self.escape_spaces(file_name)
+        cmd = ['git show HEAD^:{}'.format(file_name)]
+        return self.run(cmd)
+
     def git_stage(self, file_name):
         file_name = self.escape_spaces(file_name)
         cmd = ['git add {}'.format(file_name)]
