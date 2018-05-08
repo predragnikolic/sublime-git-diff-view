@@ -9,11 +9,13 @@ scope: text.sgits
 contexts:
   main:
     - match: \b(M|MM)\b
-      scope: constant.numeric
+      scope: markup.changed
 
     - match: \b(A)\b
-      scope: string
+      scope: markup.inserted
 
     - match: \b(D)\b
-      scope: entity.name.tag
+      scope: markup.deleted
 
+    - match: \b(\?{1,2})\b
+      scope: markup.ignored
