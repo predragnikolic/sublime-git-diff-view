@@ -48,9 +48,11 @@ class GitView:
         file_name = git_statuses[line]['file_name']
         diff_output = ''
 
-        # no diff for deleted files ? maybe
-        if 'D' not in git_statuses[line]['modification_type']:
+        if 'M' or 'A' in git_statuses[line]['modification_type']:
             diff_output = self.command.git_diff_file(file_name)
+
+        if '?' in git_statuses[line]['modification_type']:
+            diff_output = self.command.show_file_content(file_name)
 
         view.run_command("update_diff_view",
                          {"line": line, 'diff_output': diff_output})

@@ -53,6 +53,11 @@ class Command:
         cmd = ['git diff --no-color HEAD {}'.format(file_name)]
         return self.run(cmd)
 
+    def show_file_content(self, file_name):
+        file_name = self.escape_spaces(file_name)
+        cmd = ['cat {}'.format(file_name)]
+        return self.run(cmd)
+
     def git_stage(self, file_name):
         file_name = self.escape_spaces(file_name)
         cmd = ['git add {}'.format(file_name)]
