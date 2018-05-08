@@ -17,5 +17,5 @@ contexts:
     - match: \b(D)\b
       scope: markup.deleted
 
-    - match: \b(\?{1,2})\b
+    - match: (\?\?)
       scope: markup.ignored

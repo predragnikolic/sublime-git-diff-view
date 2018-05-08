@@ -25,6 +25,9 @@ class Command:
             # if file contains spaces the name will
             # be wraped with quotes, so we strip them
             file = file.strip("\"")
+            # strip spaces from type if left
+            modification_type = modification_type.strip()
+
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
@@ -67,7 +70,7 @@ class Command:
 
     def escape_spaces(self, file_name):
         return file_name.replace(' ', '\ ')
-    
+
     def run(self, cmd):
         p = subprocess.Popen(cmd,
                              bufsize=-1,
