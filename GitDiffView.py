@@ -95,14 +95,18 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             filter(lambda view: view.name() == view_name, views)
         )[0]
 
+class Base(sublime_plugin.TextCommand):
+    def hello(self):
+        print('hello')
 
-class StageUnstageCommand(sublime_plugin.TextCommand):
+
+class StageUnstageCommand(Base):
     def run(self, edit):
         window = sublime.active_window()
         command = Command(window)
         git_status_view = GitStatusView(window)
         git_statuses = command.git_status_dict()
-
+        self.hello()
         cursor_pos = self.view.sel()[0].begin()
         current_line = self.view.rowcol(cursor_pos)[0]
         if self._have_a_diff_to_show(current_line, git_statuses):
