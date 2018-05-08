@@ -10,6 +10,8 @@ from .core.Event import Event
 from .core.Command import Command
 
 
+
+
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = sublime.active_window()
@@ -136,7 +138,7 @@ class DismissChangesCommand(GitTextCommand):
     warning_text = "Warning: this will dismiss all changes to the file \"{}.\""
 
     def run(self, edit):
-        if self._have_a_diff_to_show():
+        if self.have_a_diff_to_show():
             file = self.get_file()
             message = self._get_message(file)
 
@@ -147,7 +149,7 @@ class DismissChangesCommand(GitTextCommand):
                 self.command.git_dismis_changes(file["file_name"])
                 self.rerender_git_status_view()
 
-    def should_dismiss_dialog(message):
+    def should_dismiss_dialog(self, message):
         return sublime.ok_cancel_dialog(message, 'Dismiss')
 
     def _get_message(self, file):
