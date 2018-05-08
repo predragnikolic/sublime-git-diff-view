@@ -10,8 +10,6 @@ from .core.Event import Event
 from .core.Command import Command
 
 
-
-
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = sublime.active_window()
