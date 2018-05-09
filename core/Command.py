@@ -57,7 +57,6 @@ class Command:
         return files
 
     def git_status_output(self):
-        self.called()
         cmd = ['git status --porcelain']
         return self.run(cmd)
 
