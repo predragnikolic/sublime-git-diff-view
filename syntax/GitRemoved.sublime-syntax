@@ -1,0 +1,12 @@
+%YAML 1.2
+---
+name: GitRemoved
+hidden: true
+file_extensions: 
+  - grf
+scope: text.grf
+
+contexts:
+  main:
+    - match: .*
+      scope: markup.deleted

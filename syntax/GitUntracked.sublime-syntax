@@ -1,0 +1,12 @@
+%YAML 1.2
+---
+name: GitUntracked
+hidden: true
+file_extensions: 
+  - guf
+scope: text.guf
+
+contexts:
+  main:
+    - match: .*
+      scope: markup.ignored

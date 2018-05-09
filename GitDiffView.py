@@ -71,13 +71,25 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, line, diff_output):
+    def run(self, edit, line, diff_output, modification_type):
         window = sublime.active_window()
         views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
 
         # enable editing the file for editing
         git_diff_view.set_read_only(False)
+
+        if 'M' or 'A' in modification_type:
+            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+
+        if '?' in modification_type:
+            git_diff_view.set_syntax_file(
+                'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
+
+        if 'D' in modification_type:
+            git_diff_view.set_syntax_file(
+                'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
+
         self.delete_content(git_diff_view)
         git_diff_view.insert(edit, 0, diff_output)
         # disable editing the file for showing
@@ -105,6 +117,7 @@ class StageUnstageCommand(GitTextCommand):
             else:
                 self.command.git_stage(file["file_name"])
             self.rerender_git_status_view()
+            Event.fire('git_status.update_diff_view', self.current_line)
 
 
 class DismissChangesCommand(GitTextCommand):

@@ -9,5 +9,4 @@ class GitDiffView:
         view.set_name(GitDiffView.view_name)
         view.settings().set("line_numbers", False)
         view.set_scratch(True)
-        view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
         return view
