@@ -52,7 +52,10 @@ class GitView:
         modification_type = git_statuses[line]['modification_type']
         diff_output = ''
 
-        if ('M' or 'A') in modification_type:
+        if 'M' in modification_type:
+            diff_output = self.command.git_diff_file(file_name)
+
+        elif 'A' in modification_type:
             diff_output = self.command.git_diff_file(file_name)
 
         elif '?' in modification_type:

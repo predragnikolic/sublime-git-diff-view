@@ -84,7 +84,10 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         # enable editing the file for editing
         git_diff_view.set_read_only(False)
 
-        if ('M' or 'A') in modification_type:
+        if 'M' in modification_type:
+            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+
+        elif 'A' in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif '?' in modification_type:
