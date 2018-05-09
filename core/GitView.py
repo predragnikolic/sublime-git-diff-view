@@ -14,7 +14,7 @@ class GitView:
         self.layout = layout
         self.git_status_view = GitStatusView(window)
         self.git_diff_view = GitDiffView(window)
-        self.command = Command.singleton(window)
+        self.command = Command(window)
 
     def close(self):
         for view in self.window.views():

@@ -11,12 +11,6 @@ class Command:
         print('called ', self.called_times)
         self.called_times += 1
 
-    @staticmethod
-    def singleton(window):
-        if Command.instance is None:
-            Command.instance = Command(window)
-        return Command.instance
-
     def __init__(self, window):
         self.window = window
         self.project_root = window.extract_variables()['folder']
