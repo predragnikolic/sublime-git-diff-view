@@ -8,13 +8,6 @@ import sublime
 class GitView:
     ''' Shows the git status and git diff'''
     listener = None
-    instance = None
-
-    @staticmethod
-    def singleton(window, layout):
-        if GitView.instance is None:
-            GitView.instance = GitView(window, layout)
-        return GitView.instance
 
     def __init__(self, window, layout):
         self.window = window
@@ -59,8 +52,7 @@ class GitView:
         modification_type = git_statuses[line]['modification_type']
         diff_output = ''
 
-        if 'M' or 'A' in modification_type:
-            # view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+        if ('M' or 'A') in modification_type:
             diff_output = self.command.git_diff_file(file_name)
 
         elif '?' in modification_type:

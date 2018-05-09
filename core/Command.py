@@ -8,7 +8,7 @@ class Command:
 
     # testing
     def called(self):
-        print('called ', self.index)
+        print('called ', self.called_times)
         self.called_times += 1
 
     @staticmethod
@@ -44,7 +44,9 @@ class Command:
             old_file_name = None
             if 'R' in modification_type:
                 old_file_name, new_file = file.split("->")
-                file = new_file.strip()
+                file = new_file.replace("\"", "")
+                file = file.strip()
+                old_file_name = old_file_name.replace("\"", "")
                 old_file_name = old_file_name.strip()
 
             # append space to modification type, looks prettier
@@ -61,6 +63,7 @@ class Command:
         return files
 
     def git_status_output(self):
+        self.called()
         cmd = ['git status --porcelain']
         return self.run(cmd)
 

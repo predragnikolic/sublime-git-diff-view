@@ -19,7 +19,7 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         views_manager = ViewsManager(window)
         layout = Layout(window)
-        git_view = GitView.singleton(window, layout)
+        git_view = GitView(window, layout)
 
         # STATE: GitView is open, will be closed
         if ViewsManager.is_git_view_open():
@@ -77,14 +77,14 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output, modification_type):
-        window = self.view.window()
+        window = sublime.active_window()
         views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
 
         # enable editing the file for editing
         git_diff_view.set_read_only(False)
 
-        if 'M' or 'A' in modification_type:
+        if ('M' or 'A') in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif '?' in modification_type:

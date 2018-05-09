@@ -20,7 +20,7 @@ class GitTextCommand(sublime_plugin.TextCommand):
 
     def _setup(self):
         self.window = sublime.active_window()
-        self.command = Command.singleton(self.window)
+        self.command = Command(self.window)
         self.current_line = self._get_line(self._get_cursor_pos())
         self.git_statuses = self.command.git_status_dict()
 
