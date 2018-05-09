@@ -17,10 +17,16 @@ class Formated:
         for status in git_statuses:
             staged_status = staged if status['is_staged'] else unstaged
 
+            file_name = status['file_name']
+
+            if status['old_file_name']:
+                file_name = status['old_file_name'] \
+                            + ' -> ' + status['file_name']
+
             formated_output.append("{} {} {}".format(
                 staged_status,
                 status['modification_type'],
-                status['file_name']
+                file_name
             ))
 
         help = [

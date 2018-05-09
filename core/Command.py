@@ -27,7 +27,12 @@ class Command:
             file = file.strip("\"")
             # strip spaces from type if left
             modification_type = modification_type.strip()
-
+            old_file_name = None
+            if 'R' in modification_type:
+                old_file_name, new_file = file.split("->")
+                file = new_file.strip()
+                old_file_name = old_file_name.strip()
+                
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
@@ -35,7 +40,8 @@ class Command:
             files.append({
                 "file_name": file,
                 "modification_type": modification_type,
-                "is_staged": file in staged_files
+                "is_staged": file in staged_files,
+                "old_file_name": old_file_name
             })
 
         return files

@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-name: GitUntracked
+name: Git Untracked
 hidden: true
 file_extensions: 
   - guf

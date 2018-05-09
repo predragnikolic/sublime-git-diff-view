@@ -1,10 +1,10 @@
 %YAML 1.2
 ---
-name: GitStatusDiff
+name: Git Status
 hidden: true
 file_extensions: 
-  - sgits
-scope: text.sgits
+  - gsf
+scope: text.gsf
 
 contexts:
   main:
@@ -15,6 +15,9 @@ contexts:
       scope: markup.inserted
 
     - match: \b(D)\b
+      scope: markup.deleted
+
+    - match: \b(R)\b
       scope: markup.deleted
 
     - match: (\?\?)
