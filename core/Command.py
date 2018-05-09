@@ -32,7 +32,7 @@ class Command:
                 old_file_name, new_file = file.split("->")
                 file = new_file.strip()
                 old_file_name = old_file_name.strip()
-                
+
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
