@@ -4,9 +4,15 @@
 		"keys": ["a"],
 		"command": "stage_unstage",
 		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
-	}, {
+	}, 
+	{
 		"keys": ["d"],
 		"command": "dismiss_changes",
+		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
+	}, 
+	{
+		"keys": ["g"],
+		"command": "goto_file",
 		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
 	}
 ]

@@ -9,6 +9,7 @@ from .core.GitDiffView import GitDiffView
 from .core.Event import Event
 from .core.Command import Command
 from .core.GitTextCommand import GitTextCommand
+from os import path
 
 
 class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
@@ -49,6 +50,9 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             view.run_command('git_diff_toggle_view')
 
     def on_selection_modified_async(self, view):
+        if not self._is_git_status_view_in_focus(view):
+            return
+
         if not self._have_selection_in(view):
             return
 
@@ -56,8 +60,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         current_line = view.rowcol(cursor_pos)[0]
         on_same_line = current_line == self.previus_line
 
-        # return if the git status view is not in focus
-        if not self._is_git_status_view_in_focus(view) or on_same_line:
+        if on_same_line:
             return
 
         self.previus_line = current_line
@@ -82,11 +85,11 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         if 'M' or 'A' in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
-        if '?' in modification_type:
+        elif '?' in modification_type:
             git_diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
 
-        if 'D' in modification_type:
+        elif 'D' in modification_type:
             git_diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
 
@@ -140,3 +143,19 @@ class DismissChangesCommand(GitTextCommand):
 
     def _get_message(self, file):
         return self.warning_text.format(file["file_name"])
+
+
+class GotoFileCommand(GitTextCommand):
+    def run(self, edit):
+        if self.have_a_diff_to_show():
+            file = self.get_file()
+
+            if 'D' in file["modification_type"]:
+                print('cant go to a deleted file')
+                return
+
+            project_root = self.window.extract_variables()['folder']
+            absolute_path_to_file = path.join(project_root,
+                                              file["file_name"])
+            self.window.run_command('git_diff_toggle_view')
+            self.window.open_file(absolute_path_to_file)

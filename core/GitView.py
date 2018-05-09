@@ -53,10 +53,10 @@ class GitView:
             # view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
             diff_output = self.command.git_diff_file(file_name)
 
-        if '?' in modification_type:
+        elif '?' in modification_type:
             diff_output = self.command.show_added_file(file_name)
 
-        if 'D' in modification_type:
+        elif 'D' in modification_type:
             diff_output = self.command.show_deleted_file(file_name)
 
         data = {
