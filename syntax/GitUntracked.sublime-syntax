@@ -9,4 +9,4 @@ scope: text.guf
 contexts:
   main:
     - match: .*
-      scope: markup.ignored
+      scope: markup.untracked

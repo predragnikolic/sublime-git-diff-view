@@ -18,7 +18,11 @@ contexts:
       scope: markup.deleted
 
     - match: \b(R)\b
-      scope: markup.deleted
+      scope: keyword
 
     - match: (\?\?)
-      scope: markup.ignored
+      scope: markup.untracked
+
+    - match: '(\[)(\w+)(\])'
+      captures:
+        2: keyword
