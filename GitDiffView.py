@@ -19,7 +19,7 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         views_manager = ViewsManager(window)
         layout = Layout(window)
-        git_view = GitView(window, layout)
+        git_view = GitView.singleton(window, layout)
 
         # STATE: GitView is open, will be closed
         if ViewsManager.is_git_view_open():
@@ -29,15 +29,17 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
         # STATE: GitView is closed, will be opended
         else:
-            if self._no_git_output():
+            # array of dict that holds information about
+            # the file, type of modification, and if the file is staged
+            git_statuses = self.command.git_status_dict()
+            if self._no_git_output(git_statuses):
                 window.status_message('No git changes to show.')
                 return
             views_manager.save_views_for_later()
             layout.two_columns()
-            git_view.open()
+            git_view.open(git_statuses)
 
-    def _no_git_output(self):
-        git_statuses = self.command.git_status_dict()
+    def _no_git_output(self, git_statuses):
         return len(git_statuses) < 1
 
 
@@ -75,7 +77,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, line, diff_output, modification_type):
-        window = sublime.active_window()
+        window = self.view.window()
         views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
 
