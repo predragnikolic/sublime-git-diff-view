@@ -1,14 +1,15 @@
 # Git Diff View - sublime plugin
-This plugin is intended for a quick overview of changes before commiting them. Nothing more, nothing less.
+Get a quick overview of changes before commiting them.
 
 ![Example](/img/showcase.gif)
-in this example, sublime [git](https://github.com/kemayo/sublime-text-git) plugin is used to commit the changes.
+
 
 ### Features
 - Show all modified files
 - Show the diff view for a file 
 - Stage/Unstage files
 - Dismiss changes for a file
+- Go to a file
 
 ### Installation
 
@@ -17,10 +18,21 @@ in this example, sublime [git](https://github.com/kemayo/sublime-text-git) plugi
 
 ### More Info
 
+
 The default keybinding for toggling the view is:
 
 ```json
     { "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"}
+```
+
+Type of modification will be shown in the git status. 
+Here is the list of the types: 
+```
+    ?? - untracked
+    A - Added
+    M - Modified
+    D - Deleted
+    R - Renamed
 ```
 
 The view won't open if there are no git changes.
