@@ -28,13 +28,13 @@ The default keybinding for toggling the view is:
 Type of modification will be shown in the git status. 
 Here is a list of the types: 
 ```
-    ?? - untracked
+    ?? - Untracked
      A - Added
      M - Modified
      D - Deleted
      R - Renamed
-    UU - Unmrged Conflict
-```
+    UU - Unmerged(Conflict)
+ ```
 
 The view won't open if there are no git changes.
 

@@ -54,6 +54,9 @@ class GitView:
         if 'M' in modification_type:
             diff_output = command.git_diff_file(file_name)
 
+        elif 'U' in modification_type:
+            diff_output = command.git_diff_file(file_name)
+
         elif 'A' in modification_type:
             diff_output = command.git_diff_file(file_name)
 

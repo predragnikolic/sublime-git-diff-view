@@ -111,6 +111,9 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         if 'M' in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
+        elif 'U' in modification_type:
+            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+
         elif 'A' in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 

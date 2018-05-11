@@ -11,6 +11,9 @@ contexts:
     - match: \b(M|MM)\b
       scope: markup.changed
 
+    - match: \b(UU)\b
+      scope: markup.changed
+
     - match: \b(A)\b
       scope: markup.inserted
 
