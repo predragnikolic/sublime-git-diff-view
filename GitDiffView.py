@@ -51,25 +51,23 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         if view.name() != GitStatusView.view_name:
             return
 
-        print('activated async')
         self.listener = Event.listen(
             'git_status.update_diff_view',
             lambda line: GitView.update_diff_view(view, line))
 
         Event.listen('git_view.close', self.remove_listener)
+        ViewsManager.is_open = True
 
     def on_deactivated_async(self, view):
         if view.name() != GitStatusView.view_name:
             return
 
-        print('deactivated async')
         Event.fire('git_view.close')
 
     def on_close(self, view):
         if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
             ViewsManager.is_open = True
             view.run_command('git_diff_toggle_view')
-            print('closing')
             Event.fire('git_view.close')
 
     def on_selection_modified_async(self, view):

@@ -10,7 +10,6 @@ class Event:
 
     @classmethod
     def listen(self, key, listener):
-        print('added listener')
         if key in self.events:
             self.events[key].append(listener)
         else:
@@ -19,7 +18,6 @@ class Event:
 
     @classmethod
     def removeListener(self, key, listener):
-        print('removed listener')
         if key in self.events:
             self.events[key].remove(listener)
 
