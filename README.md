@@ -16,7 +16,7 @@ Get a quick overview of changes before commiting them.
 * Clone this repository to `sublime-text-3/Packages` folder.
 * Done. :wink:
 
-### More Info
+### Note
 
 
 The default keybinding for toggling the view is:
@@ -24,6 +24,10 @@ The default keybinding for toggling the view is:
 ```json
     { "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"}
 ```
+
+The git view won't open if there are no git changes.
+
+
 
 Type of modification will be shown in the git status. 
 Here is a list of the types: 
@@ -35,6 +39,3 @@ Here is a list of the types:
      R - Renamed
     UU - Unmerged(Conflict)
  ```
-
-The view won't open if there are no git changes.
-
