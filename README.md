@@ -36,5 +36,6 @@ Here is a list of the types:
     UU - Unmerged(Conflict)
  ```
 
-The view won't open if there are no git changes.
+### Note
+The Git view won't open if there are no git changes.
 
