@@ -45,11 +45,32 @@ class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
     previus_line = None
+    listener = None
+
+    def on_activated_async(self, view):
+        if view.name() != GitStatusView.view_name:
+            return
+
+        print('activated async')
+        self.listener = Event.listen(
+            'git_status.update_diff_view',
+            lambda line: GitView.update_diff_view(view, line))
+
+        Event.listen('git_view.close', self.remove_listener)
+
+    def on_deactivated_async(self, view):
+        if view.name() != GitStatusView.view_name:
+            return
+
+        print('deactivated async')
+        Event.fire('git_view.close')
 
     def on_close(self, view):
         if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
             ViewsManager.is_open = True
             view.run_command('git_diff_toggle_view')
+            print('closing')
+            Event.fire('git_view.close')
 
     def on_selection_modified_async(self, view):
         if not self._is_git_status_view_in_focus(view):
@@ -73,6 +94,11 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
     def _have_selection_in(self, view):
         return len(view.sel()) > 0
+
+    def remove_listener(self):
+        if self.listener is not None:
+            self.listener()
+            self.listener = None
 
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
@@ -166,4 +192,5 @@ class GotoFileCommand(GitTextCommand):
             absolute_path_to_file = path.join(project_root,
                                               file["file_name"])
             self.window.run_command('git_diff_toggle_view')
-            self.window.open_file(absolute_path_to_file)
+            view = self.window.open_file(absolute_path_to_file)
+            self.window.focus_view(view)
