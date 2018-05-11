@@ -26,7 +26,7 @@ The default keybinding for toggling the view is:
 ```
 
 Type of modification will be shown in the git status. 
-Here is the list of the types: 
+Here is an list of the types: 
 ```
     ?? - untracked
     A - Added
