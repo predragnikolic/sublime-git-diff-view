@@ -29,11 +29,12 @@ Type of modification will be shown in the git status.
 Here is a list of the types: 
 ```
     ?? - untracked
-    A - Added
-    M - Modified
-    D - Deleted
-    R - Renamed
-```
+     A - Added
+     M - Modified
+     D - Deleted
+     R - Renamed
+    UU - Unmerged(Conflict)
+ ```
 
 The view won't open if there are no git changes.
 
