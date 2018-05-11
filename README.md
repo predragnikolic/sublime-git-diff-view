@@ -7,7 +7,7 @@ Get a quick overview of changes before commiting them.
 ### Features
 - Show all modified files
 - Show the diff view for a file 
-- Stage/Unstage files
+- Stage/Unstage files (Staged files are marked with "✔")
 - Dismiss changes for a file
 - Go to a file
 
