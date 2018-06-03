@@ -66,8 +66,14 @@ class Command:
 
     def git_diff_file(self, file_name):
         file_name = self.escape_spaces(file_name)
-        cmd = ['git diff --no-color HEAD {}'.format(file_name)]
-        return self.run(cmd)
+        cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
+        output = ''
+        try:
+            output = self.run(cmd)
+        except Exception as e:
+            output = self.show_added_file(file_name)
+        
+        return output
 
     def show_added_file(self, file_name):
         file_name = self.escape_spaces(file_name)
@@ -86,7 +92,7 @@ class Command:
 
     def git_unstage(self, file_name):
         file_name = self.escape_spaces(file_name)
-        cmd = ['git reset HEAD {}'.format(file_name)]
+        cmd = ['git reset HEAD -- {}'.format(file_name)]
         return self.run(cmd)
 
     def git_dismis_changes(self, file_name):
@@ -108,4 +114,5 @@ class Command:
         output, stderr = p.communicate()
         if (stderr):
             print('Error in Command.py:', stderr)
+            raise Exception('Error in Command.py: {}'.format(stderr))
         return output.decode('utf-8')
