@@ -65,7 +65,7 @@ class Command:
         return self.run(cmd)
 
     def git_diff_file(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         output = ''
         try:
@@ -76,31 +76,33 @@ class Command:
         return output
 
     def show_added_file(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['cat {}'.format(file_name)]
         return self.run(cmd)
 
     def show_deleted_file(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
     def git_stage(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['git add {}'.format(file_name)]
         return self.run(cmd)
 
     def git_unstage(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['git reset HEAD -- {}'.format(file_name)]
         return self.run(cmd)
 
     def git_dismis_changes(self, file_name):
-        file_name = self.escape_spaces(file_name)
+        file_name = self.escape_special_characters(file_name)
         cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
-    def escape_spaces(self, file_name):
+    def escape_special_characters(self, file_name):
+        file_name = file_name.replace('(', '\(');
+        file_name = file_name.replace(')', '\)');
         return file_name.replace(' ', '\ ')
 
     def run(self, cmd):
