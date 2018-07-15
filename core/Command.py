@@ -57,7 +57,7 @@ class Command:
         return files
 
     def git_status_output(self):
-        cmd = ['git status --porcelain']
+        cmd = ['git status --porcelain --untracked-files']
         return self.run(cmd)
 
     def git_staged_files(self):
