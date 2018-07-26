@@ -20,7 +20,7 @@ Get a quick overview of changes before commiting them.
 
 ### Instructions
 
-The default keybinding for toggling the view is `ctrl+shift+g`.
+The default keybinding for toggling the view is `ctrl+shift+g` or `super+shift+g`.
 The git view won't open if there are no git changes.
 
 Type of modification will be shown in the git status, next to the file name.
