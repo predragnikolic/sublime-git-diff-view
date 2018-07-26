@@ -107,7 +107,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, line, diff_output, modification_type):
+    def run(self, edit, diff_output, modification_type):
         window = sublime.active_window()
         views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
@@ -154,4 +154,3 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         return list(
             filter(lambda view: view.name() == view_name, views)
         )[0]
-

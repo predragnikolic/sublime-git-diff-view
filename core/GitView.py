@@ -74,7 +74,6 @@ class GitView:
             diff_output = command.show_deleted_file(file_name)
 
         data = {
-            'line': line,
             'diff_output': diff_output,
             'modification_type': modification_type
         }
