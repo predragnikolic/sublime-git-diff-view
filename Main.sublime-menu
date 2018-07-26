@@ -1,0 +1,27 @@
+[
+  {
+    "id": "preferences",
+    "children": [
+      {
+        "caption": "Package Settings",
+        "mnemonic": "P",
+        "id": "package-settings",
+        "children": [
+          {
+            "caption": "Git Diff View",
+            "children": [
+              {
+                "caption": "Key Bindings",
+                "command": "edit_settings",
+                "args": {
+                  "base_file": "${packages}/GitDiffView/Keymaps/Default (${platform}).sublime-keymap",
+                  "user_file": "${packages}/User/Default (${platform}).sublime-keymap"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
