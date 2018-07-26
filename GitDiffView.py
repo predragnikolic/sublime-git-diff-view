@@ -1,5 +1,3 @@
-from os import path
-
 import sublime
 import sublime_plugin
 from GitDiffView.status_commands.DismissChangesCommand import \
@@ -13,7 +11,6 @@ from .core.Command import Command
 from .core.Event import Event
 from .core.GitDiffView import GitDiffView
 from .core.GitStatusView import GitStatusView
-from .core.GitTextCommand import GitTextCommand
 from .core.GitView import GitView
 from .core.Layout import Layout
 from .core.ViewsManager import ViewsManager
@@ -106,7 +103,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             self.listener = None
 
 
-class UpdateDiffViewCommand(sublime_plugin.TextCommand):
+class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, diff_output, modification_type):
         window = sublime.active_window()
         views = window.views()

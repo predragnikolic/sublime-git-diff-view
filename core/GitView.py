@@ -78,7 +78,7 @@ class GitView:
             'modification_type': modification_type
         }
 
-        view.run_command("update_diff_view", data)
+        view.run_command("update_git_diff_view", data)
 
     @staticmethod
     def _have_a_diff_to_show(line, git_statuses):
