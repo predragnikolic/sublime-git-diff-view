@@ -32,5 +32,6 @@ Here is a list of the types:
      M - Modified
      D - Deleted
      R - Renamed
+     C - Copied
     UU - Unmerged(Conflict)
 ```

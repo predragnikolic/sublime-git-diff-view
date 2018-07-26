@@ -43,6 +43,13 @@ class Command:
                 old_file_name = old_file_name.replace("\"", "")
                 old_file_name = old_file_name.strip()
 
+            if 'C' in modification_type:
+                old_file_name, new_file = file.split("->")
+                file = new_file.replace("\"", "")
+                file = file.strip()
+                old_file_name = old_file_name.replace("\"", "")
+                old_file_name = old_file_name.strip()
+
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)

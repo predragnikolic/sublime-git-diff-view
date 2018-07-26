@@ -64,6 +64,9 @@ class GitView:
         elif 'R' in modification_type:
             diff_output = command.git_diff_file(file_name)
 
+        elif 'C' in modification_type:
+            diff_output = command.git_diff_file(file_name)
+
         elif '?' in modification_type:
             diff_output = command.show_added_file(file_name)
 

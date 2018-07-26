@@ -23,6 +23,9 @@ contexts:
     - match: \b(R)\b
       scope: keyword
 
+    - match: \b(C)\b
+      scope: keyword
+
     - match: (\?\?)
       scope: markup.untracked
 

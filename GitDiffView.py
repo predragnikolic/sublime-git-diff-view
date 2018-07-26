@@ -120,6 +120,9 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         elif 'R' in modification_type:
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
+        elif 'C' in modification_type:
+            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+
         elif '?' in modification_type:
             git_diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
