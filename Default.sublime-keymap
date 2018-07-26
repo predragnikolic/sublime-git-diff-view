@@ -2,17 +2,17 @@
 	{ "keys": ["ctrl+shift+g"], "command": "git_diff_toggle_view"},
 	{
 		"keys": ["a"],
-		"command": "stage_unstage",
+		"command": "git_diff_view_stage_unstage",
 		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
-	}, 
+	},
 	{
 		"keys": ["d"],
-		"command": "dismiss_changes",
+		"command": "git_diff_view_dismiss_changes",
 		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
 	}, 
 	{
 		"keys": ["g"],
-		"command": "goto_file",
+		"command": "git_diff_view_goto_file",
 		"context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
 	}
 ]

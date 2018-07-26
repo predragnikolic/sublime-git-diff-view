@@ -146,7 +146,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         )[0]
 
 
-class StageUnstageCommand(GitTextCommand):
+class GitDiffViewStageUnstageCommand(GitTextCommand):
     def run(self, edit):
         if self.have_a_diff_to_show():
             file = self.get_file()
@@ -158,7 +158,7 @@ class StageUnstageCommand(GitTextCommand):
             Event.fire('git_status.update_diff_view', self.current_line)
 
 
-class DismissChangesCommand(GitTextCommand):
+class GitDiffViewDismissChangesCommand(GitTextCommand):
     warning_text = "Warning: this will dismiss all changes to the file \"{}.\""
 
     def run(self, edit):
@@ -180,7 +180,7 @@ class DismissChangesCommand(GitTextCommand):
         return self.warning_text.format(file["file_name"])
 
 
-class GotoFileCommand(GitTextCommand):
+class GitDiffViewGotoFileCommand(GitTextCommand):
     def run(self, edit):
         if self.have_a_diff_to_show():
             file = self.get_file()
