@@ -12,7 +12,7 @@ from .core.GitTextCommand import GitTextCommand
 from os import path
 
 
-class GitDiffToggleViewCommand(sublime_plugin.TextCommand):
+class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         window = sublime.active_window()
         self.command = Command(window)
@@ -67,7 +67,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
     def on_close(self, view):
         if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
             ViewsManager.is_open = True
-            view.run_command('git_diff_toggle_view')
+            view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
 
     def on_selection_modified_async(self, view):
@@ -195,6 +195,6 @@ class GitDiffViewGotoFileCommand(GitTextCommand):
             project_root = self.window.extract_variables()['folder']
             absolute_path_to_file = path.join(project_root,
                                               file["file_name"])
-            self.window.run_command('git_diff_toggle_view')
+            self.window.run_command('toggle_git_diff_view')
             view = self.window.open_file(absolute_path_to_file)
             self.window.focus_view(view)
