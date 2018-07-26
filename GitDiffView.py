@@ -1,15 +1,22 @@
+from os import path
+
 import sublime
 import sublime_plugin
+from GitDiffView.status_commands.DismissChangesCommand import \
+    GitDiffViewDismissChangesCommand
+from GitDiffView.status_commands.GotoFileCommand import \
+    GitDiffViewGotoFileCommand
+from GitDiffView.status_commands.StageUnstageCommand import \
+    GitDiffViewStageUnstageCommand
 
-from .core.ViewsManager import ViewsManager
-from .core.Layout import Layout
-from .core.GitView import GitView
-from .core.GitStatusView import GitStatusView
-from .core.GitDiffView import GitDiffView
-from .core.Event import Event
 from .core.Command import Command
+from .core.Event import Event
+from .core.GitDiffView import GitDiffView
+from .core.GitStatusView import GitStatusView
 from .core.GitTextCommand import GitTextCommand
-from os import path
+from .core.GitView import GitView
+from .core.Layout import Layout
+from .core.ViewsManager import ViewsManager
 
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
@@ -148,53 +155,3 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             filter(lambda view: view.name() == view_name, views)
         )[0]
 
-
-class GitDiffViewStageUnstageCommand(GitTextCommand):
-    def run(self, edit):
-        if self.have_a_diff_to_show():
-            file = self.get_file()
-            if file["is_staged"]:
-                self.command.git_unstage(file["file_name"])
-            else:
-                self.command.git_stage(file["file_name"])
-            self.rerender_git_status_view()
-            Event.fire('git_status.update_diff_view', self.current_line)
-
-
-class GitDiffViewDismissChangesCommand(GitTextCommand):
-    warning_text = "Warning: this will dismiss all changes to the file \"{}.\""
-
-    def run(self, edit):
-        if self.have_a_diff_to_show():
-            file = self.get_file()
-            message = self._get_message(file)
-
-            if self.should_dismiss_dialog(message):
-                if file["is_staged"]:
-                    self.command.git_unstage(file["file_name"])
-
-                self.command.git_dismis_changes(file["file_name"])
-                self.rerender_git_status_view()
-
-    def should_dismiss_dialog(self, message):
-        return sublime.ok_cancel_dialog(message, 'Dismiss')
-
-    def _get_message(self, file):
-        return self.warning_text.format(file["file_name"])
-
-
-class GitDiffViewGotoFileCommand(GitTextCommand):
-    def run(self, edit):
-        if self.have_a_diff_to_show():
-            file = self.get_file()
-
-            if 'D' in file["modification_type"]:
-                print('cant go to a deleted file')
-                return
-
-            project_root = self.window.extract_variables()['folder']
-            absolute_path_to_file = path.join(project_root,
-                                              file["file_name"])
-            self.window.run_command('toggle_git_diff_view')
-            view = self.window.open_file(absolute_path_to_file)
-            self.window.focus_view(view)
