@@ -1,5 +1,5 @@
 from GitDiffView.core.Event import Event
-from GitDiffView.core.GitTextCommand import GitTextCommand
+from GitDiffView.status_commands.GitTextCommand import GitTextCommand
 
 
 class GitDiffViewStageUnstageCommand(GitTextCommand):

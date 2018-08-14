@@ -1,4 +1,4 @@
-from GitDiffView.core.GitTextCommand import GitTextCommand
+from GitDiffView.status_commands.GitTextCommand import GitTextCommand
 from sublime import ok_cancel_dialog
 
 

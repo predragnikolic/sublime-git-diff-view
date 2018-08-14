@@ -1,8 +1,8 @@
 import sublime_plugin
 import sublime
 
-from .GitStatusView import GitStatusView
-from .Command import Command
+from GitDiffView.core.GitStatusView import GitStatusView
+from GitDiffView.core.Command import Command
 
 
 class GitTextCommand(sublime_plugin.TextCommand):
