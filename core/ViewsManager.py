@@ -1,5 +1,5 @@
 class ViewsManager:
-    '''Responsible for storing views and reopening them later'''
+    ''' Responsible for storing views and reopening them later. '''
 
     # {'window_id' : [ views ]}
     previous_views = {}

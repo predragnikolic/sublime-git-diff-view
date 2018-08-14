@@ -3,22 +3,31 @@ import re
 
 
 class Command:
-    instance = None
-    called_times = 1
+    ''' Responsible for running git comands throught `subprocess`
+    and returning it's output. '''
 
-    # testing
-    def called(self):
-        print('called ', self.called_times)
-        self.called_times += 1
+    # for testing testing
+    # called_times = 1
+    # def called(self):
+    #     print('called ', self.called_times)
+    #     self.called_times += 1
 
     def __init__(self, window):
         self.window = window
         self.project_root = window.extract_variables()['folder']
 
     def git_statuses(self):
-        files = []
+        ''' Return a list of git statuses.
+        Example:
+        [{
+            "file_name",
+            "modification_type",
+            "is_staged",
+            "old_file_name"
+        }] '''
+        statuses = []
 
-        # array of staged files
+        # array of staged statuses
         staged_files = self.git_staged_files().splitlines()
         git_status_output = self.git_status_output()
 
@@ -54,14 +63,14 @@ class Command:
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
 
-            files.append({
+            statuses.append({
                 "file_name": file,
                 "modification_type": modification_type,
                 "is_staged": file in staged_files,
                 "old_file_name": old_file_name
             })
 
-        return files
+        return statuses
 
     def git_status_output(self):
         cmd = ['git status --porcelain --untracked-files']
@@ -77,9 +86,8 @@ class Command:
         output = ''
         try:
             output = self.run(cmd)
-        except Exception as e:
+        except Exception:
             output = self.show_added_file(file_name)
-        
         return output
 
     def show_added_file(self, file_name):
