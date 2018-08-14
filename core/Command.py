@@ -46,18 +46,10 @@ class Command:
             modification_type = modification_type.strip()
             old_file_name = None
             if 'R' in modification_type:
-                old_file_name, new_file = file.split("->")
-                file = new_file.replace("\"", "")
-                file = file.strip()
-                old_file_name = old_file_name.replace("\"", "")
-                old_file_name = old_file_name.strip()
+                old_file_name, file = self.split_filename_at_arrow(file)
 
             if 'C' in modification_type:
-                old_file_name, new_file = file.split("->")
-                file = new_file.replace("\"", "")
-                file = file.strip()
-                old_file_name = old_file_name.replace("\"", "")
-                old_file_name = old_file_name.strip()
+                old_file_name, file = self.split_filename_at_arrow(file)
 
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
@@ -71,6 +63,16 @@ class Command:
             })
 
         return statuses
+
+    def split_filename_at_arrow(self, file):
+        ''' If the file has a `->` than split it in two files.
+        Returns the `old_file_name`, than the `new_file`. '''
+        old_file_name, new_file = file.split("->")
+        file = new_file.replace("\"", "")
+        file = file.strip()
+        old_file_name = old_file_name.replace("\"", "")
+        old_file_name = old_file_name.strip()
+        return old_file_name, file
 
     def git_status_output(self):
         cmd = ['git status --porcelain --untracked-files']
