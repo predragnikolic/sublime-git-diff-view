@@ -15,7 +15,7 @@ class Command:
         self.window = window
         self.project_root = window.extract_variables()['folder']
 
-    def git_status_dict(self):
+    def git_statuses(self):
         files = []
 
         # array of staged files
@@ -108,9 +108,9 @@ class Command:
         return self.run(cmd)
 
     def escape_special_characters(self, file_name):
-        file_name = file_name.replace('(', '\(');
-        file_name = file_name.replace(')', '\)');
-        return file_name.replace(' ', '\ ')
+        file_name = file_name.replace('(', '\\(');
+        file_name = file_name.replace(')', '\\)');
+        return file_name.replace(' ', '\\ ')
 
     def run(self, cmd):
         p = subprocess.Popen(cmd,

@@ -35,7 +35,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         else:
             # array of dict that holds information about
             # the file, type of modification, and if the file is staged
-            git_statuses = self.command.git_status_dict()
+            git_statuses = self.command.git_statuses()
             if self._no_git_output(git_statuses):
                 window.status_message('No git changes to show.')
                 return

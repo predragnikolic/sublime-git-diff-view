@@ -7,7 +7,7 @@ from .Event import Event
 
 
 class GitView:
-    ''' Shows the git status and git diff'''
+    ''' Shows the git status and git diff. '''
     listener = None
 
     def __init__(self, window, layout):
@@ -18,6 +18,8 @@ class GitView:
         self.command = Command(window)
 
     def close(self):
+        ''' Closes the git status view and git diff view. '''
+
         for view in self.window.views():
             if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
                 self.window.focus_view(view)
@@ -25,6 +27,8 @@ class GitView:
                 Event.fire('git_view.close')
 
     def open(self, git_statuses):
+        ''' Opens the git status view, and git diff view. '''
+
         git_status_view = self.git_status_view.generate(git_statuses)
         self.layout.insert_into_first_column(git_status_view)
 
@@ -43,7 +47,7 @@ class GitView:
     @staticmethod
     def update_diff_view(view, line):
         command = Command(sublime.active_window())
-        git_statuses = command.git_status_dict()
+        git_statuses = command.git_statuses()
 
         if not GitView._have_a_diff_to_show(line, git_statuses):
             return
@@ -81,5 +85,7 @@ class GitView:
         view.run_command("update_git_diff_view", data)
 
     @staticmethod
+    def _have_a_diff_to_show(line, git_statuses):
+        return line < len(git_statuses)
     def _have_a_diff_to_show(line, git_statuses):
         return line < len(git_statuses)
