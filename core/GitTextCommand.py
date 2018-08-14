@@ -6,6 +6,9 @@ from .Command import Command
 
 
 class GitTextCommand(sublime_plugin.TextCommand):
+    ''' Acts as an abstract class. All git commands
+    that can be triggered from the gits status view can extend it. '''
+
     def have_a_diff_to_show(self):
         self._setup()
         return self.current_line < len(self.git_statuses)
