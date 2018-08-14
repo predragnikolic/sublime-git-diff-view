@@ -87,5 +87,3 @@ class GitView:
     @staticmethod
     def _have_a_diff_to_show(line, git_statuses):
         return line < len(git_statuses)
-    def _have_a_diff_to_show(line, git_statuses):
-        return line < len(git_statuses)
