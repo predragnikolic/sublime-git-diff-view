@@ -31,4 +31,4 @@ contexts:
 
     - match: '(\[)(\w+)(\])'
       captures:
-        2: keyword
+        2: keyword.control

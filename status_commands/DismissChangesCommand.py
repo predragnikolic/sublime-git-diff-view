@@ -1,3 +1,4 @@
+from GitDiffView.core.Event import Event
 from GitDiffView.status_commands.GitTextCommand import GitTextCommand
 from sublime import ok_cancel_dialog
 
@@ -16,6 +17,7 @@ class GitDiffViewDismissChangesCommand(GitTextCommand):
 
                 self.command.git_dismis_changes(file["file_name"])
                 self.rerender_git_status_view()
+                Event.fire('git_status.update_diff_view', self.current_line)
 
     def should_dismiss_dialog(self, message):
         return ok_cancel_dialog(message, 'Dismiss')
