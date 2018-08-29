@@ -1,4 +1,4 @@
-# Git Diff View - sublime plugin
+# Git Diff View - Sublime Text 3
 
 Get a quick overview of changes before commiting them.
 
@@ -35,3 +35,7 @@ Here is a list of the types:
      C - Copied
     UU - Unmerged(Conflict)
 ```
+
+# Note
+
+For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).  
