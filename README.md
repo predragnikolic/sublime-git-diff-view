@@ -2,7 +2,7 @@
 
 Get a quick overview of changes before commiting them.
 
-![Example](img/example.gif)
+![Example](img/showcase.gif)
 
 ### Features
 
