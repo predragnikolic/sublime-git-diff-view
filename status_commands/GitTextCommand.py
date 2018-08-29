@@ -3,6 +3,7 @@ import sublime
 
 from GitDiffView.core.GitStatusView import GitStatusView
 from GitDiffView.core.Command import Command
+from GitDiffView.core.Event import Event
 
 
 class GitTextCommand(sublime_plugin.TextCommand):
@@ -18,6 +19,12 @@ class GitTextCommand(sublime_plugin.TextCommand):
 
     def rerender_git_status_view(self):
         git_statuses = self.command.git_statuses()
+
+        # if there are no git statuses
+        # then no need to rerender, just close the diff view
+        if len(git_statuses) < 1:
+            self.view.run_command('toggle_git_diff_view')
+            Event.fire('git_view.close')
         git_status_view = GitStatusView(self.window)
         git_status_view.update(self.view, git_statuses, self._get_cursor_pos())
 
