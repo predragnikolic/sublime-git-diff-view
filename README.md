@@ -36,6 +36,6 @@ Here is a list of the types:
     UU - Unmerged(Conflict)
 ```
 
-# Note
+### Note
 
 For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).  

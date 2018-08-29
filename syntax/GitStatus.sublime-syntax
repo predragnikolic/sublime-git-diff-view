@@ -21,10 +21,10 @@ contexts:
       scope: markup.deleted
 
     - match: \b(R)\b
-      scope: keyword
+      scope: markup.changed
 
     - match: \b(C)\b
-      scope: keyword
+      scope: markup.changed
 
     - match: (\?\?)
       scope: markup.untracked
