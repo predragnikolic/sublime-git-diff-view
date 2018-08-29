@@ -65,7 +65,11 @@ class ViewsManager:
         sel.add(cursor_pos)
 
         # show the position at center
-        view.show_at_center(cursor_pos)
+        # if the row is greater then the last visible row
+        row = view.rowcol(cursor_pos)[0]
+        last_visible_row = 18
+        if row > last_visible_row:
+            view.show_at_center(cursor_pos)
 
     def _save_last_active_view(self, view):
         self.last_active_view[self.window.id()] = view.file_name()
