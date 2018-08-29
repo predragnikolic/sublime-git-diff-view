@@ -3,8 +3,8 @@
 name: Git Untracked
 hidden: true
 file_extensions: 
-  - guf
-scope: text.guf
+  - guf         # stands for Git Untracked Format
+scope: text.guf # Used to show files in Git Diff View that are untracked
 
 contexts:
   main:

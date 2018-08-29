@@ -3,8 +3,8 @@
 name: Git Removed
 hidden: true
 file_extensions: 
-  - grf
-scope: text.grf
+  - grf         # stands for Git Removed Format
+scope: text.grf # Used to show files in Git Diff View that are untracked
 
 contexts:
   main:

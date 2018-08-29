@@ -118,8 +118,8 @@ class Command:
         return self.run(cmd)
 
     def escape_special_characters(self, file_name):
-        file_name = file_name.replace('(', '\\(');
-        file_name = file_name.replace(')', '\\)');
+        file_name = file_name.replace('(', '\\(')
+        file_name = file_name.replace(')', '\\)')
         return file_name.replace(' ', '\\ ')
 
     def run(self, cmd):

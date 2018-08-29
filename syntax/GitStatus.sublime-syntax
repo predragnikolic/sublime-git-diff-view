@@ -3,8 +3,8 @@
 name: Git Status
 hidden: true
 file_extensions: 
-  - gsf
-scope: text.gsf
+  - gsf           # stands for Git Removed Format
+scope: text.gsf   # Used to add scopes to the Git Status View
 
 contexts:
   main:
