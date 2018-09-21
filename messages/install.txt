@@ -1,0 +1,9 @@
+Thanks you for installing GitDiffView! 
+
+### Instructions
+
+The default keybinding for toggling the view is `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
+The git view won't open if there are no git changes.
+
+Need more info or have some issues... go here
+> https://github.com/predragnikolic/sublime-git-diff-view
