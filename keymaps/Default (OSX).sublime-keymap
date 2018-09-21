@@ -1,3 +1,3 @@
 [
-    { "keys": ["super+shift+g"], "command": "toggle_git_diff_view"}
+    { "keys": ["alt+shift+g"], "command": "toggle_git_diff_view"}
 ]
