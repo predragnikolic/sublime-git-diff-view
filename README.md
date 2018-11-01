@@ -23,6 +23,11 @@ Get a quick overview of changes before commiting them.
 The default keybinding for toggling the view is `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
 The git view won't open if there are no git changes.
 
+Inside the `Git Status` view you can use the following keybinds:
+* `a` - stage/unstage a file
+* `d` - dismiss changes to a file
+* `g` - go to a file
+
 Type of modification will be shown in the git status, next to the file name.
 Here is a list of the types:
 
@@ -38,4 +43,4 @@ Here is a list of the types:
 
 ### Note
 
-For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).  
+For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
