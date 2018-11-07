@@ -12,7 +12,13 @@ Get a quick overview of changes before commiting them.
 -   Dismiss changes for a file
 -   Go to a file
 
-### Installation
+### Installation 
+
+#### Stable Version
+
+Open the command palette and run `Package Control: Install Package`, then select `GitDiffView`.
+
+#### Development Version
 
 -   Clone this repository to `sublime-text-3/Packages` folder.
 -   Rename the folder to `GitDiffView`.
@@ -24,9 +30,12 @@ The default keybinding for toggling the view is `ctrl+shift+g`(Linux) or `alt+sh
 The git view won't open if there are no git changes.
 
 Inside the `Git Status` view you can use the following keybinds:
-* `a` - stage/unstage a file
-* `d` - dismiss changes to a file
-* `g` - go to a file
+
+```
+  a - stage/unstage a file
+  d - dismiss changes to a file
+  g - go to a file
+```
 
 Type of modification will be shown in the git status, next to the file name.
 Here is a list of the types:
