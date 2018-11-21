@@ -27,6 +27,7 @@ class GitStatusView:
         sel = view.sel()
         sel.clear()
         sel.add(cursor_pos)
+        view.show(cursor_pos)
 
     def _insert_text(self, view, output):
         view.run_command("insert", {"characters": output})

@@ -42,7 +42,8 @@ class GitView:
 
         sel = git_status_view.sel()
         sel.clear()
-        sel.add(sublime.Region(0, 0))
+        sel.add(0)
+        git_status_view.show(0)
 
     @staticmethod
     def update_diff_view(view, line):
