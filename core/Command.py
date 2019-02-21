@@ -62,6 +62,8 @@ class Command:
                 "old_file_name": old_file_name
             })
 
+        statuses = sorted(statuses, key=lambda k: k['file_name']) 
+
         return statuses
 
     def split_filename_at_arrow(self, file):
