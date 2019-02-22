@@ -26,7 +26,7 @@ class GitTextCommand(sublime_plugin.TextCommand):
             self.view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
         git_status_view = GitStatusView(self.window)
-        git_status_view.update(self.view, git_statuses, self._get_cursor_pos())
+        git_status_view.update(self.view, git_statuses)
 
     def _setup(self):
         self.window = sublime.active_window()

@@ -10,18 +10,20 @@ from GitDiffView.status_commands.StageUnstageCommand import \
 from .core.Command import Command
 from .core.Event import Event
 from .core.GitDiffView import GitDiffView
-from .core.GitStatusView import GitStatusView
+from .core.GitStatusView import GitStatusView, get_git_status_view
 from .core.GitView import GitView
 from .core.Layout import Layout
 from .core.ViewsManager import ViewsManager
 
 
-REFRESH_LIST = False
+
+
+STOP_INTERVAL = False
 
 def set_interval(fn):
     def interval():
         fn()
-        if not REFRESH_LIST:
+        if not STOP_INTERVAL:
             sublime.set_timeout(interval, 800)
     sublime.set_timeout(interval, 800)
 
@@ -31,14 +33,10 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         window = sublime.active_window()
         views = window.views()
         
-        gsv = None
-        for view in views:
-            if view.name() == 'Git Status':
-                gsv = view
-                break
-
+        gsv = get_git_status_view()  # type: View
         if gsv is None: 
             return
+
         gsv.set_read_only(False)
         gsv.replace(edit, sublime.Region(0, gsv.size()), content)
         gsv.set_read_only(True)
@@ -46,7 +44,8 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global REFRESH_LIST
+        global STOP_INTERVAL
+
         window = sublime.active_window()
         self.command = Command(window)
 
@@ -55,26 +54,19 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         git_view = GitView(window, layout)
 
         def refresh_list():
-            gsv = None
-            views = window.views()
-            for view in views:
-                if view.name() == 'Git Status':
-                    gsv = view
-                    break
-
+            ''' Refresh git status view content'''
+            gsv = get_git_status_view()  # type: View
             if gsv is None: 
                 return
 
             git_statuses = self.command.git_statuses()
-            # if there are no git statuses
-            # then no need to rerender, just close the diff view
             git_status_view = GitStatusView(window)
 
             if len(git_statuses) < 1:
-                git_status_view.update(gsv, 'No changes', gsv.sel()[0].begin())
+                git_status_view.update(gsv, 'No changes')
                 return
 
-            git_status_view.update(gsv, git_statuses, gsv.sel()[0].begin())
+            git_status_view.update(gsv, git_statuses)
 
 
         # STATE: GitView is open, will be closed
@@ -83,15 +75,11 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
             layout.one_column()
             views_manager.reopen()
 
-            REFRESH_LIST = True
-
+            STOP_INTERVAL = True
         # STATE: GitView is closed, will be opended
         else:
             # array of dict that holds information about
             # the file, type of modification, and if the file is staged
-            REFRESH_LIST = False
-            set_interval(refresh_list)
-
             git_statuses = self.command.git_statuses()
             if self._no_git_output(git_statuses):
                 window.status_message('No git changes to show.')
@@ -99,6 +87,9 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
             views_manager.save_views_for_later()
             layout.two_columns()
             git_view.open(git_statuses)
+
+            STOP_INTERVAL = False
+            set_interval(refresh_list)
 
     def _no_git_output(self, git_statuses):
         return len(git_statuses) < 1

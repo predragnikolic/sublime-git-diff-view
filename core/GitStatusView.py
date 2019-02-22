@@ -1,6 +1,18 @@
+import sublime
 from .Formated import Formated
 
 prev_formated_git_stauts = ''
+
+
+def get_git_status_view():
+    ''' Return the git status View '''
+    window = sublime.active_window()
+    views = window.views()
+    for view in views:
+        if view.name() == 'Git Status':
+            return view
+    return None
+
 
 class GitStatusView:
     view_name = "Git Status"
@@ -17,7 +29,7 @@ class GitStatusView:
         self._configure_view(view)
         return view
 
-    def update(self, view, git_statuses, cursor_pos):
+    def update(self, view, git_statuses):
         global prev_formated_git_stauts
 
         if isinstance(git_statuses, str):
