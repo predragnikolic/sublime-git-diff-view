@@ -16,8 +16,25 @@ from .core.Layout import Layout
 from .core.ViewsManager import ViewsManager
 
 
+REFRESH_LIST = False
+
+def set_interval(fn):
+    def interval():
+        fn()
+        if not REFRESH_LIST:
+            sublime.set_timeout_async(interval, 200)
+    sublime.set_timeout_async(interval, 200)
+
+
+class GitRefreshListCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        print('called')
+
+
+
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        global REFRESH_LIST
         window = sublime.active_window()
         self.command = Command(window)
 
@@ -25,16 +42,44 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         layout = Layout(window)
         git_view = GitView(window, layout)
 
+        def refresh_list():
+            print('d')
+            gsv = None
+            views = window.views()
+            if len(views) > 0:
+                view = views[0]
+                if view.name() == 'Git Status':
+                    gsv = view
+            if gsv is None: 
+                return
+
+            git_statuses = self.command.git_statuses()
+            # if there are no git statuses
+            # then no need to rerender, just close the diff view
+            git_status_view = GitStatusView(window)
+
+            if len(git_statuses) < 1:
+                git_status_view.update(gsv, 'No changes', gsv.sel()[0].begin())
+                return
+
+            git_status_view.update(gsv, git_statuses, gsv.sel()[0].begin())
+
+
         # STATE: GitView is open, will be closed
         if ViewsManager.is_git_view_open():
             git_view.close()
             layout.one_column()
             views_manager.reopen()
 
+            REFRESH_LIST = True
+
         # STATE: GitView is closed, will be opended
         else:
             # array of dict that holds information about
             # the file, type of modification, and if the file is staged
+            REFRESH_LIST = False
+            set_interval(refresh_list)
+
             git_statuses = self.command.git_statuses()
             if self._no_git_output(git_statuses):
                 window.status_message('No git changes to show.')

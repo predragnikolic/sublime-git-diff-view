@@ -1,5 +1,6 @@
 from .Formated import Formated
 
+prev_formated_git_stauts = ''
 
 class GitStatusView:
     view_name = "Git Status"
@@ -17,7 +18,18 @@ class GitStatusView:
         return view
 
     def update(self, view, git_statuses, cursor_pos):
-        formated_git_status = self.formated.git_status(git_statuses)
+        global prev_formated_git_stauts
+
+        if isinstance(git_statuses, str):
+            formated_git_status = git_statuses
+        else:
+            formated_git_status = self.formated.git_status(git_statuses)
+
+        if prev_formated_git_stauts == formated_git_status:
+            # dont trigger render, because it is the same content
+            return
+
+        prev_formated_git_stauts = formated_git_status
         view.set_read_only(False)
         view.run_command("select_all")
         view.run_command("right_delete")
