@@ -22,14 +22,26 @@ def set_interval(fn):
     def interval():
         fn()
         if not REFRESH_LIST:
-            sublime.set_timeout_async(interval, 200)
-    sublime.set_timeout_async(interval, 200)
+            sublime.set_timeout(interval, 800)
+    sublime.set_timeout(interval, 800)
 
 
-class GitRefreshListCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        print('called')
+class UpdateStatusViewCommand(sublime_plugin.TextCommand):
+    def run(self, edit, content):
+        window = sublime.active_window()
+        views = window.views()
+        
+        gsv = None
+        for view in views:
+            if view.name() == 'Git Status':
+                gsv = view
+                break
 
+        if gsv is None: 
+            return
+        gsv.set_read_only(False)
+        gsv.replace(edit, sublime.Region(0, gsv.size()), content)
+        gsv.set_read_only(True)
 
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
@@ -43,13 +55,13 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         git_view = GitView(window, layout)
 
         def refresh_list():
-            print('d')
             gsv = None
             views = window.views()
-            if len(views) > 0:
-                view = views[0]
+            for view in views:
                 if view.name() == 'Git Status':
                     gsv = view
+                    break
+
             if gsv is None: 
                 return
 
