@@ -9,13 +9,11 @@ from GitDiffView.status_commands.StageUnstageCommand import \
 
 from .core.Command import Command
 from .core.Event import Event
-from .core.GitDiffView import GitDiffView
+from .core.GitDiffView import GitDiffView, get_git_diff_view
 from .core.GitStatusView import GitStatusView, get_git_status_view
 from .core.GitView import GitView
 from .core.Layout import Layout
 from .core.ViewsManager import ViewsManager
-
-
 
 
 STOP_INTERVAL = False
@@ -29,10 +27,7 @@ def set_interval(fn):
 
 
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, content):
-        window = sublime.active_window()
-        views = window.views()
-        
+    def run(self, edit, content):        
         gsv = get_git_status_view()  # type: View
         if gsv is None: 
             return
@@ -40,6 +35,17 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         gsv.set_read_only(False)
         gsv.replace(edit, sublime.Region(0, gsv.size()), content)
         gsv.set_read_only(True)
+
+
+class ClearGitDiffView(sublime_plugin.TextCommand):
+    def run(self, edit):
+        gdv = get_git_diff_view()  # type: View
+        if gdv is None: 
+            return
+
+        gdv.set_read_only(False)
+        gdv.replace(edit, sublime.Region(0, gdv.size()), "")
+        gdv.set_read_only(True)
 
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
@@ -64,6 +70,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 
             if len(git_statuses) < 1:
                 git_status_view.update(gsv, 'No changes')
+                gsv.run_command("clear_git_diff_view")
                 return
 
             git_status_view.update(gsv, git_statuses)

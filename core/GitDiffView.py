@@ -1,3 +1,16 @@
+import sublime
+
+
+def get_git_diff_view():
+    ''' Return the git diff View '''
+    window = sublime.active_window()
+    views = window.views()
+    for view in views:
+        if view.name() == 'Git Diff View':
+            return view
+    return None
+
+
 class GitDiffView:
     view_name = "Git Diff View"
 

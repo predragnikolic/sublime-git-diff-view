@@ -51,6 +51,7 @@ class GitView:
         git_statuses = command.git_statuses()
 
         if not GitView._have_a_diff_to_show(line, git_statuses):
+            view.run_command("clear_git_diff_view")
             return
 
         file_name = git_statuses[line]['file_name']
