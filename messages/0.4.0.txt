@@ -1,0 +1,12 @@
+=> 0.4.0
+
+📦 NEW:
+* Git status view updates when you stage/unstage/commit through the terminal, command palette, or anywhere.
+
+![showcase](https://user-images.githubusercontent.com/22029477/53237438-fd0d1c80-3696-11e9-9053-062fa2c151cf.gif)
+
+
+🐛 FIX:
+* No scroll jump when staging|unstaging
+
+Source https://github.com/predragnikolic/sublime-git-diff-view/releases/tag/0.4.0.
