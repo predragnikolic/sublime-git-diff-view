@@ -26,6 +26,24 @@ def set_interval(fn):
     sublime.set_timeout(interval, 800)
 
 
+def refresh_list():
+    ''' Refresh git status view content'''
+    window = sublime.active_window()
+    gsv = get_git_status_view()  # type: View
+    if gsv is None: 
+        return
+
+    git_statuses = Command(window).git_statuses()
+    git_status_view = GitStatusView(window)
+
+    if len(git_statuses) < 1:
+        git_status_view.update(gsv, 'No changes')
+        gsv.run_command("clear_git_diff_view")
+        return
+
+    git_status_view.update(gsv, git_statuses)
+
+
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, content):        
         gsv = get_git_status_view()  # type: View
@@ -58,22 +76,6 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         views_manager = ViewsManager(window)
         layout = Layout(window)
         git_view = GitView(window, layout)
-
-        def refresh_list():
-            ''' Refresh git status view content'''
-            gsv = get_git_status_view()  # type: View
-            if gsv is None: 
-                return
-
-            git_statuses = self.command.git_statuses()
-            git_status_view = GitStatusView(window)
-
-            if len(git_statuses) < 1:
-                git_status_view.update(gsv, 'No changes')
-                gsv.run_command("clear_git_diff_view")
-                return
-
-            git_status_view.update(gsv, git_statuses)
 
 
         # STATE: GitView is open, will be closed
@@ -206,3 +208,11 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
         return list(
             filter(lambda view: view.name() == view_name, views)
         )[0]
+
+def plugin_loaded():
+    gsv = get_git_status_view()
+
+    # If status view is open when sublime starts, 
+    # setup listener for refreshing the list
+    if gsv is not None:
+        set_interval(refresh_list)
