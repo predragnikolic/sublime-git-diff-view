@@ -1,5 +1,6 @@
 import sublime
 import sublime_plugin
+import os
 from GitDiffView.status_commands.DismissChangesCommand import \
     GitDiffViewDismissChangesCommand
 from GitDiffView.status_commands.GotoFileCommand import \
@@ -14,7 +15,7 @@ from .core.GitStatusView import GitStatusView, get_git_status_view
 from .core.GitView import GitView
 from .core.Layout import Layout
 from .core.ViewsManager import ViewsManager
-
+from .core.FileSyntax import FileSyntax
 
 STOP_INTERVAL = False
 
@@ -161,7 +162,11 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 
 class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, diff_output, modification_type):
+    def __init__(self, view):
+        super().__init__(view)
+        self.file_syntax = FileSyntax(sublime.active_window())
+
+    def run(self, edit, diff_output, modification_type, file_name):
         window = sublime.active_window()
         views = window.views()
         git_diff_view = self.get_view(views, GitDiffView.view_name)
@@ -185,8 +190,8 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
             git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif '?' in modification_type:
-            git_diff_view.set_syntax_file(
-                'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
+            syntax = self.file_syntax.get(file_name)
+            git_diff_view.set_syntax_file(syntax or 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
 
         elif 'D' in modification_type:
             git_diff_view.set_syntax_file(

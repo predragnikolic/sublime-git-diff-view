@@ -81,7 +81,8 @@ class GitView:
 
         data = {
             'diff_output': diff_output,
-            'modification_type': modification_type
+            'modification_type': modification_type,
+            'file_name': file_name
         }
 
         view.run_command("update_git_diff_view", data)
