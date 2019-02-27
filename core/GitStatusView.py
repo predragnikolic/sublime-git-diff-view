@@ -25,7 +25,7 @@ class GitStatusView:
         view = self.window.new_file()
 
         formated_git_status = self.formated.git_status(git_statuses)
-        self._insert_text(view, formated_git_status)
+        view.run_command("append", {"characters": formated_git_status})
         self._configure_view(view)
         return view
 
@@ -46,9 +46,6 @@ class GitStatusView:
         view.run_command('update_status_view', {
                 'content': formated_git_status,
             })
-
-    def _insert_text(self, view, output):
-        view.run_command("insert", {"characters": output})
 
     def _configure_view(self, view):
         view.set_syntax_file(
