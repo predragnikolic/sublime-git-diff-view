@@ -57,6 +57,7 @@ class GitStatusView:
         view.settings().set("tab_size", 4)
         view.settings().set("show_minimap", False)
         view.settings().set("word_wrap", False)
+        view.settings().set("draw_indent_guides", False)
         view.set_name(self.view_name)
         view.set_scratch(True)
         # disable editing of the view
