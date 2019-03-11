@@ -119,6 +119,11 @@ class Command:
         cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
+    def git_clean(self, file_name):
+        file_name = self.escape_special_characters(file_name)
+        cmd = ['git clean -f {}'.format(file_name)]
+        return self.run(cmd)
+
     def escape_special_characters(self, file_name):
         file_name = file_name.replace('(', '\\(')
         file_name = file_name.replace(')', '\\)')
