@@ -11,7 +11,7 @@ class Formated:
         # type of modification, and if the file is staged
         # will be rendered to git status view
         formated_output = []
-        staged = '✔'
+        staged = '■'
         unstaged = '☐'
 
         for status in git_statuses:
