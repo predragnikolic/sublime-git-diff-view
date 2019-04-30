@@ -2,28 +2,28 @@
 ---
 name: Git Status
 hidden: true
-file_extensions: 
+file_extensions:
   - gsf           # stands for Git Removed Format
 scope: text.gsf   # Used to add scopes to the Git Status View
 
 contexts:
   main:
-    - match: \b(M|MM)\b
+    - match: ■\s+\b(M|MM)\b
       scope: markup.changed
 
-    - match: \b(UU)\b
+    - match: ■\s+\b(UU)\b
       scope: markup.changed
 
-    - match: \b(A)\b
+    - match: ■\s+\b(A)\b
       scope: markup.inserted
 
-    - match: \b(D)\b
+    - match: ■\s+\b(D)\b
       scope: markup.deleted
 
-    - match: \b(R)\b
+    - match: ■\s+\b(R)\b
       scope: markup.changed
 
-    - match: \b(C)\b
+    - match: ■\s+\b(C)\b
       scope: markup.changed
 
     - match: (\?\?)
