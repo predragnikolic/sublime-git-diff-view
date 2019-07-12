@@ -10,7 +10,6 @@ contexts:
   main:
     - match: ^[^ ]\s{1,2}
       push:
-        - meta_scope: markup.bold
         - include: fileline
 
     - match: ^\s{2,3}
