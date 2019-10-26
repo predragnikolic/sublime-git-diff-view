@@ -1,5 +1,6 @@
 from os import path
 from GitDiffView.status_commands.GitTextCommand import GitTextCommand
+from GitDiffView.core.Command import Command
 
 
 class GitDiffViewGotoFileCommand(GitTextCommand):
@@ -11,8 +12,8 @@ class GitDiffViewGotoFileCommand(GitTextCommand):
                 print('cant go to a deleted file')
                 return
 
-            project_root = self.window.extract_variables()['folder']
-            absolute_path_to_file = path.join(project_root,
+            command = Command(self.window)
+            absolute_path_to_file = path.join(command.project_root,
                                               file["file_name"])
             self.window.run_command('toggle_git_diff_view')
             view = self.window.open_file(absolute_path_to_file)

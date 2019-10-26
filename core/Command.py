@@ -14,7 +14,8 @@ class Command:
 
     def __init__(self, window):
         self.window = window
-        self.project_root = window.extract_variables()['folder']
+        self.project_root = None
+        self.project_root = self.run(['git rev-parse --show-toplevel']).strip()
 
     def git_statuses(self):
         ''' Return a list of git statuses.
@@ -62,7 +63,7 @@ class Command:
                 "old_file_name": old_file_name
             })
 
-        statuses = sorted(statuses, key=lambda k: k['file_name']) 
+        statuses = sorted(statuses, key=lambda k: k['file_name'])
 
         return statuses
 
@@ -130,9 +131,16 @@ class Command:
         return file_name.replace(' ', '\\ ')
 
     def run(self, cmd):
+        cwd = None
+
+        if self.project_root is None:
+            cwd = self.window.extract_variables()['folder']
+        else:
+            cwd = self.project_root
+
         p = subprocess.Popen(cmd,
                              bufsize=-1,
-                             cwd=self.project_root,
+                             cwd=cwd,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
