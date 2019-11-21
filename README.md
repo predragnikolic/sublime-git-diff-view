@@ -57,7 +57,7 @@ For other Git commands, like commiting, pushing, pulling, see [Git](https://gith
 ### Configuration
 
 You can turn on highlight file names in git status view by setting `"highlight_file_names": true` in
-`Preferences > Package Settings > GitDiffView > Settings`
+`Preferences > Package Settings > GitDiffView > Settings`.
 
 `highlight_file_names: true`
 
