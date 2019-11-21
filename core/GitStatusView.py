@@ -3,7 +3,6 @@ from .Formated import Formated
 
 prev_formated_git_stauts = ''
 
-
 def get_git_status_view():
     ''' Return the git status View '''
     window = sublime.active_window()
@@ -12,7 +11,6 @@ def get_git_status_view():
         if view.name() == 'Git Status':
             return view
     return None
-
 
 class GitStatusView:
     view_name = "Git Status"
@@ -48,8 +46,10 @@ class GitStatusView:
             })
 
     def _configure_view(self, view):
-        view.set_syntax_file(
-            'Packages/GitDiffView/syntax/GitStatus.sublime-syntax')
+        settings = sublime.load_settings("GitDiffView.sublime-settings")
+        file_list_syntax_definition = settings.get('file_list_syntax_definition', 'Packages/GitDiffView/syntax/GitStatus.sublime-syntax')
+        view.set_syntax_file(file_list_syntax_definition)
+
         view.settings().set('highlight_line', True)
         view.settings().set("line_numbers", False)
         view.settings().set("scroll_past_end", False)
