@@ -47,8 +47,14 @@ class GitStatusView:
 
     def _configure_view(self, view):
         settings = sublime.load_settings("GitDiffView.sublime-settings")
-        file_list_syntax_definition = settings.get('file_list_syntax_definition', 'Packages/GitDiffView/syntax/GitStatus.sublime-syntax')
-        view.set_syntax_file(file_list_syntax_definition)
+
+        default_sytnax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
+        fancy_sytnax = "Packages/GitDiffView/syntax/GitStatusFancy.sublime-syntax"
+
+        highlight_file_names = settings.get("highlight_file_names", False)
+        syntax = fancy_sytnax if highlight_file_names else default_sytnax
+
+        view.set_syntax_file(syntax)
 
         view.settings().set('highlight_line', True)
         view.settings().set("line_numbers", False)
