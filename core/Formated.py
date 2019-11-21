@@ -12,7 +12,7 @@ class Formated:
         # will be rendered to git status view
         formated_output = []
         staged = '■'
-        unstaged = '☐'
+        unstaged = ' '
 
         for status in git_statuses:
             staged_status = staged if status['is_staged'] else unstaged
