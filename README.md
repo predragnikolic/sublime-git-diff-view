@@ -53,3 +53,18 @@ Here is a list of the types:
 ### Note
 
 For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
+
+### Configuration
+
+#### Theme
+
+2 themes are available by default and can be changed in settings.
+`Preferences > Package Settings > GitDiffView > Settings`
+
+##### Default theme
+
+![Default theme](img/theme-default.png)
+
+##### Fancy theme
+
+![Fancy theme](img/theme-fancy.png)

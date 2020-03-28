@@ -3,7 +3,6 @@ from .Formated import Formated
 
 prev_formated_git_stauts = ''
 
-
 def get_git_status_view():
     ''' Return the git status View '''
     window = sublime.active_window()
@@ -12,7 +11,6 @@ def get_git_status_view():
         if view.name() == 'Git Status':
             return view
     return None
-
 
 class GitStatusView:
     view_name = "Git Status"
@@ -25,7 +23,7 @@ class GitStatusView:
         view = self.window.new_file()
 
         formated_git_status = self.formated.git_status(git_statuses)
-        self._insert_text(view, formated_git_status)
+        view.run_command("append", {"characters": formated_git_status})
         self._configure_view(view)
         return view
 
@@ -47,12 +45,11 @@ class GitStatusView:
                 'content': formated_git_status,
             })
 
-    def _insert_text(self, view, output):
-        view.run_command("insert", {"characters": output})
-
     def _configure_view(self, view):
-        view.set_syntax_file(
-            'Packages/GitDiffView/syntax/GitStatus.sublime-syntax')
+        settings = sublime.load_settings("GitDiffView.sublime-settings")
+        file_list_syntax_definition = settings.get('file_list_syntax_definition', 'Packages/GitDiffView/syntax/GitStatus.sublime-syntax')
+        view.set_syntax_file(file_list_syntax_definition)
+
         view.settings().set('highlight_line', True)
         view.settings().set("line_numbers", False)
         view.settings().set("scroll_past_end", False)
@@ -60,6 +57,7 @@ class GitStatusView:
         view.settings().set("tab_size", 4)
         view.settings().set("show_minimap", False)
         view.settings().set("word_wrap", False)
+        view.settings().set("draw_indent_guides", False)
         view.set_name(self.view_name)
         view.set_scratch(True)
         # disable editing of the view

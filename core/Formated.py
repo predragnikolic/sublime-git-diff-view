@@ -1,5 +1,5 @@
+import sublime
 from .Command import Command
-
 
 class Formated:
     def __init__(self, window):
@@ -11,8 +11,10 @@ class Formated:
         # type of modification, and if the file is staged
         # will be rendered to git status view
         formated_output = []
-        staged = '■'
-        unstaged = '☐'
+
+        settings = sublime.load_settings("GitDiffView.sublime-settings")
+        staged = settings.get('staged_symbol');
+        unstaged = ' ';
 
         for status in git_statuses:
             staged_status = staged if status['is_staged'] else unstaged
