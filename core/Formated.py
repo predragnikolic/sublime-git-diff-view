@@ -14,7 +14,7 @@ class Formated:
 
         settings = sublime.load_settings("GitDiffView.sublime-settings")
         staged = settings.get('staged_symbol', '■')
-        unstaged = settings.get('unstaged_symbol', '☐')
+        unstaged = ' '
 
         for status in git_statuses:
             staged_status = staged if status['is_staged'] else unstaged
