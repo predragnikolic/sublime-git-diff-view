@@ -1,6 +1,5 @@
 {
     "staged_symbol": "■",
-    "unstaged_symbol": "☐",
 
     // this settings change requires a restart
     "highlight_file_names": false
