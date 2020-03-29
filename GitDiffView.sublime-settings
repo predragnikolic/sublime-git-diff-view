@@ -1,12 +1,6 @@
 {
-    // Changes how file list is coloured.
-    // Requires restart
-    //
-    // - Packages/GitDiffView/syntax/GitStatus.sublime-syntax  
-    //     Default Theme - colored are only symbols.
-    // - Packages/GitDiffView/syntax/GitStatusFancy.sublime-syntax  
-    //     Apart from colouring symbols it colours file names, and greys out
-    //     file paths
-    "file_list_syntax_definition": "Packages/GitDiffView/syntax/GitStatus.sublime-syntax",
-    "staged_symbol": "■"
+    "staged_symbol": "■",
+
+    // this settings change requires a restart
+    "highlight_file_names": false
 }
