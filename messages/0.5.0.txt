@@ -1,0 +1,8 @@
+=> 0.5.0
+
+## What's Changed
+* Introduce `highlight_file_names` setting by @lumnn.
+* Improve diff view of modified files by splitting diffs of partially staged files into 2 sections - Staged and Unstaged by @lumnn.
+* Hide sidebar and panel when Diff View is open by @lumnn
+
+**Full Changelog**: https://github.com/predragnikolic/sublime-git-diff-view/compare/0.4.4...0.5.0
