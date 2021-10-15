@@ -51,11 +51,11 @@ class ViewsManager:
 
             trying_restoring_the_cursor(view)
 
-        last_sidebar_state = self.last_sidebar_state[self.window.id()]
+        last_sidebar_state = self.last_sidebar_state.get(self.window.id())
         if last_sidebar_state:
             self.window.set_sidebar_visible(True)
 
-        last_active_panel = self.last_active_panel[self.window.id()]
+        last_active_panel = self.last_active_panel.get(self.window.id())
         if last_active_panel:
             self.window.run_command("show_panel", { "panel": last_active_panel })
 
