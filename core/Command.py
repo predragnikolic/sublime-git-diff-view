@@ -90,8 +90,7 @@ class Command:
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         output = ''
         try:
-            output = self.run(cmd)
-            output = output.split("\n", 4)[4]
+            output = self.remove_diff_head(self.run(cmd))
         except Exception:
             output = self.show_added_file(file_name)
         return output
@@ -100,8 +99,7 @@ class Command:
         file_name = self.escape_special_characters(file_name)
         staged_arg = '--staged' if staged else ''
         cmd = ['git diff --no-color {} -- {}'.format(staged_arg, file_name)]
-        output = self.run(cmd)
-        output = output.split("\n", 4)[4]
+        output = self.remove_diff_head(self.run(cmd))
         return output
 
     def show_added_file(self, file_name):
@@ -138,6 +136,9 @@ class Command:
         file_name = file_name.replace('(', '\\(')
         file_name = file_name.replace(')', '\\)')
         return file_name.replace(' ', '\\ ')
+
+    def remove_diff_head(self, diff):
+        return diff.split("\n", 4)[4]
 
     def run(self, cmd):
         cwd = None
