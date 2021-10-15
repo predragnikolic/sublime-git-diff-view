@@ -1,6 +1,5 @@
 import sublime
 
-
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
 
@@ -10,6 +9,10 @@ class ViewsManager:
     last_active_view = {}
     # {'window_id': pos}
     last_cursor_pos = {}
+    # {'window_id': bool }
+    last_sidebar_state = {}
+    # {'window_id': str }
+    last_active_panel = {}
 
     is_open = False
 
@@ -22,7 +25,12 @@ class ViewsManager:
         ViewsManager.is_open = not ViewsManager.is_open
         return is_open
 
-    def reopen(self):
+    def prepare(self):
+        self.save_views_for_later()
+        self.window.set_sidebar_visible(False)
+        self.window.run_command('hide_panel')
+
+    def restore(self):
         views = self.get_views() or []
         for file_name in views:
                 if file_name:
@@ -42,12 +50,23 @@ class ViewsManager:
                                         trying_restoring_the_cursor(view), 20)
 
             trying_restoring_the_cursor(view)
+
+        last_sidebar_state = self.last_sidebar_state[self.window.id()]
+        if last_sidebar_state:
+            self.window.set_sidebar_visible(True)
+
+        last_active_panel = self.last_active_panel[self.window.id()]
+        if last_active_panel:
+            self.window.run_command("show_panel", { "panel": last_active_panel })
+
         self._clear_state()
 
     def save_views_for_later(self):
         view = self.window.active_view()
         self._save_last_active_view(view)
         self._save_last_cursor_pos(view)
+        self._save_sidebar_state()
+        self._save_active_panel()
         self._save_views(self.window.views())
 
     def get_views(self):
@@ -77,6 +96,12 @@ class ViewsManager:
     def _save_last_cursor_pos(self, view):
         self.last_cursor_pos[self.window.id()] = view.sel()[0].begin()
 
+    def _save_active_panel(self):
+        self.last_active_panel[self.window.id()] = self.window.active_panel()
+
+    def _save_sidebar_state(self):
+        self.last_sidebar_state[self.window.id()] = self.window.is_sidebar_visible()
+
     def _save_views(self, views):
         self.previous_views[self.window.id()] = []
 
@@ -87,3 +112,4 @@ class ViewsManager:
 
     def _clear_state(self):
         self.previous_views[self.window.id()] = []
+        self.last_active_panel[self.window.id()] = None

@@ -74,17 +74,15 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         window = sublime.active_window()
         self.command = Command(window)
 
-        views_manager = ViewsManager(window)
         layout = Layout(window)
+        views_manager = ViewsManager(window)
         git_view = GitView(window, layout)
-
 
         # STATE: GitView is open, will be closed
         if ViewsManager.is_git_view_open():
-            window.set_sidebar_visible(True)
             git_view.close()
             layout.one_column()
-            views_manager.reopen()
+            views_manager.restore()
 
             STOP_INTERVAL = True
         # STATE: GitView is closed, will be opended
@@ -96,9 +94,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
                 window.status_message('No git changes to show.')
                 return
 
-            window.set_sidebar_visible(False)
-            window.run_command('hide_panel')
-            views_manager.save_views_for_later()
+            views_manager.prepare()
             layout.two_columns()
             git_view.open(git_statuses)
 
