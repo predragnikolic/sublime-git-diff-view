@@ -58,7 +58,17 @@ class GitView:
         modification_type = git_statuses[line]['modification_type']
         diff_output = ''
 
-        if 'M' in modification_type:
+        if 'MM' == modification_type:
+            diff_output = (
+                "Staged\n" +
+                "======\n" +
+                command.git_diff_file_staged(file_name) +
+                "Unstaged\n" +
+                "========\n" +
+                command.git_diff_file_staged(file_name, False)
+            )
+
+        elif 'M' in modification_type:
             diff_output = command.git_diff_file(file_name)
 
         elif 'U' in modification_type:

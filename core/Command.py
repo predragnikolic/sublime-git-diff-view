@@ -91,8 +91,17 @@ class Command:
         output = ''
         try:
             output = self.run(cmd)
+            output = output.split("\n", 4)[4]
         except Exception:
             output = self.show_added_file(file_name)
+        return output
+
+    def git_diff_file_staged(self, file_name, staged = True):
+        file_name = self.escape_special_characters(file_name)
+        staged_arg = '--staged' if staged else ''
+        cmd = ['git diff --no-color {} -- {}'.format(staged_arg, file_name)]
+        output = self.run(cmd)
+        output = output.split("\n", 4)[4]
         return output
 
     def show_added_file(self, file_name):
