@@ -132,6 +132,15 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
 
+    def on_pre_close_project(self, window):
+        layout = Layout(window)
+        views_manager = ViewsManager(window)
+
+        # STATE: GitView is open, will be closed
+        if ViewsManager.is_git_view_open():
+            layout.one_column()
+            views_manager.restore()
+
     def on_selection_modified_async(self, view):
         if not self._is_git_status_view_in_focus(view):
             return
