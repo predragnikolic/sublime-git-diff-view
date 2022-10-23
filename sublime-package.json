@@ -1,0 +1,25 @@
+{
+  "contributions": {
+    "settings": [
+      {
+        "file_patterns": ["/GitDiffView.sublime-settings"],
+        "schema": {
+          "type": "object",
+          "properties": {
+            "staged_symbol": {
+              "type": "string",
+              "default": "■",
+              "markdownDescription": "The symbol that will be shown next to a file that is staged."
+            },
+            "highlight_file_names": {
+              "type": "boolean",
+              "default": false,
+              "markdownDescription": "When enabled, staged file names will be colored."
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    ]
+  }
+}
