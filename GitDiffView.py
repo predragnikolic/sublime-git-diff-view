@@ -1,6 +1,6 @@
 import sublime
 import sublime_plugin
-import os
+
 from GitDiffView.status_commands.DismissChangesCommand import \
     GitDiffViewDismissChangesCommand
 from GitDiffView.status_commands.GotoFileCommand import \
@@ -10,7 +10,7 @@ from GitDiffView.status_commands.StageUnstageCommand import \
 
 from .core.Command import Command
 from .core.Event import Event
-from .core.GitDiffView import GitDiffView, get_git_diff_view
+from .core.DiffView import GitDiffView, get_git_diff_view
 from .core.GitStatusView import GitStatusView, get_git_status_view
 from .core.GitView import GitView
 from .core.Layout import Layout

@@ -1,7 +1,7 @@
 import sublime
 
 from .GitStatusView import GitStatusView
-from .GitDiffView import GitDiffView
+from .DiffView import GitDiffView
 from .Command import Command
 from .Event import Event
 
