@@ -1,0 +1,8 @@
+=> 0.6.0
+
+## What's Changed
+- Auto complete suggestion when LSP-json is installed.
+
+Development Changes
+- Switched to Python 3.8
+- Added `mypy` and `flake8`
