@@ -1,5 +1,5 @@
 [
-  { "caption": "Preferences: GitDiffView",
+  { "caption": "Preferences: GitDiffView Settings",
     "command": "edit_settings",
     "args": {
       "base_file": "${packages}/GitDiffView/GitDiffView.sublime-settings",
