@@ -1,10 +1,9 @@
+from typing import List
 import sublime
 
 
-def get_git_diff_view():
+def get_diff_view(views: List[sublime.View]):
     ''' Return the git diff View '''
-    window = sublime.active_window()
-    views = window.views()
     for view in views:
         if view.name() == 'Git Diff View':
             return view

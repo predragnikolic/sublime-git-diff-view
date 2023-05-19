@@ -7,7 +7,7 @@ from .stage_unstage_file import GitDiffViewStageUnstageCommand
 
 from .core.git_commands import Command
 from .core.event_bus import Event
-from .core.diff_view import GitDiffView, get_git_diff_view
+from .core.diff_view import GitDiffView, get_diff_view
 from .core.git_status_view import GitStatusView, get_git_status_view
 from .core.git_view import GitView
 from .core.layout import Layout
@@ -53,15 +53,18 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         gsv.set_read_only(True)
 
 
+# command: clear_git_diff_view
 class ClearGitDiffView(sublime_plugin.TextCommand):
     def run(self, edit):
-        gdv = get_git_diff_view()  # type: View
-        if gdv is None: 
+        w = self.view.window()
+        if not w:
             return
-
-        gdv.set_read_only(False)
-        gdv.replace(edit, sublime.Region(0, gdv.size()), "")
-        gdv.set_read_only(True)
+        diff_view = get_diff_view(w.views())
+        if diff_view is None:
+            return
+        diff_view.set_read_only(False)
+        diff_view.replace(edit, sublime.Region(0, diff_view.size()), "")
+        diff_view.set_read_only(True)
 
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
