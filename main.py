@@ -133,6 +133,6 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
                 'git_status': git_status,
             })
         except:
-            status_view.run_command("clear_git_diff_view")
+            status_view.run_command("clear_diff_view")
 
 

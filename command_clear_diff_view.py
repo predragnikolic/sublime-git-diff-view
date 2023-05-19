@@ -1,10 +1,10 @@
-from core.diff_view import get_diff_view
+from .core.diff_view import get_diff_view
 import sublime
 import sublime_plugin
 
 
-# command: clear_git_diff_view
-class ClearGitDiffView(sublime_plugin.TextCommand):
+# command: clear_diff_view
+class ClearDiffView(sublime_plugin.TextCommand):
     def run(self, edit):
         w = self.view.window()
         if not w:
