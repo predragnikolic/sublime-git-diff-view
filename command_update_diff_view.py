@@ -1,9 +1,9 @@
-from typing import Optional
 from .core.diff_view import get_diff_view
 from .core.git_commands import Git, GitStatus
 from .core.status_view import get_status_view
-import sublime_plugin
+from typing import Optional
 import sublime
+import sublime_plugin
 
 
 # command: update_diff_view

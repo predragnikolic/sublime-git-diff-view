@@ -1,16 +1,15 @@
-import sublime
-import sublime_plugin
-from .utils import get_line
-
+from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
-from .core.diff_view import get_diff_view, DIFF_VIEW_NAME
-from .core.status_view import get_status_view, STATUS_VIEW_NAME
 from .core.git_view import GitView
 from .core.layout import Layout
+from .core.status_view import get_status_view, STATUS_VIEW_NAME
 from .core.view_manager import ViewsManager
+from .utils import get_line
+import sublime
+import sublime_plugin
+
 
 STOP_INTERVAL = False
-
 def set_interval(fn):
     def interval():
         fn()
@@ -29,6 +28,15 @@ def refresh_list():
     view.run_command('update_status_view', {
         'git_statuses': git_statuses,
     })
+
+
+def plugin_loaded():
+    status_view = get_status_view(sublime.active_window().views())
+
+    # If status view is open when sublime starts,
+    # setup listener for refreshing the list
+    if status_view is not None:
+        set_interval(refresh_list)
 
 
 # command: close_git_diff_view
@@ -127,12 +135,4 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         except:
             status_view.run_command("clear_git_diff_view")
 
-
-def plugin_loaded():
-    status_view = get_status_view(sublime.active_window().views())
-
-    # If status view is open when sublime starts, 
-    # setup listener for refreshing the list
-    if status_view is not None:
-        set_interval(refresh_list)
 

@@ -1,6 +1,6 @@
 from core.diff_view import get_diff_view
-import sublime_plugin
 import sublime
+import sublime_plugin
 
 
 # command: clear_git_diff_view

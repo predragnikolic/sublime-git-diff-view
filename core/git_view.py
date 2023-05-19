@@ -1,11 +1,12 @@
-from typing import Dict, List
+from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import GitStatus
+from .status_view import STATUS_VIEW_NAME, create_status_view
+from typing import Dict, List
 import sublime
 
-from .status_view import STATUS_VIEW_NAME, create_status_view
-from .diff_view import create_diff_view, DIFF_VIEW_NAME
 
 WindowId = int
+
 
 class GitView:
     ''' Shows the git status and git diff. '''

@@ -1,10 +1,9 @@
-from os import path
-from .core.git_view import GitView
-import sublime_plugin
-import sublime
-
-from .utils import get_line
 from .core.git_commands import Git
+from .core.git_view import GitView
+from .utils import get_line
+from os import path
+import sublime
+import sublime_plugin
 
 
 # command: git_diff_view_goto_file

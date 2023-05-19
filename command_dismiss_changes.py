@@ -1,5 +1,5 @@
-from .core.git_view import GitView
 from .core.git_commands import Git
+from .core.git_view import GitView
 from .utils import get_line
 import sublime
 import sublime_plugin

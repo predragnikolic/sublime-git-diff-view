@@ -1,5 +1,4 @@
 from typing import List
-
 from .utils import format_git_statuses
 from .core.git_commands import GitStatus
 from .core.status_view import get_status_view

@@ -1,7 +1,7 @@
-from .core.git_view import GitView
-import sublime_plugin
-from .utils import get_line
 from .core.git_commands import Git
+from .core.git_view import GitView
+from .utils import get_line
+import sublime_plugin
 
 
 # command: git_diff_view_stage_unstage

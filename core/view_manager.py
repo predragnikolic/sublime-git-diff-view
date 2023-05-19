@@ -1,6 +1,6 @@
-from typing import List
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
+from typing import List
 import sublime
 
 
