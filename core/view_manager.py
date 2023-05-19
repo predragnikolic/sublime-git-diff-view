@@ -33,9 +33,8 @@ class ViewsManager:
     def restore(self):
         views = self.get_views() or []
         for file_name in views:
-                if file_name:
-                    self.window.open_file(file_name)
-
+            if file_name:
+                self.window.open_file(file_name)
         last_active_view = self._get_last_active_view()
         if last_active_view:
             view = self.window.open_file(last_active_view)
@@ -70,7 +69,7 @@ class ViewsManager:
         self._save_views(self.window.views())
 
     def get_views(self):
-        return self.previous_views.get(self.window.id())
+        return self.previous_views.get(self.window.id(), [])
 
     def _get_last_active_view(self):
         return self.last_active_view.get(self.window.id())

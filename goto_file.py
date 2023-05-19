@@ -1,4 +1,5 @@
 from os import path
+from .core.git_view import GitView
 import sublime_plugin
 import sublime
 
@@ -15,7 +16,7 @@ class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
         if line is None:
             return
         git = Git(window)
-        git_statuses = git.git_statuses() or []
+        git_statuses = GitView.git_statuses[window.id()]
         git_status = git_statuses[line]
         if not git_status:
             return
@@ -27,7 +28,6 @@ class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
             return
         absolute_path_to_file = path.join(git.git_root_dir,
                                           git_status["file_name"])
-        window.run_command('toggle_git_diff_view')
-
         view = window.open_file(absolute_path_to_file)
+        window.run_command('toggle_git_diff_view')
         sublime.set_timeout(lambda: window.focus_view(view))

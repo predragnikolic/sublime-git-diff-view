@@ -1,14 +1,16 @@
+from typing import Dict, List
+from .git_commands import GitStatus
 import sublime
 
 from .status_view import STATUS_VIEW_NAME, create_status_view
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
-from .git_commands import Git
-from .event_bus import Event
 
+WindowId = int
 
 class GitView:
     ''' Shows the git status and git diff. '''
     listener = None
+    git_statuses: Dict[WindowId, List[GitStatus]] = {}
 
     def __init__(self, window, layout):
         self.window: sublime.Window = window
@@ -16,14 +18,13 @@ class GitView:
 
     def close(self):
         ''' Closes the git status view and git diff view. '''
-
         for view in self.window.views():
             if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
                 view.close()
-                Event.fire('git_view.close')
 
-    def open(self, git_statuses):
+    def open(self):
         ''' Opens the git status view, and git diff view. '''
+        git_statuses = GitView.git_statuses[self.window.id()]
         status_view = create_status_view(self.window, git_statuses)
         self.layout.insert_into_first_column(status_view)
         diff_view = create_diff_view(self.window)
@@ -38,19 +39,5 @@ class GitView:
         if not git_status:
             return
         diff_view.run_command("update_diff_view", {
-            'git_status': git_status,
-        })
-
-    @staticmethod
-    def update_diff_view(view, line: int):
-        git = Git(sublime.active_window())
-        git_statuses = git.git_statuses()
-
-        if line >= len(git_statuses):
-            view.run_command("clear_git_diff_view")
-            return
-
-        git_status = git_statuses[line]
-        view.run_command("update_diff_view", {
             'git_status': git_status,
         })

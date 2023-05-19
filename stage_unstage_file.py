@@ -1,3 +1,4 @@
+from .core.git_view import GitView
 import sublime_plugin
 from .utils import get_line
 from .core.git_commands import Git
@@ -12,7 +13,7 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
         if line is None:
             return
         git = Git(window)
-        git_statuses = git.git_statuses() or []
+        git_statuses = GitView.git_statuses[window.id()]
         git_status = git_statuses[line]
         if not git_status:
             return
@@ -20,6 +21,7 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
             git.reset_head(git_status["file_name"])
         else:
             git.add(git_status["file_name"])
+        git_statuses = git.git_statuses()
         self.view.run_command('update_status_view', {
             'git_statuses': git_statuses,
         })

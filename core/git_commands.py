@@ -1,3 +1,4 @@
+from os import stat
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
 import re
 import subprocess
@@ -32,6 +33,7 @@ class Git:
 
     def git_statuses(self) -> List[GitStatus]:
         statuses: List[GitStatus] = []
+        print('eeej')
 
         # array of staged statuses
         staged_files = self.diff().splitlines()
@@ -72,6 +74,9 @@ class Git:
             })
 
         statuses = sorted(statuses, key=lambda k: k['file_name'])
+        # bad :D
+        from .git_view import GitView
+        GitView.git_statuses[self.window.id()] = statuses # store
 
         return statuses
 
