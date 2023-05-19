@@ -19,7 +19,7 @@ class GitStatusView:
         self.window = window
         self.formated = Formated(window)
 
-    def generate(self, git_statuses):
+    def create(self, git_statuses):
         view = self.window.new_file()
 
         formated_git_status = self.formated.git_status(git_statuses)

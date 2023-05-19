@@ -7,7 +7,7 @@ from .stage_unstage_file import GitDiffViewStageUnstageCommand
 
 from .core.git_commands import Command
 from .core.event_bus import Event
-from .core.diff_view import GitDiffView, get_diff_view
+from .core.diff_view import get_diff_view, DIFF_VIEW_NAME
 from .core.git_status_view import GitStatusView, get_git_status_view
 from .core.git_view import GitView
 from .core.layout import Layout
@@ -127,7 +127,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         Event.fire('git_view.close')
 
     def on_close(self, view):
-        if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
+        if view.name() in [GitStatusView.view_name, DIFF_VIEW_NAME]:
             ViewsManager.is_open = True
             view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
@@ -169,7 +169,9 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, diff_output, modification_type, file_name):
         window = sublime.active_window()
         views = window.views()
-        git_diff_view = self.get_view(views, GitDiffView.view_name)
+        git_diff_view = get_diff_view(views)
+        if not git_diff_view:
+            return
 
         # enable editing the file for editing
         git_diff_view.set_read_only(False)

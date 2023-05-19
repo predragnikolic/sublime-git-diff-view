@@ -1,7 +1,7 @@
 import sublime
 
 from .git_status_view import GitStatusView
-from .diff_view import GitDiffView
+from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import Command
 from .event_bus import Event
 
@@ -14,14 +14,13 @@ class GitView:
         self.window = window
         self.layout = layout
         self.git_status_view = GitStatusView(window)
-        self.git_diff_view = GitDiffView(window)
         self.command = Command(window)
 
     def close(self):
         ''' Closes the git status view and git diff view. '''
 
         for view in self.window.views():
-            if view.name() in [GitStatusView.view_name, GitDiffView.view_name]:
+            if view.name() in [GitStatusView.view_name, DIFF_VIEW_NAME]:
                 self.window.focus_view(view)
                 self.window.run_command('close_file')
                 Event.fire('git_view.close')
@@ -29,10 +28,10 @@ class GitView:
     def open(self, git_statuses):
         ''' Opens the git status view, and git diff view. '''
 
-        git_status_view = self.git_status_view.generate(git_statuses)
+        git_status_view = self.git_status_view.create(git_statuses)
         self.layout.insert_into_first_column(git_status_view)
 
-        git_diff_view = self.git_diff_view.generate()
+        git_diff_view = create_diff_view(self.window)
         self.layout.insert_into_second_column(git_diff_view)
 
         # call --> UPDATE_DIFF_VIEW <-- after registering
