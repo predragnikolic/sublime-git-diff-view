@@ -11,7 +11,7 @@ class GitView:
     listener = None
 
     def __init__(self, window, layout):
-        self.window = window
+        self.window: sublime.Window = window
         self.layout = layout
 
     def close(self):
@@ -19,8 +19,7 @@ class GitView:
 
         for view in self.window.views():
             if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
-                self.window.focus_view(view)
-                self.window.run_command('close_file')
+                view.close()
                 Event.fire('git_view.close')
 
     def open(self, git_statuses):
