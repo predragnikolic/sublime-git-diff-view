@@ -77,7 +77,9 @@ class ClearGitDiffView(sublime_plugin.TextCommand):
 class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _):
         global STOP_INTERVAL
-        window = sublime.active_window()
+        window =  self.view.window()
+        if not window:
+            return
 
         layout = Layout(window)
         views_manager = ViewsManager(window)
@@ -93,7 +95,7 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
 class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _):
         global STOP_INTERVAL
-        window = sublime.active_window()
+        window =  self.view.window()
         if not window:
             return
         if ViewsManager.is_git_view_open(window.views()):
@@ -121,7 +123,7 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
 
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _):
-        window = sublime.active_window()
+        window = self.view.window()
         if not window:
             return
         if ViewsManager.is_git_view_open(window.views()):
