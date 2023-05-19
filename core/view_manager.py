@@ -36,9 +36,7 @@ class ViewsManager:
         self.window.run_command('hide_panel')
 
     def restore(self):
-        print('called')
         views = self.get_views() or []
-        print('views', views)
         for file_name in views:
             if file_name:
                 self.window.open_file(file_name)

@@ -1,6 +1,6 @@
 # Git Diff View - Sublime Text 3
 
-Get a quick overview of changes before commiting them.
+Get a quick overview of changes before committing them.
 
 ![Example](img/showcase.gif)
 
@@ -29,7 +29,7 @@ Open the command palette and run `Package Control: Install Package`, then select
 The default keybinding for toggling the view is `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
 The git view won't open if there are no git changes.
 
-Inside the `Git Status` view you can use the following keybinds:
+Inside the `Git Status` view you can use the following keybindings:
 
 ```
   a - stage/unstage a file
@@ -52,17 +52,8 @@ Here is a list of the types:
 
 ### Note
 
-For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
+For other Git commands, like committing, pushing, and pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
 
 ### Configuration
 
-You can turn on highlight file names in git status view by setting `"highlight_file_names": true` in
-`Preferences > Package Settings > GitDiffView > Settings`.
-
-`highlight_file_names: true`
-
-![Fancy theme](img/theme-fancy.png)
-
-`highlight_file_names: false`
-
-![Default theme](img/theme-default.png)
+There is no configuration :)

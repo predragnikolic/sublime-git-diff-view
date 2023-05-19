@@ -18,7 +18,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             return
         formatted_git_statuses = format_git_statuses(git_statuses)
         if UpdateStatusViewCommand.prev_formatted_git_statuses == formatted_git_statuses:
-            # dont trigger render, because it is the same content
+            # don't trigger render, because it is the same content
             return
         UpdateStatusViewCommand.prev_formatted_git_statuses = formatted_git_statuses
         new_content = formatted_git_statuses

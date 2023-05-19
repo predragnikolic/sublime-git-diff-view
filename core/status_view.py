@@ -21,10 +21,8 @@ def create_status_view(window: sublime.Window, git_statuses: List[GitStatus]) ->
     view.run_command("append", {"characters": formatted_git_status})
     # configure view
     settings = sublime.load_settings("GitDiffView.sublime-settings")
-    default_sytnax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
-    fancy_sytnax = "Packages/GitDiffView/syntax/GitStatusFancy.sublime-syntax"
-    highlight_file_names = settings.get("highlight_file_names", False)
-    syntax = fancy_sytnax if highlight_file_names else default_sytnax
+    default_syntax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
+    syntax = default_syntax
     view.set_syntax_file(syntax)
     view.settings().set('highlight_line', True)
     view.settings().set("line_numbers", False)
