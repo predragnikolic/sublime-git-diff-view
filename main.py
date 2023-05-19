@@ -169,7 +169,8 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             self.listener = None
 
 
-class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
+# command: update_diff_view
+class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, modification_type, file_name):
         window = self.view.window()
         if not window:
@@ -179,7 +180,6 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
         diff_view = get_diff_view(views)
         if not diff_view:
             return
-
         # enable editing the file for editing
         diff_view.set_read_only(False)
 
@@ -217,6 +217,7 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
             diff_output = git.show_deleted_file(file_name)
         diff_view.replace(edit, sublime.Region(0, diff_view.size()), diff_output)
+
         sel = diff_view.sel()
         if sel:
             sel.clear()
