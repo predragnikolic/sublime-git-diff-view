@@ -1,7 +1,6 @@
 import sublime_plugin
 import sublime
 
-from .core.status_view import GitStatusView
 from .core.git_commands import Git
 from .core.event_bus import Event
 
@@ -25,8 +24,9 @@ class GitTextCommand(sublime_plugin.TextCommand):
         if len(git_statuses) < 1:
             self.view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
-        git_status_view = GitStatusView(self.window)
-        git_status_view.update(self.view, git_statuses)
+        self.view.run_command('update_status_view', {
+            'git_statuses': git_statuses,
+        })
 
     def _setup(self):
         self.window = sublime.active_window()

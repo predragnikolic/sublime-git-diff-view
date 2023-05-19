@@ -5,6 +5,7 @@ import sublime
 STATUS_VIEW_NAME = "Git Status"
 prev_formatted_git_status = ''
 
+
 def get_status_view(views: List[sublime.View]) -> Optional[sublime.View]:
     ''' Return the git status View '''
     for view in views:
@@ -17,7 +18,6 @@ def create_status_view(window: sublime.Window, git_statuses: List[GitStatus]) ->
     view = window.new_file()
     formatted_git_status = format_git_statuses(git_statuses)
     view.run_command("append", {"characters": formatted_git_status})
-
     # configure view
     settings = sublime.load_settings("GitDiffView.sublime-settings")
     default_sytnax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
@@ -37,31 +37,7 @@ def create_status_view(window: sublime.Window, git_statuses: List[GitStatus]) ->
     view.set_scratch(True)
     # disable editing of the view
     view.set_read_only(True)
-
     return view
-
-
-class GitStatusView:
-    def __init__(self, window):
-        self.window = window
-
-    def update(self, view, git_statuses):
-        global prev_formatted_git_status
-
-        if isinstance(git_statuses, str):
-            formatted_git_status = git_statuses
-        else:
-            formatted_git_status = format_git_statuses(git_statuses)
-
-        if prev_formatted_git_status == formatted_git_status:
-            # dont trigger render, because it is the same content
-            return
-
-        prev_formatted_git_status = formatted_git_status
-
-        view.run_command('update_status_view', {
-                'content': formatted_git_status,
-            })
 
 
 def format_git_statuses(git_statuses: List[GitStatus]) -> str:

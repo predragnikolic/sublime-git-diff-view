@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 import sublime
 import sublime_plugin
 
@@ -6,10 +6,10 @@ from .dismiss_changes import GitDiffViewDismissChangesCommand
 from .goto_file import GitDiffViewGotoFileCommand
 from .stage_unstage_file import GitDiffViewStageUnstageCommand
 
-from .core.git_commands import Git
+from .core.git_commands import Git, GitStatus
 from .core.event_bus import Event
 from .core.diff_view import get_diff_view, DIFF_VIEW_NAME
-from .core.status_view import GitStatusView, get_status_view, STATUS_VIEW_NAME
+from .core.status_view import format_git_statuses, get_status_view, STATUS_VIEW_NAME
 from .core.git_view import GitView
 from .core.layout import Layout
 from .core.view_manager import ViewsManager
@@ -27,32 +27,38 @@ def set_interval(fn):
 def refresh_list():
     ''' Refresh git status view content'''
     window = sublime.active_window()
-    status_view = get_status_view(window.views())
-    if status_view is None:
+    view = window.active_view()
+    if view is None:
         return
-
     git_statuses = Git(window).git_statuses()
-    git_status_view = GitStatusView(window)
-
-    if len(git_statuses) < 1:
-        git_status_view.update(status_view, 'No changes')
-        status_view.run_command("clear_git_diff_view")
-        return
-
-    git_status_view.update(status_view, git_statuses)
+    view.run_command('update_status_view', {
+        'git_statuses': git_statuses,
+    })
 
 
+# command: update_status_view
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, content):        
+    prev_formatted_git_statuses = ""
+    def run(self, edit, git_statuses: List[GitStatus]):
         window = self.view.window()
         if not window:
             return
         status_view = get_status_view(window.views())
         if status_view is None:
             return
-
+        formatted_git_statuses = format_git_statuses(git_statuses)
+        if UpdateStatusViewCommand.prev_formatted_git_statuses == formatted_git_statuses:
+            # dont trigger render, because it is the same content
+            return
+        UpdateStatusViewCommand.prev_formatted_git_statuses = formatted_git_statuses
+        new_content = formatted_git_statuses
+        # update diff view if necessary
+        if len(git_statuses) < 1:
+            new_content = "No changes"
+            status_view.run_command("clear_git_diff_view")
+        # update status view
         status_view.set_read_only(False)
-        status_view.replace(edit, sublime.Region(0, status_view.size()), content)
+        status_view.replace(edit, sublime.Region(0, status_view.size()), new_content)
         status_view.set_read_only(True)
 
 

@@ -1,6 +1,6 @@
 import sublime
 
-from .status_view import STATUS_VIEW_NAME, GitStatusView, create_status_view
+from .status_view import STATUS_VIEW_NAME, create_status_view
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import Git
 from .event_bus import Event
@@ -13,7 +13,6 @@ class GitView:
     def __init__(self, window, layout):
         self.window = window
         self.layout = layout
-        self.git_status_view = GitStatusView(window)
 
     def close(self):
         ''' Closes the git status view and git diff view. '''
