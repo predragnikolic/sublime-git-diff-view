@@ -1,4 +1,3 @@
-from os import remove
 from typing import List
 from .core.git_commands import GitStatus
 from .core.status_view import get_status_view
