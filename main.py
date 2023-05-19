@@ -94,12 +94,12 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
             views_manager.restore()
 
             STOP_INTERVAL = True
-        # STATE: GitView is closed, will be opended
+        # STATE: GitView is closed, will be opened
         else:
             # array of dict that holds information about
             # the file, type of modification, and if the file is staged
             git_statuses = self.git.git_statuses()
-            if self._no_git_output(git_statuses):
+            if not git_statuses:
                 window.status_message('No git changes to show.')
                 return
 
@@ -109,9 +109,6 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 
             STOP_INTERVAL = False
             set_interval(refresh_list)
-
-    def _no_git_output(self, git_statuses):
-        return len(git_statuses) < 1
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
