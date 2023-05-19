@@ -1,15 +1,14 @@
 from .git_commands import GitStatus
-from typing import List
+from typing import List, Optional
 import sublime
 
+STATUS_VIEW_NAME = "Git Status"
 prev_formatted_git_status = ''
 
-def get_git_status_view():
+def get_status_view(views: List[sublime.View]) -> Optional[sublime.View]:
     ''' Return the git status View '''
-    window = sublime.active_window()
-    views = window.views()
     for view in views:
-        if view.name() == 'Git Status':
+        if view.name() == STATUS_VIEW_NAME:
             return view
     return None
 
@@ -64,7 +63,7 @@ class GitStatusView:
         view.settings().set("show_minimap", False)
         view.settings().set("word_wrap", False)
         view.settings().set("draw_indent_guides", False)
-        view.set_name(self.view_name)
+        view.set_name(STATUS_VIEW_NAME)
         view.set_scratch(True)
         # disable editing of the view
         view.set_read_only(True)

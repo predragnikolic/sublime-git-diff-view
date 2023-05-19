@@ -9,7 +9,7 @@ from .stage_unstage_file import GitDiffViewStageUnstageCommand
 from .core.git_commands import Git
 from .core.event_bus import Event
 from .core.diff_view import get_diff_view, DIFF_VIEW_NAME
-from .core.git_status_view import GitStatusView, get_git_status_view
+from .core.status_view import GitStatusView, get_status_view, STATUS_VIEW_NAME
 from .core.git_view import GitView
 from .core.layout import Layout
 from .core.view_manager import ViewsManager
@@ -27,30 +27,33 @@ def set_interval(fn):
 def refresh_list():
     ''' Refresh git status view content'''
     window = sublime.active_window()
-    gsv = get_git_status_view()  # type: View
-    if gsv is None: 
+    status_view = get_status_view(window.views())
+    if status_view is None:
         return
 
     git_statuses = Git(window).git_statuses()
     git_status_view = GitStatusView(window)
 
     if len(git_statuses) < 1:
-        git_status_view.update(gsv, 'No changes')
-        gsv.run_command("clear_git_diff_view")
+        git_status_view.update(status_view, 'No changes')
+        status_view.run_command("clear_git_diff_view")
         return
 
-    git_status_view.update(gsv, git_statuses)
+    git_status_view.update(status_view, git_statuses)
 
 
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, content):        
-        gsv = get_git_status_view()  # type: View
-        if gsv is None: 
+        window = self.view.window()
+        if not window:
+            return
+        status_view = get_status_view(window.views())
+        if status_view is None:
             return
 
-        gsv.set_read_only(False)
-        gsv.replace(edit, sublime.Region(0, gsv.size()), content)
-        gsv.set_read_only(True)
+        status_view.set_read_only(False)
+        status_view.replace(edit, sublime.Region(0, status_view.size()), content)
+        status_view.set_read_only(True)
 
 
 # command: clear_git_diff_view
@@ -110,7 +113,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
     listener = None
 
     def on_activated_async(self, view):
-        if view.name() != GitStatusView.view_name:
+        if view.name() != STATUS_VIEW_NAME:
             return
 
         self.listener = Event.listen(
@@ -121,13 +124,13 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         ViewsManager.is_open = True
 
     def on_deactivated_async(self, view):
-        if view.name() != GitStatusView.view_name:
+        if view.name() != STATUS_VIEW_NAME:
             return
 
         Event.fire('git_view.close')
 
     def on_close(self, view):
-        if view.name() in [GitStatusView.view_name, DIFF_VIEW_NAME]:
+        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
             ViewsManager.is_open = True
             view.run_command('toggle_git_diff_view')
             Event.fire('git_view.close')
@@ -150,7 +153,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         Event.fire('git_status.update_diff_view', current_line)
 
     def _is_git_status_view_in_focus(self, view):
-        return view.name() == GitStatusView.view_name
+        return view.name() == STATUS_VIEW_NAME
 
     def _have_selection_in(self, view):
         return len(view.sel()) > 0
@@ -200,24 +203,22 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
         # disable editing the file for showing
         git_diff_view.set_read_only(True)
 
-        git_status_view = self.get_view(views, GitStatusView.view_name)
-        window.focus_view(git_status_view)
+        status_view = get_status_view(views)
+        if not status_view:
+            return
+        window.focus_view(status_view)
 
     def delete_content(self, view):
         view.run_command("select_all")
         view.run_command("right_delete")
 
-    def get_view(self, views, view_name):
-        return list(
-            filter(lambda view: view.name() == view_name, views)
-        )[0]
 
 def plugin_loaded():
-    gsv = get_git_status_view()
+    status_view = get_status_view(sublime.active_window().views())
 
     # If status view is open when sublime starts, 
     # setup listener for refreshing the list
-    if gsv is not None:
+    if status_view is not None:
         set_interval(refresh_list)
 
 

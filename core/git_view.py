@@ -1,6 +1,6 @@
 import sublime
 
-from .git_status_view import GitStatusView
+from .status_view import STATUS_VIEW_NAME, GitStatusView
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import Git
 from .event_bus import Event
@@ -19,7 +19,7 @@ class GitView:
         ''' Closes the git status view and git diff view. '''
 
         for view in self.window.views():
-            if view.name() in [GitStatusView.view_name, DIFF_VIEW_NAME]:
+            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
                 self.window.focus_view(view)
                 self.window.run_command('close_file')
                 Event.fire('git_view.close')

@@ -1,7 +1,7 @@
 import sublime_plugin
 import sublime
 
-from .core.git_status_view import GitStatusView
+from .core.status_view import GitStatusView
 from .core.git_commands import Git
 from .core.event_bus import Event
 
