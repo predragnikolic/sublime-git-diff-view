@@ -6,6 +6,7 @@ from .core.status_view import get_status_view
 import sublime_plugin
 import sublime
 
+
 # command: update_status_view
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
     prev_formatted_git_statuses = ""

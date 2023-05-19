@@ -5,6 +5,7 @@ from .core.status_view import get_status_view
 import sublime_plugin
 import sublime
 
+
 # command: update_diff_view
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, git_status: GitStatus):
