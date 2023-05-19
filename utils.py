@@ -1,5 +1,3 @@
-from typing import List
-from .core.git_commands import GitStatus
 import sublime
 
 
