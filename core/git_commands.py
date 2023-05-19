@@ -32,12 +32,9 @@ class Git:
 
     def git_statuses(self) -> List[GitStatus]:
         statuses: List[GitStatus] = []
-        print('eeej')
-
         # array of staged statuses
         staged_files = self.diff().splitlines()
         git_status_output = self.status_untracked_files()
-
         # normalize git status output
         files_changed = git_status_output.splitlines()
         files_changed = list(map(lambda file: file.strip(), files_changed))
@@ -57,26 +54,21 @@ class Git:
             old_file_name = None
             if 'R' in modification_type:
                 old_file_name, file = self.split_filename_at_arrow(file)
-
             if 'C' in modification_type:
                 old_file_name, file = self.split_filename_at_arrow(file)
-
             # append space to modification type, looks prettier
             if len(modification_type) < 2:
                 modification_type = ' {}'.format(modification_type)
-
             statuses.append({
                 "file_name": file,
                 "modification_type": cast(ModificationType, modification_type),
                 "is_staged": file in staged_files,
                 "old_file_name": old_file_name
             })
-
         statuses = sorted(statuses, key=lambda k: k['file_name'])
-        # bad :D
+        # bad code, fix circular imports (:
         from .git_view import GitView
         GitView.git_statuses[self.window.id()] = statuses # store
-
         return statuses
 
     def split_filename_at_arrow(self, file) -> Tuple[str, str]:

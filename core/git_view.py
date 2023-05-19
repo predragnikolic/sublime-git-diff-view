@@ -11,8 +11,8 @@ WindowId = int
 class GitView:
     ''' Shows the git status and git diff. '''
     listener = None
-    # stores the last result of the git.git_statuses() call for fast reads
     git_statuses: Dict[WindowId, List[GitStatus]] = {}
+    ''' stores the last result of the `git.git_statuses()` call for fast reads'''
 
     def __init__(self, window, layout):
         self.window: sublime.Window = window
