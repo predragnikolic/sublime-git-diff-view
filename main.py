@@ -174,49 +174,49 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, edit, diff_output, modification_type, file_name):
         window = sublime.active_window()
         views = window.views()
-        git_diff_view = get_diff_view(views)
-        if not git_diff_view:
+        diff_view = get_diff_view(views)
+        if not diff_view:
             return
 
         # enable editing the file for editing
-        git_diff_view.set_read_only(False)
+        diff_view.set_read_only(False)
 
         if 'M' in modification_type:
-            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif 'U' in modification_type:
-            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif 'A' in modification_type:
-            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif 'R' in modification_type:
-            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif 'C' in modification_type:
-            git_diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
 
         elif '?' in modification_type:
             syntax = get_syntax(file_name, self.view)
-            git_diff_view.set_syntax_file(syntax or 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
+            diff_view.set_syntax_file(syntax or 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
 
         elif 'D' in modification_type:
-            git_diff_view.set_syntax_file(
+            diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
 
-        self.delete_content(git_diff_view)
-        git_diff_view.insert(edit, 0, diff_output)
+        diff_view.replace(edit, sublime.Region(0, diff_view.size()), diff_output)
+        sel = diff_view.sel()
+        if sel:
+            sel.clear()
+
         # disable editing the file for showing
-        git_diff_view.set_read_only(True)
+        diff_view.set_read_only(True)
 
         status_view = get_status_view(views)
         if not status_view:
             return
         window.focus_view(status_view)
 
-    def delete_content(self, view):
-        view.run_command("select_all")
-        view.run_command("right_delete")
 
 
 def plugin_loaded():
