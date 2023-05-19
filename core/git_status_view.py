@@ -1,4 +1,4 @@
-from core.git_commands import GitStatus
+from .git_commands import GitStatus
 from typing import List
 import sublime
 

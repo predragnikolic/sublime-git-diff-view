@@ -1,3 +1,4 @@
+from typing import Optional
 import sublime
 import sublime_plugin
 
@@ -12,7 +13,6 @@ from .core.git_status_view import GitStatusView, get_git_status_view
 from .core.git_view import GitView
 from .core.layout import Layout
 from .core.view_manager import ViewsManager
-from .core.file_syntax import get_syntax
 
 STOP_INTERVAL = False
 
@@ -219,3 +219,17 @@ def plugin_loaded():
     # setup listener for refreshing the list
     if gsv is not None:
         set_interval(refresh_list)
+
+
+def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
+    window = view.window()
+    if not window:
+        return
+    tmp_buffer = window.open_file(file_name, sublime.TRANSIENT)
+    # Even if is_loading() is true the view's settings can be
+    # retrieved; settings assigned before open_file() returns.
+    syntax = str(tmp_buffer.settings().get("syntax", ""))
+    window.run_command("close")
+    window.focus_view(view)
+    return syntax
+
