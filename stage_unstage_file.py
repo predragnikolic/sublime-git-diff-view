@@ -11,13 +11,11 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
         line = get_line(self.view)
         if line is None:
             return
-        git_statuses = Git(self.view.window()).git_statuses()
-        if not git_statuses:
-            return
+        git = Git(window)
+        git_statuses = git.git_statuses() or []
         git_status = git_statuses[line]
         if not git_status:
             return
-        git = Git(window)
         if git_status["is_staged"]:
             git.reset_head(git_status["file_name"])
         else:
