@@ -24,22 +24,22 @@ class GitView:
 
     def open(self, git_statuses):
         ''' Opens the git status view, and git diff view. '''
-
         status_view = create_status_view(self.window, git_statuses)
         self.layout.insert_into_first_column(status_view)
-
         diff_view = create_diff_view(self.window)
         self.layout.insert_into_second_column(diff_view)
-
-        # call --> UPDATE_DIFF_VIEW <-- after registering
-        # the 'git_status.update_diff_view' listener
-        # so it nows how to remove it
-        self.update_diff_view(diff_view, 0)
-
+        # select first line, Status View
         sel = status_view.sel()
         sel.clear()
         sel.add(0)
         status_view.show(0)
+        # display first line , Git View
+        git_status = git_statuses[0]
+        if not git_status:
+            return
+        diff_view.run_command("update_diff_view", {
+            'git_status': git_status,
+        })
 
     @staticmethod
     def update_diff_view(view, line: int):
