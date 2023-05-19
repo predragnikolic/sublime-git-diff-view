@@ -1,6 +1,7 @@
-from typing import List
 from core.git_commands import GitStatus
+from typing import List
 import sublime
+
 
 def format_git_statuses(git_statuses: List[GitStatus]) -> str:
     # type of modification, and if the file is staged

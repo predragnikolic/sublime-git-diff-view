@@ -1,6 +1,6 @@
-import subprocess
-import re
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
+import re
+import subprocess
 
 
 ModificationType = Literal[

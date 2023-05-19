@@ -1,5 +1,5 @@
-import sublime
 from .format_status import format_git_statuses
+import sublime
 
 prev_formatted_git_status = ''
 
