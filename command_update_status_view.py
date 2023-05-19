@@ -63,7 +63,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             unstaged_styles = f"color: {primary_color}; border: 1px solid {primary_color};"
             staged_styles = f"color: #333333; background-color: {primary_color}; border: 1px solid {primary_color};"
             styles = staged_styles if git_status['is_staged'] else unstaged_styles
-            phantom = sublime.Phantom(sublime.Region(point), f'''<div style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.5rem; margin-right: 0.4em; {styles}">
+            phantom = sublime.Phantom(sublime.Region(point), f'''<div style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
             phantoms.append(phantom)
@@ -71,3 +71,5 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
         if active_view:
             window.focus_view(active_view)
+
+
