@@ -20,7 +20,7 @@ class GitView:
     def close(self):
         ''' Closes the git status view and git diff view. '''
         for view in self.window.views():
-            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
+            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME] and view.is_valid():
                 view.close()
 
     def open(self):
