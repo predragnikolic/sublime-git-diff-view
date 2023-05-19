@@ -1,5 +1,3 @@
-from ..utils import format_git_statuses
-from .git_commands import GitStatus
 from typing import List, Optional
 import sublime
 
