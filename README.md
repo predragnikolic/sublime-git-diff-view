@@ -56,4 +56,4 @@ For other Git commands, like committing, pushing, and pulling, see [Git](https:/
 
 ### Configuration
 
-There is no configuration :)
+There is no configuration.
