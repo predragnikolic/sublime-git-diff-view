@@ -14,9 +14,9 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             return
         active_view = window.active_view()
         status_view = get_status_view(window.views())
-        self._phantom_set = sublime.PhantomSet(status_view, 'eej')
         if status_view is None:
             return
+        self.phantom_set = sublime.PhantomSet(status_view, "status_view_phantoms")
         files = []
         phantoms: List[sublime.Phantom] = []
         for git_status in git_statuses:
@@ -68,7 +68,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
             phantoms.append(phantom)
-        self._phantom_set.update(phantoms)
+        self.phantom_set.update(phantoms)
 
         if active_view:
             window.focus_view(active_view)
