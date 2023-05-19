@@ -115,7 +115,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
-    previus_line = None
+    previous_line = None
     listener = None
 
     def on_activated_async(self, view):
@@ -150,12 +150,12 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
         cursor_pos = view.sel()[0].begin()
         current_line = view.rowcol(cursor_pos)[0]
-        on_same_line = current_line == self.previus_line
+        on_same_line = current_line == self.previous_line
 
         if on_same_line:
             return
 
-        self.previus_line = current_line
+        self.previous_line = current_line
         Event.fire('git_status.update_diff_view', current_line)
 
     def _is_git_status_view_in_focus(self, view):
