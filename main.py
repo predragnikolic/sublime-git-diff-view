@@ -36,6 +36,7 @@ def plugin_loaded():
     # If status view is open when sublime starts,
     # setup listener for refreshing the list
     if status_view is not None:
+        refresh_list()
         set_interval(refresh_list)
 
 

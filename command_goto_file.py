@@ -28,6 +28,6 @@ class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
             return
         absolute_path_to_file = path.join(git.git_root_dir,
                                           git_status["file_name"])
+        window.run_command('toggle_git_diff_view')
         view = window.open_file(absolute_path_to_file)
         sublime.set_timeout(lambda: window.focus_view(view))
-        window.run_command('toggle_git_diff_view')
