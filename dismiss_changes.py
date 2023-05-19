@@ -1,24 +1,35 @@
-from .core.event_bus import Event
-from .git_text import GitTextCommand
+from .core.git_commands import Git
+from .utils import get_line
 import sublime
+import sublime_plugin
 
 
-class GitDiffViewDismissChangesCommand(GitTextCommand):
+class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
     def run(self, _):
-        if not self.have_a_diff_to_show():
+        window = self.view.window()
+        if not window:
             return
-        file = self.get_file()
-        message = f'Warning: Dismiss all changes to the file "{file["file_name"]}?"'
+        line = get_line(self.view)
+        if line is None:
+            return
+        git = Git(window)
+        git_statuses = git.git_statuses() or []
+        git_status = git_statuses[line]
+        if not git_status:
+            return
+        message = f'Warning: Dismiss all changes to the file "{git_status["file_name"]}?"'
         if not sublime.ok_cancel_dialog(message, 'Dismiss'):
             return
-        if file["is_staged"]:
-            self.git.reset_head(file["file_name"])
-        if file["modification_type"] == '??':
-            self.git.clean(file["file_name"])
+        if git_status["is_staged"]:
+            git.reset_head(git_status["file_name"])
+        if git_status["modification_type"] == '??':
+            git.clean(git_status["file_name"])
         else:
-            self.git.checkout(file["file_name"])
+            git.checkout(git_status["file_name"])
 
         self.view.run_command('update_status_view', {
-            'git_statuses': self.git_statuses,
+            'git_statuses': git_statuses,
         })
-        Event.fire('git_status.update_diff_view', self.current_line)
+        self.view.run_command("update_diff_view", {
+            'git_status': git_status,
+        })
