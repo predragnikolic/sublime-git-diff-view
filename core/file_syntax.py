@@ -1,7 +1,8 @@
+from typing import Optional
 import sublime
 
 
-def get_syntax(file_name: str, view: sublime.View):
+def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
     window = view.window()
     if not window:
         return
