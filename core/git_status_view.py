@@ -1,4 +1,5 @@
-from .format_status import format_git_statuses
+from core.git_commands import GitStatus
+from typing import List
 import sublime
 
 prev_formatted_git_status = ''
@@ -67,3 +68,25 @@ class GitStatusView:
         view.set_scratch(True)
         # disable editing of the view
         view.set_read_only(True)
+
+
+def format_git_statuses(git_statuses: List[GitStatus]) -> str:
+    result = []
+    settings = sublime.load_settings("GitDiffView.sublime-settings")
+    staged = settings.get('staged_symbol', '■')
+    unstaged = ' '
+    for status in git_statuses:
+        staged_status = staged if status['is_staged'] else unstaged
+        file_name = status['file_name']
+        if status['old_file_name']:
+            file_name = f"{status['old_file_name']} -> {status['file_name']}"
+        result.append(f"{staged_status} {status['modification_type']} {file_name}")
+    help = [
+        "-------------------------------",
+        "[a] stage/unstage file",
+        "[d] dismiss changes to file",
+        "[g] go to file"
+    ]
+    for option in help:
+        result.append(option)
+    return '\n'.join(result)
