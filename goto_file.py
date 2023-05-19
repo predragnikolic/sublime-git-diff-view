@@ -30,4 +30,4 @@ class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
                                           git_status["file_name"])
         view = window.open_file(absolute_path_to_file)
         sublime.set_timeout(lambda: window.focus_view(view))
-        window.run_command('close_git_diff_view')
+        window.run_command('toggle_git_diff_view')

@@ -74,7 +74,9 @@ class ClearGitDiffView(sublime_plugin.TextCommand):
         diff_view.replace(edit, sublime.Region(0, diff_view.size()), "")
         diff_view.set_read_only(True)
 
-class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
+
+# command: toggle_git_diff_view
+class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _):
         global STOP_INTERVAL
         window = sublime.active_window()
@@ -85,52 +87,28 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         views_manager = ViewsManager(window)
         git_view = GitView(window, layout)
 
-        git_view.close()
-        layout.one_column()
-        views_manager.restore()
-
-        STOP_INTERVAL = True
-
-
-class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, _):
-        global STOP_INTERVAL
-        window =  sublime.active_window()
-        if not window:
-            return
         if ViewsManager.is_git_view_open(window.views()):
-            return
-        git = Git(window)
+            git_view.close()
+            layout.one_column()
+            views_manager.restore()
 
-        layout = Layout(window)
-        views_manager = ViewsManager(window)
-        git_view = GitView(window, layout)
-        # open GitView
-        # array of dict that holds information about
-        # the file, type of modification, and if the file is staged
-        git_statuses = git.git_statuses()
-        if not git_statuses:
-            window.status_message('No git changes to show.')
-            return
-
-        views_manager.prepare()
-        layout.two_columns()
-        git_view.open()
-
-        STOP_INTERVAL = False
-        set_interval(refresh_list)
-
-
-# command: toggle_git_diff_view
-class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, _):
-        window = self.view.window()
-        if not window:
-            return
-        if ViewsManager.is_git_view_open(window.views()):
-            self.view.run_command('close_git_diff_view')
+            STOP_INTERVAL = True
         else:
-           self.view.run_command('open_git_diff_view')
+            git = Git(window)
+            # open GitView
+            # array of dict that holds information about
+            # the file, type of modification, and if the file is staged
+            git_statuses = git.git_statuses()
+            if not git_statuses:
+                window.status_message('No git changes to show.')
+                return
+
+            views_manager.prepare()
+            layout.two_columns()
+            git_view.open()
+
+            STOP_INTERVAL = False
+            set_interval(refresh_list)
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
@@ -139,7 +117,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
     def on_close(self, view):
         if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
-            view.run_command('close_git_diff_view')
+            view.run_command('toggle_git_diff_view')
 
     def on_selection_modified(self, view):
         if view.name() != STATUS_VIEW_NAME:
@@ -160,6 +138,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             })
         except:
             status_view.run_command("clear_git_diff_view")
+
 
 # command: update_diff_view
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
