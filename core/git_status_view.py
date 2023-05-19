@@ -1,7 +1,7 @@
 import sublime
-from .format_status import Formated
+from .format_status import format_git_statuses
 
-prev_formated_git_stauts = ''
+prev_formatted_git_status = ''
 
 def get_git_status_view():
     ''' Return the git status View '''
@@ -17,32 +17,31 @@ class GitStatusView:
 
     def __init__(self, window):
         self.window = window
-        self.formated = Formated(window)
 
     def create(self, git_statuses):
         view = self.window.new_file()
 
-        formated_git_status = self.formated.git_status(git_statuses)
-        view.run_command("append", {"characters": formated_git_status})
+        formatted_git_status = format_git_statuses(git_statuses)
+        view.run_command("append", {"characters": formatted_git_status})
         self._configure_view(view)
         return view
 
     def update(self, view, git_statuses):
-        global prev_formated_git_stauts
+        global prev_formatted_git_status
 
         if isinstance(git_statuses, str):
-            formated_git_status = git_statuses
+            formatted_git_status = git_statuses
         else:
-            formated_git_status = self.formated.git_status(git_statuses)
+            formatted_git_status = format_git_statuses(git_statuses)
 
-        if prev_formated_git_stauts == formated_git_status:
+        if prev_formatted_git_status == formatted_git_status:
             # dont trigger render, because it is the same content
             return
 
-        prev_formated_git_stauts = formated_git_status
+        prev_formatted_git_status = formatted_git_status
 
         view.run_command('update_status_view', {
-                'content': formated_git_status,
+                'content': formatted_git_status,
             })
 
     def _configure_view(self, view):
