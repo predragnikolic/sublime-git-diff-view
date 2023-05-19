@@ -38,7 +38,8 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
             diff_output = git.diff_file(file_name)
         elif 'A' in modification_type:
-            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            syntax = get_syntax(file_name, self.view)
+            diff_view.set_syntax_file(syntax or 'Packages/Diff/Diff.sublime-syntax')
             diff_output = git.diff_file(file_name)
         elif 'R' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
