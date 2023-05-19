@@ -76,7 +76,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             <div style="margin-top: 0.4rem">a - stage/unstage a file</div>
             <div style="margin-top: 0.4rem">d - dismiss changes to a file</div>
             <div style="margin-top: 0.4rem">g - go to a file</div>
-        </div>''', sublime.LAYOUT_BELOW)
+        </div>''', sublime.LAYOUT_BLOCK)
         phantoms.append(help_phantom)
         self.phantom_set.update(phantoms)
 
