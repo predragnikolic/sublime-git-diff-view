@@ -1,6 +1,6 @@
 import sublime
 
-from .status_view import STATUS_VIEW_NAME, GitStatusView
+from .status_view import STATUS_VIEW_NAME, GitStatusView, create_status_view
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import Git
 from .event_bus import Event
@@ -27,21 +27,21 @@ class GitView:
     def open(self, git_statuses):
         ''' Opens the git status view, and git diff view. '''
 
-        git_status_view = self.git_status_view.create(git_statuses)
-        self.layout.insert_into_first_column(git_status_view)
+        status_view = create_status_view(self.window, git_statuses)
+        self.layout.insert_into_first_column(status_view)
 
-        git_diff_view = create_diff_view(self.window)
-        self.layout.insert_into_second_column(git_diff_view)
+        diff_view = create_diff_view(self.window)
+        self.layout.insert_into_second_column(diff_view)
 
         # call --> UPDATE_DIFF_VIEW <-- after registering
         # the 'git_status.update_diff_view' listener
         # so it nows how to remove it
-        self.update_diff_view(git_diff_view, 0)
+        self.update_diff_view(diff_view, 0)
 
-        sel = git_status_view.sel()
+        sel = status_view.sel()
         sel.clear()
         sel.add(0)
-        git_status_view.show(0)
+        status_view.show(0)
 
     @staticmethod
     def update_diff_view(view, line):
