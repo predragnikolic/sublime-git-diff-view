@@ -1,5 +1,5 @@
 class Layout:
-    '''Resposible for the layout'''
+    '''Responsible for the layout'''
 
     def __init__(self, window):
         self.window = window

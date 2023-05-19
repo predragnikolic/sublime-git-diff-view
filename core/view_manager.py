@@ -1,4 +1,8 @@
+from typing import List
+from .diff_view import DIFF_VIEW_NAME
+from .status_view import STATUS_VIEW_NAME
 import sublime
+
 
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
@@ -20,10 +24,11 @@ class ViewsManager:
         self.window = window
 
     @staticmethod
-    def is_git_view_open():
-        is_open = ViewsManager.is_open
-        ViewsManager.is_open = not ViewsManager.is_open
-        return is_open
+    def is_git_view_open(views: List[sublime.View]):
+        for view in views:
+            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
+                return True
+        return False
 
     def prepare(self):
         self.save_views_for_later()
@@ -31,7 +36,9 @@ class ViewsManager:
         self.window.run_command('hide_panel')
 
     def restore(self):
+        print('called')
         views = self.get_views() or []
+        print('views', views)
         for file_name in views:
             if file_name:
                 self.window.open_file(file_name)
@@ -103,11 +110,9 @@ class ViewsManager:
 
     def _save_views(self, views):
         self.previous_views[self.window.id()] = []
-
         for view in views:
-                self.previous_views[self.window.id()].append(view.file_name())
-                self.window.focus_view(view)
-                self.window.run_command('close_file')
+            self.previous_views[self.window.id()].append(view.file_name())
+            view.close()
 
     def _clear_state(self):
         self.previous_views[self.window.id()] = []
