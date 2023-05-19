@@ -1,6 +1,6 @@
 from os import path
-from GitDiffView.status_commands.GitTextCommand import GitTextCommand
-from GitDiffView.core.Command import Command
+from .git_text import GitTextCommand
+from .core.git_commands import Command
 
 
 class GitDiffViewGotoFileCommand(GitTextCommand):

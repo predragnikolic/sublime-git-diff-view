@@ -1,9 +1,9 @@
 import sublime_plugin
 import sublime
 
-from GitDiffView.core.GitStatusView import GitStatusView
-from GitDiffView.core.Command import Command
-from GitDiffView.core.Event import Event
+from .core.git_status_view import GitStatusView
+from .core.git_commands import Command
+from .core.event_bus import Event
 
 
 class GitTextCommand(sublime_plugin.TextCommand):

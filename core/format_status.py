@@ -1,5 +1,5 @@
 import sublime
-from .Command import Command
+from .git_commands import Command
 
 class Formated:
     def __init__(self, window):

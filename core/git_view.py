@@ -1,9 +1,9 @@
 import sublime
 
-from .GitStatusView import GitStatusView
-from .DiffView import GitDiffView
-from .Command import Command
-from .Event import Event
+from .git_status_view import GitStatusView
+from .diff_view import GitDiffView
+from .git_commands import Command
+from .event_bus import Event
 
 
 class GitView:

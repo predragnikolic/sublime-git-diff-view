@@ -1,21 +1,18 @@
 import sublime
 import sublime_plugin
 
-from GitDiffView.status_commands.DismissChangesCommand import \
-    GitDiffViewDismissChangesCommand
-from GitDiffView.status_commands.GotoFileCommand import \
-    GitDiffViewGotoFileCommand
-from GitDiffView.status_commands.StageUnstageCommand import \
-    GitDiffViewStageUnstageCommand
+from .dismiss_changes import GitDiffViewDismissChangesCommand
+from .goto_file import GitDiffViewGotoFileCommand
+from .stage_unstage_file import GitDiffViewStageUnstageCommand
 
-from .core.Command import Command
-from .core.Event import Event
-from .core.DiffView import GitDiffView, get_git_diff_view
-from .core.GitStatusView import GitStatusView, get_git_status_view
-from .core.GitView import GitView
-from .core.Layout import Layout
-from .core.ViewsManager import ViewsManager
-from .core.FileSyntax import FileSyntax
+from .core.git_commands import Command
+from .core.event_bus import Event
+from .core.diff_view import GitDiffView, get_git_diff_view
+from .core.git_status_view import GitStatusView, get_git_status_view
+from .core.git_view import GitView
+from .core.layout import Layout
+from .core.view_manager import ViewsManager
+from .core.file_syntax import FileSyntax
 
 STOP_INTERVAL = False
 

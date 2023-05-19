@@ -1,5 +1,5 @@
 import sublime
-from .Formated import Formated
+from .format_status import Formated
 
 prev_formated_git_stauts = ''
 

@@ -1,5 +1,4 @@
 import sublime
-import os, tempfile
 
 class FileSyntax:
     def __init__(self, window):

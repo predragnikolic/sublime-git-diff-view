@@ -1,8 +1,4 @@
-try:
-    from typing import Any, List, Dict, Tuple, Callable, Optional
-    assert Any and List and Dict and Tuple and Callable and Optional
-except ImportError:
-    pass
+from typing import Dict, Callable
 
 
 class Event:
