@@ -30,6 +30,8 @@ def refresh_list():
     view = window.active_view()
     if view is None:
         return
+
+
     git_statuses = Git(window).git_statuses()
     view.run_command('update_status_view', {
         'git_statuses': git_statuses,
@@ -55,7 +57,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         # update diff view if necessary
         if len(git_statuses) < 1:
             new_content = "No changes"
-            status_view.run_command("clear_git_diff_view")
+            # status_view.run_command("clear_git_diff_view")
         # update status view
         status_view.set_read_only(False)
         status_view.replace(edit, sublime.Region(0, status_view.size()), new_content)
@@ -168,8 +170,11 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 
 class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, diff_output, modification_type, file_name):
-        window = sublime.active_window()
+    def run(self, edit, modification_type, file_name):
+        window = self.view.window()
+        if not window:
+            return
+        git = Git(window)
         views = window.views()
         diff_view = get_diff_view(views)
         if not diff_view:
@@ -178,29 +183,39 @@ class UpdateGitDiffViewCommand(sublime_plugin.TextCommand):
         # enable editing the file for editing
         diff_view.set_read_only(False)
 
-        if 'M' in modification_type:
+        diff_output = ''
+        if 'MM' == modification_type:
+            diff_output = (
+                "Staged\n" +
+                "======\n" +
+                git.diff_file_staged(file_name) +
+                "Unstaged\n" +
+                "========\n" +
+                git.diff_file_unstaged(file_name)
+            )
+        elif 'M' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-
+            diff_output = git.diff_file(file_name)
         elif 'U' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-
+            diff_output = git.diff_file(file_name)
         elif 'A' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-
+            diff_output = git.diff_file(file_name)
         elif 'R' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-
+            diff_output = git.diff_file(file_name)
         elif 'C' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-
+            diff_output = git.diff_file(file_name)
         elif '?' in modification_type:
             syntax = get_syntax(file_name, self.view)
             diff_view.set_syntax_file(syntax or 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
-
+            diff_output = git.show_added_file(file_name)
         elif 'D' in modification_type:
             diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
-
+            diff_output = git.show_deleted_file(file_name)
         diff_view.replace(edit, sublime.Region(0, diff_view.size()), diff_output)
         sel = diff_view.sel()
         if sel:

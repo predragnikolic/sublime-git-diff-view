@@ -52,41 +52,7 @@ class GitView:
 
         file_name = git_statuses[line]['file_name']
         modification_type = git_statuses[line]['modification_type']
-        diff_output = ''
-
-        if 'MM' == modification_type:
-            diff_output = (
-                "Staged\n" +
-                "======\n" +
-                git.diff_file_staged(file_name) +
-                "Unstaged\n" +
-                "========\n" +
-                git.diff_file_unstaged(file_name)
-            )
-
-        elif 'M' in modification_type:
-            diff_output = git.diff_file(file_name)
-
-        elif 'U' in modification_type:
-            diff_output = git.diff_file(file_name)
-
-        elif 'A' in modification_type:
-            diff_output = git.diff_file(file_name)
-
-        elif 'R' in modification_type:
-            diff_output = git.diff_file(file_name)
-
-        elif 'C' in modification_type:
-            diff_output = git.diff_file(file_name)
-
-        elif '?' in modification_type:
-            diff_output = git.show_added_file(file_name)
-
-        elif 'D' in modification_type:
-            diff_output = git.show_deleted_file(file_name)
-
         data = {
-            'diff_output': diff_output,
             'modification_type': modification_type,
             'file_name': file_name
         }
