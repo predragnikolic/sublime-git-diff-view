@@ -1,7 +1,8 @@
+from typing import List
 import sublime_plugin
 import sublime
 
-from .core.git_commands import Git
+from .core.git_commands import Git, GitStatus
 from .core.event_bus import Event
 
 
@@ -15,18 +16,6 @@ class GitTextCommand(sublime_plugin.TextCommand):
 
     def get_file(self):
         return self.git_statuses[self.current_line]
-
-    def rerender_git_status_view(self):
-        git_statuses = self.git.git_statuses()
-
-        # if there are no git statuses
-        # then no need to rerender, just close the diff view
-        if len(git_statuses) < 1:
-            self.view.run_command('toggle_git_diff_view')
-            Event.fire('git_view.close')
-        self.view.run_command('update_status_view', {
-            'git_statuses': git_statuses,
-        })
 
     def _setup(self):
         self.window = sublime.active_window()

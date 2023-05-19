@@ -17,5 +17,8 @@ class GitDiffViewDismissChangesCommand(GitTextCommand):
             self.git.clean(file["file_name"])
         else:
             self.git.checkout(file["file_name"])
-        self.rerender_git_status_view()
+
+        self.view.run_command('update_status_view', {
+            'git_statuses': self.git_statuses,
+        })
         Event.fire('git_status.update_diff_view', self.current_line)

@@ -42,7 +42,7 @@ class GitView:
         status_view.show(0)
 
     @staticmethod
-    def update_diff_view(view, line):
+    def update_diff_view(view, line: int):
         git = Git(sublime.active_window())
         git_statuses = git.git_statuses()
 
@@ -50,10 +50,7 @@ class GitView:
             view.run_command("clear_git_diff_view")
             return
 
+        git_status = git_statuses[line]
         view.run_command("update_diff_view", {
-            'git_status': git_statuses[line],
+            'git_status': git_status,
         })
-
-    @staticmethod
-    def _have_a_diff_to_show(line, git_statuses):
-        return line < len(git_statuses)
