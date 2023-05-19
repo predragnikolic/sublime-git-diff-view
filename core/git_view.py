@@ -46,18 +46,13 @@ class GitView:
         git = Git(sublime.active_window())
         git_statuses = git.git_statuses()
 
-        if not GitView._have_a_diff_to_show(line, git_statuses):
+        if line >= len(git_statuses):
             view.run_command("clear_git_diff_view")
             return
 
-        file_name = git_statuses[line]['file_name']
-        modification_type = git_statuses[line]['modification_type']
-        data = {
-            'modification_type': modification_type,
-            'file_name': file_name
-        }
-
-        view.run_command("update_diff_view", data)
+        view.run_command("update_diff_view", {
+            'git_status': git_statuses[line],
+        })
 
     @staticmethod
     def _have_a_diff_to_show(line, git_statuses):

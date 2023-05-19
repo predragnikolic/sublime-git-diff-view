@@ -171,7 +171,9 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 # command: update_diff_view
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, modification_type, file_name):
+    def run(self, edit, git_status: GitStatus):
+        modification_type = git_status['modification_type']
+        file_name = git_status['file_name']
         window = self.view.window()
         if not window:
             return
@@ -182,7 +184,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             return
         # enable editing the file for editing
         diff_view.set_read_only(False)
-
         diff_output = ''
         if 'MM' == modification_type:
             diff_output = (
@@ -226,9 +227,8 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         diff_view.set_read_only(True)
 
         status_view = get_status_view(views)
-        if not status_view:
-            return
-        window.focus_view(status_view)
+        if status_view:
+            window.focus_view(status_view)
 
 
 
