@@ -30,7 +30,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         # update diff view if necessary
         if len(git_statuses) < 1:
             new_content = "No changes"
-            self.phantom_set.update([])
+            # self.phantom_set.update([])
         # update status view
         status_view.set_read_only(False)
         status_view.replace(edit, sublime.Region(0, status_view.size()), new_content)
@@ -41,6 +41,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         inserted = status_view.style_for_scope("markup.inserted").get('foreground')
         deleted = status_view.style_for_scope("markup.deleted").get('foreground')
         untracked = status_view.style_for_scope("markup.untracked").get('foreground')
+        comment = status_view.style_for_scope("comment").get('foreground')
         renamed = style.get('purplish')
 
         for i, git_status in enumerate(git_statuses):
@@ -70,7 +71,14 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             phantom = sublime.Phantom(sublime.Region(point), f'''<div style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
+
             phantoms.append(phantom)
+        help_phantom = sublime.Phantom(sublime.Region(status_view.size(), 0), f'''<div style="border-top: 1px solid #77777720; color: {comment}">
+            <div style="margin-top: 0.4rem">a - stage/unstage a file</div>
+            <div style="margin-top: 0.4rem">d - dismiss changes to a file</div>
+            <div style="margin-top: 0.4rem">g - go to a file</div>
+        </div>''', sublime.LAYOUT_BELOW)
+        phantoms.append(help_phantom)
         self.phantom_set.update(phantoms)
 
         if active_view:
