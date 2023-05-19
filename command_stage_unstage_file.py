@@ -4,6 +4,8 @@ from .utils import get_line
 import sublime_plugin
 
 
+
+
 # command: git_diff_view_stage_unstage
 class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
     def run(self, _):

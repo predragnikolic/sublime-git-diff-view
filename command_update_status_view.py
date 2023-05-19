@@ -33,10 +33,12 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         status_view.replace(edit, sublime.Region(0, status_view.size()), new_content)
         status_view.set_read_only(True)
 
+        style = status_view.style()
         changed = status_view.style_for_scope("markup.changed").get('foreground')
         inserted = status_view.style_for_scope("markup.inserted").get('foreground')
         deleted = status_view.style_for_scope("markup.deleted").get('foreground')
         untracked = status_view.style_for_scope("markup.untracked").get('foreground')
+        renamed = style.get('purplish')
 
         for i, git_status in enumerate(git_statuses):
             point = status_view.text_point(i, 0)
@@ -51,7 +53,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             elif 'A' in modification_type:
                 primary_color = inserted
             elif 'R' in modification_type:
-                primary_color = changed
+                primary_color = renamed
             elif 'C' in modification_type:
                 primary_color = changed
             elif '?' in modification_type:
