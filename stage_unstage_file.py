@@ -1,11 +1,9 @@
-from sublime import windows
-from sublime_plugin import sublime
+import sublime
+import sublime_plugin
 from .core.git_commands import Git
-from .core.event_bus import Event
-from .git_text import GitTextCommand
 
 
-class GitDiffViewStageUnstageCommand(GitTextCommand):
+class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
     def run(self, _):
         window = self.view.window()
         if not window:
@@ -37,6 +35,7 @@ def get_line(view: sublime.View):
     if point is None:
         return
     return view.rowcol(point)[0]
+
 
 def get_point(view: sublime.View):
     sel = view.sel()
