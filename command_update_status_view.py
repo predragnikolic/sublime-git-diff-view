@@ -30,7 +30,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         # update diff view if necessary
         if len(git_statuses) < 1:
             new_content = "No changes"
-            # self.phantom_set.update([])
+            self.phantom_set.update([])
         # update status view
         status_view.set_read_only(False)
         status_view.replace(edit, sublime.Region(0, status_view.size()), new_content)
