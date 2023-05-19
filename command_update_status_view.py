@@ -13,7 +13,6 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, git_statuses: List[GitStatus]):
         window = self.view.window()
-        self.phantom_set.update([])
         if not window:
             return
         active_view = window.active_view()
