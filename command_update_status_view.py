@@ -78,7 +78,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             <div style="margin-top: 0.4rem">g - go to a file</div>
         </div>''', sublime.LAYOUT_BELOW)
         phantoms.append(help_phantom)
-        sublime.set_timeout(lambda: self.phantom_set.update(phantoms))
+        self.phantom_set.update(phantoms)
 
 
 
