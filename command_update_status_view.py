@@ -79,9 +79,6 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         </div>''', sublime.LAYOUT_BELOW)
         phantoms.append(help_phantom)
         self.phantom_set.update(phantoms)
-
-
-
         if active_view:
             window.focus_view(active_view)
 
