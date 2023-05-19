@@ -7,6 +7,10 @@ import sublime
 
 # command: update_status_view
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
+    def __init__(self, view):
+        super().__init__(view)
+        self.phantom_set = sublime.PhantomSet(view, "status_view_phantoms")
+
     def run(self, edit, git_statuses: List[GitStatus]):
         window = self.view.window()
         if not window:
@@ -15,7 +19,6 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         status_view = get_status_view(window.views())
         if status_view is None:
             return
-        self.phantom_set = sublime.PhantomSet(status_view, "status_view_phantoms")
         files = []
         phantoms: List[sublime.Phantom] = []
         for git_status in git_statuses:
