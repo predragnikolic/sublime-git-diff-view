@@ -15,12 +15,9 @@ def get_status_view(views: List[sublime.View]) -> Optional[sublime.View]:
     return None
 
 
-def create_status_view(window: sublime.Window, git_statuses: List[GitStatus]) -> sublime.View:
+def create_status_view(window: sublime.Window) -> sublime.View:
     view = window.new_file()
-    formatted_git_status = format_git_statuses(git_statuses)
-    view.run_command("append", {"characters": formatted_git_status})
     # configure view
-    settings = sublime.load_settings("GitDiffView.sublime-settings")
     default_syntax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
     syntax = default_syntax
     view.set_syntax_file(syntax)

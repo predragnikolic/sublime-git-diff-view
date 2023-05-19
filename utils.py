@@ -19,7 +19,6 @@ def get_point(view: sublime.View):
 
 def format_git_statuses(git_statuses: List[GitStatus]) -> str:
     result = []
-    settings = sublime.load_settings("GitDiffView.sublime-settings")
     staged = '■'
     unstaged = ' '
     for status in git_statuses:

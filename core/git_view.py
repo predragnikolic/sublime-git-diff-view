@@ -27,7 +27,10 @@ class GitView:
     def open(self):
         ''' Opens the git status view, and git diff view. '''
         git_statuses = GitView.git_statuses[self.window.id()]
-        status_view = create_status_view(self.window, git_statuses)
+        status_view = create_status_view(self.window)
+        status_view.run_command('update_status_view', {
+            'git_statuses': git_statuses,
+        })
         self.layout.insert_into_first_column(status_view)
         diff_view = create_diff_view(self.window)
         self.layout.insert_into_second_column(diff_view)
