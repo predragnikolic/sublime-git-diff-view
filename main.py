@@ -21,7 +21,7 @@ def set_interval(fn):
 def refresh_list():
     ''' Refresh git status view content'''
     window = sublime.active_window()
-    view = window.active_view()
+    view = get_status_view(window.views())
     if view is None:
         return
     git_statuses = Git(window).git_statuses()
