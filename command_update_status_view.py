@@ -4,22 +4,21 @@ from .core.status_view import get_status_view
 import sublime_plugin
 import sublime
 
+
 # command: update_status_view
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
+    def __init__(self, view):
+        super().__init__(view)
+        self.phantom_set = sublime.PhantomSet(view, "status_view_phantoms")
 
     def run(self, edit, git_statuses: List[GitStatus]):
         window = self.view.window()
         if not window:
             return
         active_view = window.active_view()
-        key = 'status_view_phantoms'
         status_view = get_status_view(window.views())
         if status_view is None:
             return
-        self.phantom_set = getattr(window, key, None)
-        if self.phantom_set is None:
-            self.phantom_set = sublime.PhantomSet(self.view, key)
-            setattr(window, key, self.phantom_set)
         files = []
         phantoms: List[sublime.Phantom] = []
         for git_status in git_statuses:
