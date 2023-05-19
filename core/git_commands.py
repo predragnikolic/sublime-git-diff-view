@@ -1,47 +1,55 @@
 import subprocess
 import re
+from typing import List, Literal, Optional, Tuple, TypedDict, cast
 
 
-class Command:
-    ''' Responsible for running git comands throught `subprocess`
+ModificationType = Literal[
+     "??", # Untracked
+     " A", # Added
+     " M", # Modified
+     " D", # Deleted
+     " R", # Renamed
+     " C", # Copied
+     "UU", # Unmerged(Conflict)
+]
+
+GitStatus = TypedDict('GitStatus', {
+    "file_name": str,
+    "modification_type": ModificationType,
+    "is_staged": bool,
+    "old_file_name": Optional[str]
+})
+
+
+class Git:
+    ''' Responsible for running git commands throughout `subprocess`
     and returning it's output. '''
-
-    # for testing testing
-    # called_times = 1
-    # def called(self):
-    #     print('called ', self.called_times)
-    #     self.called_times += 1
 
     def __init__(self, window):
         self.window = window
-        self.project_root = None
-        self.project_root = self.run(['git rev-parse --show-toplevel']).strip()
+        self.git_root_dir = None
+        self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
 
-    def git_statuses(self):
-        ''' Return a list of git statuses.
-        Example:
-        [{
-            "file_name",
-            "modification_type",
-            "is_staged",
-            "old_file_name"
-        }] '''
-        statuses = []
+    def git_statuses(self) -> List[GitStatus]:
+        statuses: List[GitStatus] = []
 
         # array of staged statuses
-        staged_files = self.git_staged_files().splitlines()
-        git_status_output = self.git_status_output()
+        staged_files = self.diff().splitlines()
+        git_status_output = self.status_untracked_files()
 
         # normalize git status output
         files_changed = git_status_output.splitlines()
         files_changed = list(map(lambda file: file.strip(), files_changed))
         for file in files_changed:
-            modification_type, file = re.search(
+            reg_result = re.search(
                 r"(.{0,2})\s+(.+)",
                 file
-            ).groups()
+            )
+            if not reg_result:
+                return []
+            modification_type, file = reg_result.groups()
             # if file contains spaces the name will
-            # be wraped with quotes, so we strip them
+            # be warped with quotes, so we strip them
             file = file.strip("\"")
             # strip spaces from type if left
             modification_type = modification_type.strip()
@@ -58,7 +66,7 @@ class Command:
 
             statuses.append({
                 "file_name": file,
-                "modification_type": modification_type,
+                "modification_type": cast(ModificationType, modification_type),
                 "is_staged": file in staged_files,
                 "old_file_name": old_file_name
             })
@@ -67,7 +75,7 @@ class Command:
 
         return statuses
 
-    def split_filename_at_arrow(self, file):
+    def split_filename_at_arrow(self, file) -> Tuple[str, str]:
         ''' If the file has a `->` than split it in two files.
         Returns the `old_file_name`, than the `new_file`. '''
         old_file_name, new_file = file.split("->")
@@ -77,77 +85,71 @@ class Command:
         old_file_name = old_file_name.strip()
         return old_file_name, file
 
-    def git_status_output(self):
+    def status_untracked_files(self):
         cmd = ['git status --porcelain --untracked-files']
         return self.run(cmd)
 
-    def git_staged_files(self):
+    def diff(self):
         cmd = ['git diff --name-only --cached']
         return self.run(cmd)
 
-    def git_diff_file(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+    def diff_file(self, file_name):
+        file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         output = ''
         try:
-            output = self.remove_diff_head(self.run(cmd))
+            output = remove_diff_head(self.run(cmd))
         except Exception:
             output = self.show_added_file(file_name)
         return output
 
-    def git_diff_file_staged(self, file_name, staged = True):
-        file_name = self.escape_special_characters(file_name)
-        staged_arg = '--staged' if staged else ''
-        cmd = ['git diff --no-color {} -- {}'.format(staged_arg, file_name)]
-        output = self.remove_diff_head(self.run(cmd))
+    def diff_file_staged(self, file_name):
+        file_name = escape_special_characters(file_name)
+        cmd = ['git diff --no-color --staged -- {}'.format(file_name)]
+        output = remove_diff_head(self.run(cmd))
+        return output
+
+    def diff_file_unstaged(self, file_name):
+        file_name = escape_special_characters(file_name)
+        cmd = ['git diff --no-color -- {}'.format(file_name)]
+        output = remove_diff_head(self.run(cmd))
         return output
 
     def show_added_file(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+        file_name = escape_special_characters(file_name)
         cmd = ['cat {}'.format(file_name)]
         return self.run(cmd)
 
     def show_deleted_file(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+        file_name = escape_special_characters(file_name)
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
-    def git_stage(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+    def add(self, file_name):
+        """ stage file """
+        file_name = escape_special_characters(file_name)
         cmd = ['git add {}'.format(file_name)]
         return self.run(cmd)
 
-    def git_unstage(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+    def reset_head(self, file_name):
+        """ unstage file """
+        file_name = escape_special_characters(file_name)
         cmd = ['git reset HEAD -- {}'.format(file_name)]
         return self.run(cmd)
 
-    def git_dismis_changes(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+    def checkout(self, file_name):
+        """ dismiss changes """
+        file_name = escape_special_characters(file_name)
         cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
-    def git_clean(self, file_name):
-        file_name = self.escape_special_characters(file_name)
+    def clean(self, file_name):
+        file_name = escape_special_characters(file_name)
         cmd = ['git clean -f {}'.format(file_name)]
         return self.run(cmd)
 
-    def escape_special_characters(self, file_name):
-        file_name = file_name.replace('(', '\\(')
-        file_name = file_name.replace(')', '\\)')
-        return file_name.replace(' ', '\\ ')
-
-    def remove_diff_head(self, diff):
-        return diff.split("\n", 4)[4]
-
     def run(self, cmd):
-        cwd = None
-
-        if self.project_root is None:
-            cwd = self.window.extract_variables()['folder']
-        else:
-            cwd = self.project_root
-
+        cwd = self.git_root_dir if self.git_root_dir else self.window.extract_variables()['folder']
         p = subprocess.Popen(cmd,
                              bufsize=-1,
                              cwd=cwd,
@@ -157,6 +159,16 @@ class Command:
                              shell=True)
         output, stderr = p.communicate()
         if (stderr):
-            print('Error in Command.py:', stderr)
-            raise Exception('Error in Command.py: {}'.format(stderr))
+            print(f'GitDiffView: An error happened while running this command "{cmd}".', stderr)
+            raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {stderr}')
         return output.decode('utf-8')
+
+
+def escape_special_characters(file_name: str) -> str:
+    file_name = file_name.replace('(', '\\(')
+    file_name = file_name.replace(')', '\\)')
+    return file_name.replace(' ', '\\ ')
+
+
+def remove_diff_head(diff: str) -> str:
+    return diff.split("\n", 4)[4]

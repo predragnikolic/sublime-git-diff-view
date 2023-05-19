@@ -2,7 +2,7 @@ import sublime
 
 from .git_status_view import GitStatusView
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
-from .git_commands import Command
+from .git_commands import Git
 from .event_bus import Event
 
 
@@ -14,7 +14,6 @@ class GitView:
         self.window = window
         self.layout = layout
         self.git_status_view = GitStatusView(window)
-        self.command = Command(window)
 
     def close(self):
         ''' Closes the git status view and git diff view. '''
@@ -46,8 +45,8 @@ class GitView:
 
     @staticmethod
     def update_diff_view(view, line):
-        command = Command(sublime.active_window())
-        git_statuses = command.git_statuses()
+        git = Git(sublime.active_window())
+        git_statuses = git.git_statuses()
 
         if not GitView._have_a_diff_to_show(line, git_statuses):
             view.run_command("clear_git_diff_view")
@@ -61,32 +60,32 @@ class GitView:
             diff_output = (
                 "Staged\n" +
                 "======\n" +
-                command.git_diff_file_staged(file_name) +
+                git.diff_file_staged(file_name) +
                 "Unstaged\n" +
                 "========\n" +
-                command.git_diff_file_staged(file_name, False)
+                git.diff_file_unstaged(file_name)
             )
 
         elif 'M' in modification_type:
-            diff_output = command.git_diff_file(file_name)
+            diff_output = git.diff_file(file_name)
 
         elif 'U' in modification_type:
-            diff_output = command.git_diff_file(file_name)
+            diff_output = git.diff_file(file_name)
 
         elif 'A' in modification_type:
-            diff_output = command.git_diff_file(file_name)
+            diff_output = git.diff_file(file_name)
 
         elif 'R' in modification_type:
-            diff_output = command.git_diff_file(file_name)
+            diff_output = git.diff_file(file_name)
 
         elif 'C' in modification_type:
-            diff_output = command.git_diff_file(file_name)
+            diff_output = git.diff_file(file_name)
 
         elif '?' in modification_type:
-            diff_output = command.show_added_file(file_name)
+            diff_output = git.show_added_file(file_name)
 
         elif 'D' in modification_type:
-            diff_output = command.show_deleted_file(file_name)
+            diff_output = git.show_deleted_file(file_name)
 
         data = {
             'diff_output': diff_output,

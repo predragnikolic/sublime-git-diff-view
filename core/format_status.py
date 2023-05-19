@@ -1,10 +1,8 @@
 import sublime
-from .git_commands import Command
 
 class Formated:
     def __init__(self, window):
         self.window = window
-        self.command = Command(window)
 
     def git_status(self, git_statuses):
         # holds dict with every file,

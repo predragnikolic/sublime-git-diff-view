@@ -2,7 +2,7 @@ import sublime_plugin
 import sublime
 
 from .core.git_status_view import GitStatusView
-from .core.git_commands import Command
+from .core.git_commands import Git
 from .core.event_bus import Event
 
 
@@ -18,7 +18,7 @@ class GitTextCommand(sublime_plugin.TextCommand):
         return self.git_statuses[self.current_line]
 
     def rerender_git_status_view(self):
-        git_statuses = self.command.git_statuses()
+        git_statuses = self.git.git_statuses()
 
         # if there are no git statuses
         # then no need to rerender, just close the diff view
@@ -30,9 +30,9 @@ class GitTextCommand(sublime_plugin.TextCommand):
 
     def _setup(self):
         self.window = sublime.active_window()
-        self.command = Command(self.window)
+        self.git = Git(self.window)
         self.current_line = self._get_line(self._get_cursor_pos())
-        self.git_statuses = self.command.git_statuses()
+        self.git_statuses = self.git.git_statuses()
 
     def _get_cursor_pos(self):
         return self.view.sel()[0].begin()

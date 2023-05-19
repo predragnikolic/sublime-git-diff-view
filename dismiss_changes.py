@@ -13,12 +13,12 @@ class GitDiffViewDismissChangesCommand(GitTextCommand):
 
             if self.should_dismiss_dialog(message):
                 if file["is_staged"]:
-                    self.command.git_unstage(file["file_name"])
+                    self.git.reset_head(file["file_name"])
 
                 if file["modification_type"] == '??':
-                    self.command.git_clean(file["file_name"])
+                    self.git.clean(file["file_name"])
                 else:
-                    self.command.git_dismis_changes(file["file_name"])
+                    self.git.checkout(file["file_name"])
 
                 self.rerender_git_status_view()
                 Event.fire('git_status.update_diff_view', self.current_line)

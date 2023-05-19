@@ -5,7 +5,7 @@ from .dismiss_changes import GitDiffViewDismissChangesCommand
 from .goto_file import GitDiffViewGotoFileCommand
 from .stage_unstage_file import GitDiffViewStageUnstageCommand
 
-from .core.git_commands import Command
+from .core.git_commands import Git
 from .core.event_bus import Event
 from .core.diff_view import get_diff_view, DIFF_VIEW_NAME
 from .core.git_status_view import GitStatusView, get_git_status_view
@@ -31,7 +31,7 @@ def refresh_list():
     if gsv is None: 
         return
 
-    git_statuses = Command(window).git_statuses()
+    git_statuses = Git(window).git_statuses()
     git_status_view = GitStatusView(window)
 
     if len(git_statuses) < 1:
@@ -72,7 +72,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         global STOP_INTERVAL
 
         window = sublime.active_window()
-        self.command = Command(window)
+        self.git = Git(window)
 
         layout = Layout(window)
         views_manager = ViewsManager(window)
@@ -89,7 +89,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
         else:
             # array of dict that holds information about
             # the file, type of modification, and if the file is staged
-            git_statuses = self.command.git_statuses()
+            git_statuses = self.git.git_statuses()
             if self._no_git_output(git_statuses):
                 window.status_message('No git changes to show.')
                 return
