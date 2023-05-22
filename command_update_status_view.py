@@ -77,7 +77,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             styles = staged_styles if is_staged else unstaged_styles
 
             readable_modification_type = modification_type_to_readable(modification_type)
-            title = f'Staged {readable_modification_type}' if is_staged else f'Unstaged {readable_modification_type}'
+            title = f'{readable_modification_type} and STAGED' if is_staged else f'{readable_modification_type} and UNSTAGED'
             print('title', title)
             phantom = sublime.Phantom(sublime.Region(point), f'''<div title="{title}" style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
@@ -97,13 +97,13 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
 def modification_type_to_readable(modification_type: ModificationType) -> str:
     title_dict: Dict[ModificationType, str] = {
-        "??": "Untracked",
-        " A": "Added",
-        " M": "Modified",
-        "MM": "Modified and Staged",
-        " D": "Deleted",
-        " R": "Renamed",
-        " C": "Copied",
-        "UU": "Unmerged (Conflict)"
+        "??": "File is UNTRACKED",
+        " A": "File is ADDED",
+        " M": "File is MODIFIED",
+        "MM": "File is MODIFIED",
+        " D": "File is Deleted",
+        " R": "File is Renamed",
+        " C": "File is Copied",
+        "UU": "File has Conflict/s"
     }
     return title_dict[modification_type]
