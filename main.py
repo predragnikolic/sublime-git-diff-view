@@ -103,7 +103,6 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
     previous_line = None
-    listener = None
 
     def on_pre_close(self, view: sublime.View):
         window = view.window()
