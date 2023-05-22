@@ -10,8 +10,15 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
     def __init__(self, view):
         super().__init__(view)
         self.phantom_set = sublime.PhantomSet(view, "status_view_phantoms")
+        self.prev_git_statuses: str = ''
+
+    def _is_same(self, git_statuses: List[GitStatus]):
+        return self.prev_git_statuses == str(git_statuses)
 
     def run(self, edit, git_statuses: List[GitStatus]):
+        if self._is_same(git_statuses):
+            return
+        self.prev_git_statuses = str(git_statuses)
         window = self.view.window()
         if not window:
             return
