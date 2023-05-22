@@ -7,6 +7,7 @@ ModificationType = Literal[
      "??", # Untracked
      " A", # Added
      " M", # Modified
+     "MM", # Modified and Staged
      " D", # Deleted
      " R", # Renamed
      " C", # Copied

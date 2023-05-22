@@ -88,7 +88,9 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                 diff_text = diff[2:]        #? ^                    ++++
                 look_region = diff_view.find(re.escape(look_text), 0)
                 row, _ = diff_view.rowcol(look_region.begin())
-
+                # for debugging
+                # print('look text', look_text)
+                # print('diff text', diff_text)
                 addition_matches = re.finditer(r'\++', diff_text)
                 for i in addition_matches:
                     start, end = i.span(0)

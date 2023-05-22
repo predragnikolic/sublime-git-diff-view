@@ -1,5 +1,5 @@
-from typing import List
-from .core.git_commands import GitStatus
+from typing import Dict, List
+from .core.git_commands import GitStatus, ModificationType
 from .core.status_view import get_status_view
 import sublime_plugin
 import sublime
@@ -71,10 +71,15 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             elif 'D' in modification_type:
                 primary_color = deleted
 
+            is_staged = git_status['is_staged']
             unstaged_styles = f"color: {primary_color}; border: 1px solid {primary_color};"
             staged_styles = f"color: #333333; background-color: {primary_color}; border: 1px solid {primary_color};"
-            styles = staged_styles if git_status['is_staged'] else unstaged_styles
-            phantom = sublime.Phantom(sublime.Region(point), f'''<div style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
+            styles = staged_styles if is_staged else unstaged_styles
+
+            readable_modification_type = modification_type_to_readable(modification_type)
+            title = f'Staged {readable_modification_type}' if is_staged else f'Unstaged {readable_modification_type}'
+            print('title', title)
+            phantom = sublime.Phantom(sublime.Region(point), f'''<div title="{title}" style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
 
@@ -90,3 +95,15 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             window.focus_view(active_view)
 
 
+def modification_type_to_readable(modification_type: ModificationType) -> str:
+    title_dict: Dict[ModificationType, str] = {
+        "??": "Untracked",
+        " A": "Added",
+        " M": "Modified",
+        "MM": "Modified and Staged",
+        " D": "Deleted",
+        " R": "Renamed",
+        " C": "Copied",
+        "UU": "Unmerged (Conflict)"
+    }
+    return title_dict[modification_type]
