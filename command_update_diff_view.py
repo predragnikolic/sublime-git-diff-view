@@ -78,15 +78,17 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 
         add_changes: List[sublime.Region] = []
         remove_changes: List[sublime.Region] = []
+        plus_minus_sign_offset = 1
         diffs = list(dl.ndiff(
-                [diff_view.substr(r) for r in removed_lines],
-                [diff_view.substr(r) for r in added_lines]))
+                [diff_view.substr(sublime.Region(r.begin() + plus_minus_sign_offset, r.end())) for r in removed_lines],
+                [diff_view.substr(sublime.Region(r.begin() + plus_minus_sign_offset, r.end())) for r in added_lines]))
+        start_find_pt = 0
         for i, diff in enumerate(diffs):
             is_change = diff.startswith('?')
             if is_change:
                 look_text = diffs[i-1][2:]  #+ +    font-size: 0.9em dsa;
                 diff_text = diff[2:]        #? ^                    ++++
-                look_region = diff_view.find(re.escape(look_text), 0)
+                look_region = diff_view.find(re.escape(look_text), start_find_pt)
                 row, _ = diff_view.rowcol(look_region.begin())
                 # for debugging
                 # print('look text', look_text)
@@ -94,24 +96,28 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                 addition_matches = re.finditer(r'\++', diff_text)
                 for i in addition_matches:
                     start, end = i.span(0)
-                    start_point = diff_view.text_point(row, start)
-                    end_point = diff_view.text_point(row, end)
+                    start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
+                    end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
+                    start_find_pt = end_point
                     add_changes.append(sublime.Region(start_point, end_point))
 
                 removal_matches = re.finditer(r'\-+', diff_text)
                 for i in removal_matches:
                     start, end = i.span(0)
-                    start_point = diff_view.text_point(row, start)
-                    end_point = diff_view.text_point(row, end)
+                    start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
+                    end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
+                    start_find_pt = end_point
                     remove_changes.append(sublime.Region(start_point, end_point))
 
                 diff_text_without_leading_tilde = ' ' + diff_text[1:] # diff_text
                 modification_matches = re.finditer('\\^+', diff_text_without_leading_tilde)
                 for i in modification_matches:
                     start, end = i.span(0)
-                    start_point = diff_view.text_point(row, start)
-                    end_point = diff_view.text_point(row, end)
-                    if look_text.startswith('-'):
+                    start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
+                    end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
+                    start_find_pt = end_point
+
+                    if diff_view.match_selector(start_point, 'markup.deleted.diff'):
                         remove_changes.append(sublime.Region(start_point, end_point))
                     else:
                         add_changes.append(sublime.Region(start_point, end_point))
