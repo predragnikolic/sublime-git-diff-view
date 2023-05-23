@@ -7,15 +7,15 @@ import sublime
 
 # command: update_status_view
 class UpdateStatusViewCommand(sublime_plugin.TextCommand):
-    def __init__(self, view):
+    def __init__(self, view: sublime.View) -> None:
         super().__init__(view)
         self.phantom_set = sublime.PhantomSet(view, "status_view_phantoms")
         self.prev_git_statuses: str = ''
 
-    def _is_same(self, git_statuses: List[GitStatus]):
+    def _is_same(self, git_statuses: List[GitStatus]) -> bool:
         return self.prev_git_statuses == str(git_statuses)
 
-    def run(self, edit, git_statuses: List[GitStatus]):
+    def run(self, edit: sublime.Edit, git_statuses: List[GitStatus]) -> None:
         if self._is_same(git_statuses):
             return
         self.prev_git_statuses = str(git_statuses)

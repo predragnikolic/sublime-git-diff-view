@@ -1,6 +1,7 @@
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
 import re
 import subprocess
+import sublime
 
 
 ModificationType = Literal[
@@ -27,7 +28,7 @@ class Git:
     ''' Responsible for running git commands throughout `subprocess`
     and returning it's output. '''
 
-    def __init__(self, window):
+    def __init__(self, window: sublime.Window) -> None:
         self.window = window
         self.git_root_dir = None
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
@@ -73,7 +74,7 @@ class Git:
         GitView.git_statuses[self.window.id()] = statuses # store
         return statuses
 
-    def split_filename_at_arrow(self, file) -> Tuple[str, str]:
+    def split_filename_at_arrow(self, file: str) -> Tuple[str, str]:
         ''' If the file has a `->` than split it in two files.
         Returns the `old_file_name`, than the `new_file`. '''
         old_file_name, new_file = file.split("->")
@@ -83,15 +84,15 @@ class Git:
         old_file_name = old_file_name.strip()
         return old_file_name, file
 
-    def status_untracked_files(self):
+    def status_untracked_files(self) -> str:
         cmd = ['git status --porcelain --untracked-files']
         return self.run(cmd)
 
-    def diff(self):
+    def diff(self) -> str:
         cmd = ['git diff --name-only --cached']
         return self.run(cmd)
 
-    def diff_file(self, file_name):
+    def diff_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         output = ''
@@ -101,52 +102,52 @@ class Git:
             output = self.show_added_file(file_name)
         return output
 
-    def diff_file_staged(self, file_name):
+    def diff_file_staged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color --staged -- {}'.format(file_name)]
         output = remove_diff_head(self.run(cmd))
         return output
 
-    def diff_file_unstaged(self, file_name):
+    def diff_file_unstaged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color -- {}'.format(file_name)]
         output = remove_diff_head(self.run(cmd))
         return output
 
-    def show_added_file(self, file_name):
+    def show_added_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['cat {}'.format(file_name)]
         return self.run(cmd)
 
-    def show_deleted_file(self, file_name):
+    def show_deleted_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
-    def add(self, file_name):
+    def add(self, file_name: str) -> str:
         """ stage file """
         file_name = escape_special_characters(file_name)
         cmd = ['git add {}'.format(file_name)]
         return self.run(cmd)
 
-    def reset_head(self, file_name):
+    def reset_head(self, file_name: str) -> str:
         """ unstage file """
         file_name = escape_special_characters(file_name)
         cmd = ['git reset HEAD -- {}'.format(file_name)]
         return self.run(cmd)
 
-    def checkout(self, file_name):
+    def checkout(self, file_name: str) -> str:
         """ dismiss changes """
         file_name = escape_special_characters(file_name)
         cmd = ['git checkout {}'.format(file_name)]
         return self.run(cmd)
 
-    def clean(self, file_name):
+    def clean(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git clean -f {}'.format(file_name)]
         return self.run(cmd)
 
-    def run(self, cmd):
+    def run(self, cmd: List[str]) -> str:
         cwd = self.git_root_dir if self.git_root_dir else self.window.extract_variables()['folder']
         p = subprocess.Popen(cmd,
                              bufsize=-1,

@@ -8,7 +8,7 @@ import sublime_plugin
 
 # command: git_diff_view_goto_file
 class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
-    def run(self, _):
+    def run(self, _: sublime.Edit) -> None:
         window = self.view.window()
         if not window:
             return

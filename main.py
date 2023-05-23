@@ -1,3 +1,4 @@
+from typing import Callable
 from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_view import GitView
@@ -10,15 +11,15 @@ import os
 
 
 STOP_INTERVAL = False
-def set_interval(fn):
-    def interval():
+def set_interval(fn: Callable) -> None:
+    def interval() -> None:
         fn()
         if not STOP_INTERVAL:
             sublime.set_timeout(interval, 2000)
     sublime.set_timeout(interval, 2000)
 
 
-def refresh_list():
+def refresh_list() -> None:
     ''' Refresh git status view content'''
     window = sublime.active_window()
     view = get_status_view(window.views())
@@ -30,7 +31,7 @@ def refresh_list():
     })
 
 
-def plugin_loaded():
+def plugin_loaded() -> None:
     # create session dir where the session file will be stored
     if not os.path.exists(SESSION_DIR):
        os.makedirs(SESSION_DIR)
@@ -42,7 +43,7 @@ def plugin_loaded():
 
 # command: close_git_diff_view
 class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, _):
+    def run(self, _: sublime.Edit) -> None:
         global STOP_INTERVAL
         window = self.view.window()
         if not window:
@@ -59,7 +60,7 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
 
 # command: open_git_diff_view
 class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, _):
+    def run(self, _: sublime.Edit) -> None:
         global STOP_INTERVAL
         window = self.view.window()
         if not window:
@@ -84,7 +85,7 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
 
 # command: toggle_git_diff_view
 class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, _):
+    def run(self, _: sublime.Edit) -> None:
         global STOP_INTERVAL
         window = self.view.window()
         if not window:
@@ -98,7 +99,7 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 class SelectionChangedEvent(sublime_plugin.EventListener):
     previous_line = None
 
-    def on_pre_close(self, view: sublime.View):
+    def on_pre_close(self, view: sublime.View) -> None:
         window = view.window()
         if not window:
             return
@@ -108,7 +109,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
 
 
-    def on_selection_modified(self, view):
+    def on_selection_modified(self, view: sublime.View) -> None:
         if view.name() != STATUS_VIEW_NAME:
             return
         window = view.window()

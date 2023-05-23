@@ -9,7 +9,7 @@ import re
 
 # command: update_diff_view
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit, git_status: GitStatus):
+    def run(self, edit: sublime.Edit, git_status: GitStatus) -> None:
         modification_type = git_status['modification_type']
         file_name = git_status['file_name']
         window = self.view.window()
@@ -71,7 +71,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         if status_view:
             window.focus_view(status_view)
 
-    def add_char_diff(self, diff_view: sublime.View):
+    def add_char_diff(self, diff_view: sublime.View) -> None:
         st_bug_first_call_to_find_all_will_not_work_correctly = diff_view.find_all('') # haha, one new ST bug :D, without this line, the bellow diff_view.find_all will not work. Looks like the first call to diff_view.find_all will not work correctly.
         added_lines = diff_view.find_all('^\\+.*')
         removed_lines = diff_view.find_all('^\\-.*')
@@ -128,7 +128,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
     window = view.window()
     if not window:
-        return
+        return None
     tmp_buffer = window.open_file(file_name, sublime.TRANSIENT)
     # Even if is_loading() is true the view's settings can be
     # retrieved; settings assigned before open_file() returns.

@@ -14,16 +14,16 @@ class GitView:
     git_statuses: Dict[WindowId, List[GitStatus]] = {}
     ''' stores the last result of the `git.git_statuses()` call for fast reads'''
 
-    def __init__(self, window):
+    def __init__(self, window: sublime.Window) -> None:
         self.window: sublime.Window = window
 
-    def close(self):
+    def close(self) -> None:
         ''' Closes the git status view and git diff view. '''
         for view in self.window.views():
             if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
                 view.close()
 
-    def open(self):
+    def open(self) -> None:
         ''' Opens the git status view, and git diff view. '''
         git_statuses = GitView.git_statuses[self.window.id()]
         status_view = create_status_view(self.window)

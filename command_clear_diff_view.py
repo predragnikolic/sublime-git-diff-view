@@ -5,7 +5,7 @@ import sublime_plugin
 
 # command: clear_diff_view
 class ClearDiffView(sublime_plugin.TextCommand):
-    def run(self, edit):
+    def run(self, edit: sublime.Edit) -> None:
         w = self.view.window()
         if not w:
             return
