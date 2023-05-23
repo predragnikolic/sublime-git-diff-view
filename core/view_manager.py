@@ -1,29 +1,24 @@
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
-from typing import List
+from typing import Dict, List
 import sublime
 
+WindowId = int
+FileName = str
+Layout = Dict[str, sublime.Value]
 
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
 
-    # {'window_id' : [ views.file_names ]}
-    previous_views = {}
-    # {'window_id' : view.file_name }
-    last_active_view = {}
-    # {'window_id': pos}
-    last_cursor_pos = {}
-    # {'window_id': bool }
-    last_sidebar_state = {}
-    # {'window_id': str }
-    last_active_panel = {}
-    # {'window_id': dict }
-    last_layout = {}
-    view_to_group = {}
+    previous_views: Dict[WindowId, List[FileName]] = {}
+    last_active_view: Dict[WindowId, FileName] = {}
+    last_cursor_pos: Dict[WindowId, int] = {}
+    last_sidebar_state: Dict[WindowId, bool] = {}
+    last_active_panel: Dict[WindowId, str] = {}
+    last_layout: Dict[WindowId, Layout] = {}
+    view_to_group: Dict[FileName, int] = {}
 
-    is_open = False
-
-    def __init__(self, window):
+    def __init__(self, window: sublime.Window):
         self.window: sublime.Window = window
 
     @staticmethod
@@ -45,12 +40,13 @@ class ViewsManager:
         last_layout = self.last_layout[self.window.id()]
         if last_layout:
             self.window.set_layout(last_layout)
-            self.last_layout[self.window.id()] = None
+        # restore views
         views = self.get_views() or []
         for file_name in views:
             if file_name:
                 group = self.view_to_group.get(file_name, -1)
                 self.window.open_file(file_name, group=group)
+        # restore last active view
         last_active_view = self._get_last_active_view()
         if last_active_view:
             view = self.window.open_file(last_active_view)
@@ -65,21 +61,20 @@ class ViewsManager:
                                         trying_restoring_the_cursor(view), 20)
 
             trying_restoring_the_cursor(view)
-
+        # restore sidebar
         last_sidebar_state = self.last_sidebar_state.get(self.window.id())
         if last_sidebar_state:
             self.window.set_sidebar_visible(True)
-
+        # restore panel
         last_active_panel = self.last_active_panel.get(self.window.id())
         if last_active_panel:
             self.window.run_command("show_panel", { "panel": last_active_panel })
 
-        self._clear_state()
-
     def save_views_for_later(self):
         view = self.window.active_view()
-        self._save_last_active_view(view)
-        self._save_last_cursor_pos(view)
+        if view:
+            self._save_last_active_view(view)
+            self._save_last_cursor_pos(view)
         self._save_sidebar_state()
         self._save_active_panel()
         self._save_views(self.window)
@@ -90,9 +85,10 @@ class ViewsManager:
     def _get_last_active_view(self):
         return self.last_active_view.get(self.window.id())
 
-    def _restore_cursor_pos(self, view):
+    def _restore_cursor_pos(self, view: sublime.View):
         cursor_pos = self.last_cursor_pos.get(self.window.id())
-
+        if not cursor_pos:
+            return
         # put the cursor there
         sel = view.sel()
         sel.clear()
@@ -105,14 +101,18 @@ class ViewsManager:
         if row > last_visible_row:
             view.show_at_center(cursor_pos)
 
-    def _save_last_active_view(self, view):
-        self.last_active_view[self.window.id()] = view.file_name()
+    def _save_last_active_view(self, view: sublime.View):
+        file_name = view.file_name()
+        if file_name:
+            self.last_active_view[self.window.id()] = file_name
 
-    def _save_last_cursor_pos(self, view):
+    def _save_last_cursor_pos(self, view: sublime.View):
         self.last_cursor_pos[self.window.id()] = view.sel()[0].begin()
 
     def _save_active_panel(self):
-        self.last_active_panel[self.window.id()] = self.window.active_panel()
+        active_panel = self.window.active_panel()
+        if active_panel:
+            self.last_active_panel[self.window.id()] = active_panel
 
     def _save_sidebar_state(self):
         self.last_sidebar_state[self.window.id()] = self.window.is_sidebar_visible()
@@ -122,10 +122,8 @@ class ViewsManager:
         num_groups = window.num_groups()
         for group in range(num_groups):
             for view in window.views_in_group(group):
-                self.view_to_group[view.file_name()] = group
-                self.previous_views[self.window.id()].append(view.file_name())
-                view.close()
-
-    def _clear_state(self):
-        self.previous_views[self.window.id()] = []
-        self.last_active_panel[self.window.id()] = None
+                file_name = view.file_name()
+                if file_name:
+                    self.view_to_group[file_name] = group
+                    self.previous_views[self.window.id()].append(file_name)
+                    view.close()
