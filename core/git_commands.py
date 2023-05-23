@@ -6,6 +6,7 @@ import subprocess
 ModificationType = Literal[
      "??", # Untracked
      " A", # Added
+     "AM", # Added and Staged
      " M", # Modified
      "MM", # Modified and Staged
      " D", # Deleted

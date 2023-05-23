@@ -56,12 +56,12 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             primary_color = "#ff0000"
             if modification_type == 'MM':
                 primary_color = changed
+            elif 'A' in modification_type:
+                primary_color = inserted
             elif 'M' in modification_type:
                 primary_color = changed
             elif 'U' in modification_type:
                 primary_color = changed
-            elif 'A' in modification_type:
-                primary_color = inserted
             elif 'R' in modification_type:
                 primary_color = renamed
             elif 'C' in modification_type:
@@ -99,6 +99,7 @@ def modification_type_to_readable(modification_type: ModificationType) -> str:
     title_dict: Dict[ModificationType, str] = {
         "??": "File is UNTRACKED",
         " A": "File is ADDED",
+        "AM": "File is ADDED",
         " M": "File is MODIFIED",
         "MM": "File is MODIFIED",
         " D": "File is Deleted",
