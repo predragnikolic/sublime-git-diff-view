@@ -6,6 +6,8 @@ import sublime
 import json
 from pathlib import Path
 
+SESSION_DIR = path.join(sublime.cache_path(), 'GitDiffView')
+
 WindowId = int
 FileName = str
 Layout = Dict[str, Any]
@@ -26,7 +28,7 @@ class ViewsManager:
     def __init__(self, window: sublime.Window, root_dir: RootDirPath):
         self.window: sublime.Window = window
         self.root_dir = root_dir
-        self.session_file_path = path.join(sublime.cache_path(), 'GitDiffView', 'session.json')
+        self.session_file_path = path.join(SESSION_DIR, 'session.json')
 
     @staticmethod
     def is_git_view_open(views: List[sublime.View]):

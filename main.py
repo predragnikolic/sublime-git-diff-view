@@ -2,10 +2,11 @@ from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_view import GitView
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
-from .core.view_manager import ViewsManager
+from .core.view_manager import SESSION_DIR, ViewsManager
 from .utils import get_line
 import sublime
 import sublime_plugin
+import os
 
 
 STOP_INTERVAL = False
@@ -30,8 +31,10 @@ def refresh_list():
 
 
 def plugin_loaded():
+    # create session dir where the session file will be stored
+    if not os.path.exists(SESSION_DIR):
+       os.makedirs(SESSION_DIR)
     status_view = get_status_view(sublime.active_window().views())
-
     # If status view is open when sublime starts,
     if status_view is not None:
         set_interval(refresh_list)
