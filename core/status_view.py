@@ -19,7 +19,7 @@ def create_status_view(window: sublime.Window) -> sublime.View:
     default_syntax = "Packages/GitDiffView/syntax/GitStatus.sublime-syntax"
     syntax = default_syntax
     view.set_syntax_file(syntax)
-    view.settings().set('highlight_line', True)
+    view.settings().set('highlight_line', False)
     view.settings().set("line_numbers", False)
     view.settings().set("scroll_past_end", False)
     view.settings().set("draw_centered", False)
