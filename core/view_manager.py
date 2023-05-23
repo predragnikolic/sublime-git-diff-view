@@ -1,11 +1,11 @@
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
-from typing import Dict, List
+from typing import Any, Dict, List
 import sublime
 
 WindowId = int
 FileName = str
-Layout = Dict[str, sublime.Value]
+Layout = Dict[str, Any]
 
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
