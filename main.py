@@ -1,7 +1,7 @@
 from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_view import GitView
-from .core.layout import Layout
+from .core.layout import two_columns
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
 from .core.view_manager import ViewsManager
 from .utils import get_line
@@ -45,9 +45,8 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         window = self.view.window()
         if not window:
             return
-        layout = Layout(window)
         views_manager = ViewsManager(window)
-        git_view = GitView(window, layout)
+        git_view = GitView(window)
 
         git_view.close()
         views_manager.restore()
@@ -63,9 +62,8 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
         if not window:
             return
 
-        layout = Layout(window)
         views_manager = ViewsManager(window)
-        git_view = GitView(window, layout)
+        git_view = GitView(window)
 
         git = Git(window)
         # open GitView
@@ -77,7 +75,7 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
             return
 
         views_manager.prepare()
-        layout.two_columns()
+        two_columns(window)
         git_view.open()
 
         STOP_INTERVAL = False

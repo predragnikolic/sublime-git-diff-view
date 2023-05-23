@@ -1,3 +1,4 @@
+from .layout import insert_into_first_column, insert_into_second_column
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import GitStatus
 from .status_view import STATUS_VIEW_NAME, create_status_view
@@ -13,9 +14,8 @@ class GitView:
     git_statuses: Dict[WindowId, List[GitStatus]] = {}
     ''' stores the last result of the `git.git_statuses()` call for fast reads'''
 
-    def __init__(self, window, layout):
+    def __init__(self, window):
         self.window: sublime.Window = window
-        self.layout = layout
 
     def close(self):
         ''' Closes the git status view and git diff view. '''
@@ -30,9 +30,9 @@ class GitView:
         status_view.run_command('update_status_view', {
             'git_statuses': git_statuses,
         })
-        self.layout.insert_into_first_column(status_view)
+        insert_into_first_column(self.window, status_view)
         diff_view = create_diff_view(self.window)
-        self.layout.insert_into_second_column(diff_view)
+        insert_into_second_column(self.window, diff_view)
         # select first line, Status View
         sel = status_view.sel()
         sel.clear()
