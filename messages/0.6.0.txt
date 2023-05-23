@@ -1,8 +1,11 @@
 => 0.6.0
 
 ## What's Changed
-- Auto complete suggestion when LSP-json is installed.
+- Settings are removed.
+- New UI for staging files.
+- Char diff highlights.
 
 Development Changes
+- Almost a complete rewrite of the plugin
 - Switched to Python 3.8
 - Added `mypy` and `flake8`
