@@ -34,7 +34,6 @@ def plugin_loaded():
     status_view = get_status_view(sublime.active_window().views())
 
     # If status view is open when sublime starts,
-    # setup listener for refreshing the list
     if status_view is not None:
         set_interval(refresh_list)
 
@@ -51,7 +50,6 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         git_view = GitView(window, layout)
 
         git_view.close()
-        layout.one_column()
         views_manager.restore()
 
         STOP_INTERVAL = True
@@ -95,10 +93,8 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
             return
         if ViewsManager.is_git_view_open(window.views()):
             self.view.run_command('close_git_diff_view')
-            ViewsManager.is_open = False
         else:
             self.view.run_command('open_git_diff_view')
-            ViewsManager.is_open = True
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):

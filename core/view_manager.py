@@ -17,11 +17,14 @@ class ViewsManager:
     last_sidebar_state = {}
     # {'window_id': str }
     last_active_panel = {}
+    # {'window_id': dict }
+    last_layout = {}
+    view_to_group = {}
 
     is_open = False
 
     def __init__(self, window):
-        self.window = window
+        self.window: sublime.Window = window
 
     @staticmethod
     def is_git_view_open(views: List[sublime.View]):
@@ -31,15 +34,22 @@ class ViewsManager:
         return False
 
     def prepare(self):
+        self.last_layout[self.window.id()] = self.window.layout()
+        print("prepare",self.last_layout[self.window.id()])
         self.save_views_for_later()
         self.window.set_sidebar_visible(False)
         self.window.run_command('hide_panel')
 
     def restore(self):
+        last_layout = self.last_layout[self.window.id()]
+        if last_layout:
+            self.window.set_layout(last_layout)
+            self.last_layout[self.window.id()] = None
         views = self.get_views() or []
         for file_name in views:
             if file_name:
-                self.window.open_file(file_name)
+                group = self.view_to_group.get(file_name, -1)
+                self.window.open_file(file_name, group=group)
         last_active_view = self._get_last_active_view()
         if last_active_view:
             view = self.window.open_file(last_active_view)
@@ -71,7 +81,7 @@ class ViewsManager:
         self._save_last_cursor_pos(view)
         self._save_sidebar_state()
         self._save_active_panel()
-        self._save_views(self.window.views())
+        self._save_views(self.window)
 
     def get_views(self):
         return self.previous_views.get(self.window.id(), [])
@@ -106,11 +116,14 @@ class ViewsManager:
     def _save_sidebar_state(self):
         self.last_sidebar_state[self.window.id()] = self.window.is_sidebar_visible()
 
-    def _save_views(self, views):
+    def _save_views(self, window: sublime.Window):
         self.previous_views[self.window.id()] = []
-        for view in views:
-            self.previous_views[self.window.id()].append(view.file_name())
-            view.close()
+        num_groups = window.num_groups()
+        for group in range(num_groups):
+            for view in window.views_in_group(group):
+                self.view_to_group[view.file_name()] = group
+                self.previous_views[self.window.id()].append(view.file_name())
+                view.close()
 
     def _clear_state(self):
         self.previous_views[self.window.id()] = []

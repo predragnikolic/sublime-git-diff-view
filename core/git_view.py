@@ -10,7 +10,6 @@ WindowId = int
 
 class GitView:
     ''' Shows the git status and git diff. '''
-    listener = None
     git_statuses: Dict[WindowId, List[GitStatus]] = {}
     ''' stores the last result of the `git.git_statuses()` call for fast reads'''
 
