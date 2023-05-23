@@ -34,13 +34,14 @@ class ViewsManager:
         return False
 
     def prepare(self):
+        # save layout
         self.last_layout[self.window.id()] = self.window.layout()
-        print("prepare",self.last_layout[self.window.id()])
         self.save_views_for_later()
         self.window.set_sidebar_visible(False)
         self.window.run_command('hide_panel')
 
     def restore(self):
+        # restore layout
         last_layout = self.last_layout[self.window.id()]
         if last_layout:
             self.window.set_layout(last_layout)
