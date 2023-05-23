@@ -1,6 +1,6 @@
 [
     {
-        "caption": "GitDiffView: Toggle",
+        "caption": "Git Diff View: Toggle",
         "command": "toggle_git_diff_view"
     }
 ]
