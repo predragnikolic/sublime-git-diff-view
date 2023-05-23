@@ -106,4 +106,4 @@ def modification_type_to_readable(modification_type: ModificationType) -> str:
         " C": "File is Copied",
         "UU": "File has Conflict/s"
     }
-    return title_dict[modification_type]
+    return title_dict.get(modification_type, modification_type)
