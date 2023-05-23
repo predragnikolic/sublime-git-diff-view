@@ -1,25 +1,32 @@
+from os import path
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
 from typing import Any, Dict, List
 import sublime
+import json
+from pathlib import Path
 
 WindowId = int
 FileName = str
 Layout = Dict[str, Any]
 
+RootDirPath = str
+
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
 
-    previous_views: Dict[WindowId, List[FileName]] = {}
-    last_active_view: Dict[WindowId, FileName] = {}
-    last_cursor_pos: Dict[WindowId, int] = {}
-    last_sidebar_state: Dict[WindowId, bool] = {}
-    last_active_panel: Dict[WindowId, str] = {}
-    last_layout: Dict[WindowId, Layout] = {}
+    previous_views: Dict[RootDirPath, List[FileName]] = {}
+    last_active_view: Dict[RootDirPath, FileName] = {}
+    last_cursor_pos: Dict[RootDirPath, int] = {}
+    last_sidebar_state: Dict[RootDirPath, bool] = {}
+    last_active_panel: Dict[RootDirPath, str] = {}
+    last_layout: Dict[RootDirPath, Layout] = {}
     view_to_group: Dict[FileName, int] = {}
 
-    def __init__(self, window: sublime.Window):
+    def __init__(self, window: sublime.Window, root_dir: RootDirPath):
         self.window: sublime.Window = window
+        self.root_dir = root_dir
+        self.session_file_path = path.join(sublime.cache_path(), 'GitDiffView', 'session.json')
 
     @staticmethod
     def is_git_view_open(views: List[sublime.View]):
@@ -30,14 +37,48 @@ class ViewsManager:
 
     def prepare(self):
         # save layout
-        self.last_layout[self.window.id()] = self.window.layout()
+        self.last_layout[self.root_dir] = self.window.layout()
         self.save_views_for_later()
         self.window.set_sidebar_visible(False)
         self.window.run_command('hide_panel')
 
+        self.save_to_session_file()
+
+    def load_session_file(self):
+        if not path.exists(self.session_file_path):
+            return
+        file = open(self.session_file_path, "r")
+        dict = json.loads(file.read())
+        file.close()
+        self.previous_views = dict.get(self.root_dir, {}).get('previous_views', {})
+        self.last_active_view = dict.get(self.root_dir, {}).get('last_active_view', {})
+        self.last_cursor_pos = dict.get(self.root_dir, {}).get('last_cursor_pos', {})
+        self.last_sidebar_state = dict.get(self.root_dir, {}).get('last_sidebar_state', {})
+        self.last_active_panel = dict.get(self.root_dir, {}).get('last_active_panel', {})
+        self.last_layout = dict.get(self.root_dir, {}).get('last_layout', {})
+        self.view_to_group = dict.get(self.root_dir, {}).get('view_to_group', {})
+        file.close()
+
+    def save_to_session_file(self):
+        dict = {}
+        dict[self.root_dir] = {}
+        dict[self.root_dir]['previous_views'] = self.previous_views
+        dict[self.root_dir]['last_active_view'] = self.last_active_view
+        dict[self.root_dir]['last_cursor_pos'] = self.last_cursor_pos
+        dict[self.root_dir]['last_sidebar_state'] = self.last_sidebar_state
+        dict[self.root_dir]['last_active_panel'] = self.last_active_panel
+        dict[self.root_dir]['last_layout'] = self.last_layout
+        dict[self.root_dir]['view_to_group'] = self.view_to_group
+        file_path = Path(self.session_file_path)
+        file_path.touch(exist_ok=True)
+        file = open(file_path, "w+")
+        file.write(json.dumps(dict))
+        file.close()
+
     def restore(self):
+        self.load_session_file()
         # restore layout
-        last_layout = self.last_layout[self.window.id()]
+        last_layout = self.last_layout[self.root_dir]
         if last_layout:
             self.window.set_layout(last_layout)
         # restore views
@@ -62,11 +103,11 @@ class ViewsManager:
 
             trying_restoring_the_cursor(view)
         # restore sidebar
-        last_sidebar_state = self.last_sidebar_state.get(self.window.id())
+        last_sidebar_state = self.last_sidebar_state.get(self.root_dir)
         if last_sidebar_state:
             self.window.set_sidebar_visible(True)
         # restore panel
-        last_active_panel = self.last_active_panel.get(self.window.id())
+        last_active_panel = self.last_active_panel.get(self.root_dir)
         if last_active_panel:
             self.window.run_command("show_panel", { "panel": last_active_panel })
 
@@ -80,13 +121,13 @@ class ViewsManager:
         self._save_views(self.window)
 
     def get_views(self):
-        return self.previous_views.get(self.window.id(), [])
+        return self.previous_views.get(self.root_dir, [])
 
     def _get_last_active_view(self):
-        return self.last_active_view.get(self.window.id())
+        return self.last_active_view.get(self.root_dir)
 
     def _restore_cursor_pos(self, view: sublime.View):
-        cursor_pos = self.last_cursor_pos.get(self.window.id())
+        cursor_pos = self.last_cursor_pos.get(self.root_dir)
         if not cursor_pos:
             return
         # put the cursor there
@@ -104,26 +145,26 @@ class ViewsManager:
     def _save_last_active_view(self, view: sublime.View):
         file_name = view.file_name()
         if file_name:
-            self.last_active_view[self.window.id()] = file_name
+            self.last_active_view[self.root_dir] = file_name
 
     def _save_last_cursor_pos(self, view: sublime.View):
-        self.last_cursor_pos[self.window.id()] = view.sel()[0].begin()
+        self.last_cursor_pos[self.root_dir] = view.sel()[0].begin()
 
     def _save_active_panel(self):
         active_panel = self.window.active_panel()
         if active_panel:
-            self.last_active_panel[self.window.id()] = active_panel
+            self.last_active_panel[self.root_dir] = active_panel
 
     def _save_sidebar_state(self):
-        self.last_sidebar_state[self.window.id()] = self.window.is_sidebar_visible()
+        self.last_sidebar_state[self.root_dir] = self.window.is_sidebar_visible()
 
     def _save_views(self, window: sublime.Window):
-        self.previous_views[self.window.id()] = []
+        self.previous_views[self.root_dir] = []
         num_groups = window.num_groups()
         for group in range(num_groups):
             for view in window.views_in_group(group):
                 file_name = view.file_name()
                 if file_name:
                     self.view_to_group[file_name] = group
-                    self.previous_views[self.window.id()].append(file_name)
+                    self.previous_views[self.root_dir].append(file_name)
                     view.close()

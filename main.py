@@ -47,7 +47,8 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         git_view = GitView(window)
         git_view.close()
 
-        views_manager = ViewsManager(window)
+        git = Git(window)
+        views_manager = ViewsManager(window, git.git_root_dir or "")
         views_manager.restore()
 
         STOP_INTERVAL = True
@@ -68,7 +69,7 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
         if not git_statuses:
             window.status_message('No git changes to show.')
             return
-        views_manager = ViewsManager(window)
+        views_manager = ViewsManager(window, git.git_root_dir or "")
         views_manager.prepare()
 
         git_view = GitView(window)
