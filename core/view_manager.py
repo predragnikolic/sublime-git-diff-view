@@ -17,18 +17,18 @@ RootDirPath = str
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
 
-    previous_views: Dict[RootDirPath, List[FileName]] = {}
-    last_active_view: Dict[RootDirPath, FileName] = {}
-    last_cursor_pos: Dict[RootDirPath, int] = {}
-    last_sidebar_state: Dict[RootDirPath, bool] = {}
-    last_active_panel: Dict[RootDirPath, str] = {}
-    last_layout: Dict[RootDirPath, Layout] = {}
-    view_to_group: Dict[FileName, int] = {}
 
     def __init__(self, window: sublime.Window, root_dir: RootDirPath) -> None:
         self.window: sublime.Window = window
         self.root_dir = root_dir
         self.session_file_path = path.join(SESSION_DIR, 'session.json')
+        self.previous_file_names: List[FileName] = []
+        self.last_active_file_name: Optional[FileName] = None
+        self.last_cursor_pos:  Optional[int] = None
+        self.last_sidebar_state:  Optional[bool] = None
+        self.last_active_panel:  Optional[str] = None
+        self.last_layout:  Optional[Layout] = None
+        self.view_to_group: Dict[FileName, int] = {}
 
     @staticmethod
     def is_git_view_open(views: List[sublime.View]) -> bool:
@@ -39,7 +39,7 @@ class ViewsManager:
 
     def prepare(self) -> None:
         # save layout
-        self.last_layout[self.root_dir] = self.window.layout()
+        self.last_layout = self.window.layout()
         self.save_views_for_later()
         self.window.set_sidebar_visible(False)
         self.window.run_command('hide_panel')
@@ -49,23 +49,30 @@ class ViewsManager:
     def load_session_file(self) -> None:
         if not path.exists(self.session_file_path):
             return
-        file = open(self.session_file_path, "r")
-        dict = json.loads(file.read())
-        file.close()
-        self.previous_views = dict.get(self.root_dir, {}).get('previous_views', {})
-        self.last_active_view = dict.get(self.root_dir, {}).get('last_active_view', {})
-        self.last_cursor_pos = dict.get(self.root_dir, {}).get('last_cursor_pos', {})
-        self.last_sidebar_state = dict.get(self.root_dir, {}).get('last_sidebar_state', {})
-        self.last_active_panel = dict.get(self.root_dir, {}).get('last_active_panel', {})
-        self.last_layout = dict.get(self.root_dir, {}).get('last_layout', {})
-        self.view_to_group = dict.get(self.root_dir, {}).get('view_to_group', {})
+        saved_file = open(self.session_file_path, "r")
+        dict = json.loads(saved_file.read()) or {}
+        saved_file.close()
+        saved_settings = dict.pop(self.root_dir, {})
+        self.previous_file_names = saved_settings.get('previous_file_names', [])
+        self.last_active_file_name = saved_settings.get('last_active_file_name', None)
+        self.last_cursor_pos = saved_settings.get('last_cursor_pos', None)
+        self.last_sidebar_state = saved_settings.get('last_sidebar_state', None)
+        self.last_active_panel = saved_settings.get('last_active_panel', None)
+        self.last_layout = saved_settings.get('last_layout', None)
+        self.view_to_group = saved_settings.get('view_to_group', {})
+        file_path = Path(self.session_file_path)
+        file_path.touch(exist_ok=True)
+        file = open(file_path, "w+")
+        file.write(json.dumps(dict))
         file.close()
 
     def save_to_session_file(self) -> None:
-        dict: Dict[str, Any] = {}
+        saved_file = open(self.session_file_path, "r")
+        dict = json.loads(saved_file.read()) or {}
+        saved_file.close()
         dict[self.root_dir] = {}
-        dict[self.root_dir]['previous_views'] = self.previous_views
-        dict[self.root_dir]['last_active_view'] = self.last_active_view
+        dict[self.root_dir]['previous_file_names'] = self.previous_file_names
+        dict[self.root_dir]['last_active_file_name'] = self.last_active_file_name
         dict[self.root_dir]['last_cursor_pos'] = self.last_cursor_pos
         dict[self.root_dir]['last_sidebar_state'] = self.last_sidebar_state
         dict[self.root_dir]['last_active_panel'] = self.last_active_panel
@@ -77,22 +84,23 @@ class ViewsManager:
         file.write(json.dumps(dict))
         file.close()
 
+
     def restore(self) -> None:
         self.load_session_file()
         # restore layout
-        last_layout = self.last_layout[self.root_dir]
+        last_layout = self.last_layout
         if last_layout:
             self.window.set_layout(last_layout)
         # restore views
-        views = self.get_views() or []
+        views = self.previous_file_names
         for file_name in views:
             if file_name:
                 group = self.view_to_group.get(file_name, -1)
                 self.window.open_file(file_name, group=group)
         # restore last active view
-        last_active_view = self._get_last_active_view()
-        if last_active_view:
-            view = self.window.open_file(last_active_view)
+        last_active_file_name = self.last_active_file_name
+        if last_active_file_name is not None:
+            view = self.window.open_file(last_active_file_name)
 
             def trying_restoring_the_cursor(view: sublime.View) -> None:
                 if not view.is_loading():
@@ -105,31 +113,34 @@ class ViewsManager:
 
             trying_restoring_the_cursor(view)
         # restore sidebar
-        last_sidebar_state = self.last_sidebar_state.get(self.root_dir)
-        if last_sidebar_state:
+        last_sidebar_state = self.last_sidebar_state
+        if last_sidebar_state is not None:
             self.window.set_sidebar_visible(True)
         # restore panel
-        last_active_panel = self.last_active_panel.get(self.root_dir)
+        last_active_panel = self.last_active_panel
         if last_active_panel:
             self.window.run_command("show_panel", { "panel": last_active_panel })
 
     def save_views_for_later(self) -> None:
         view = self.window.active_view()
         if view:
-            self._save_last_active_view(view)
-            self._save_last_cursor_pos(view)
-        self._save_sidebar_state()
-        self._save_active_panel()
-        self._save_views(self.window)
-
-    def get_views(self) -> List[FileName]:
-        return self.previous_views.get(self.root_dir, [])
-
-    def _get_last_active_view(self) -> Optional[FileName]:
-        return self.last_active_view.get(self.root_dir)
+            file_name = view.file_name()
+            # save active view
+            if file_name:
+                self.last_active_file_name = file_name
+            # save cursor
+            self.last_cursor_pos = view.sel()[0].begin()
+        # save sidebar
+        self.last_sidebar_state = self.window.is_sidebar_visible()
+        # save panel
+        active_panel = self.window.active_panel()
+        if active_panel:
+            self.last_active_panel = active_panel
+        # save open views
+        self._save_open_file_names(self.window)
 
     def _restore_cursor_pos(self, view: sublime.View) -> None:
-        cursor_pos = self.last_cursor_pos.get(self.root_dir)
+        cursor_pos = self.last_cursor_pos
         if not cursor_pos:
             return
         # put the cursor there
@@ -144,29 +155,13 @@ class ViewsManager:
         if row > last_visible_row:
             view.show_at_center(cursor_pos)
 
-    def _save_last_active_view(self, view: sublime.View) -> None:
-        file_name = view.file_name()
-        if file_name:
-            self.last_active_view[self.root_dir] = file_name
-
-    def _save_last_cursor_pos(self, view: sublime.View) -> None:
-        self.last_cursor_pos[self.root_dir] = view.sel()[0].begin()
-
-    def _save_active_panel(self) -> None:
-        active_panel = self.window.active_panel()
-        if active_panel:
-            self.last_active_panel[self.root_dir] = active_panel
-
-    def _save_sidebar_state(self) -> None:
-        self.last_sidebar_state[self.root_dir] = self.window.is_sidebar_visible()
-
-    def _save_views(self, window: sublime.Window) -> None:
-        self.previous_views[self.root_dir] = []
+    def _save_open_file_names(self, window: sublime.Window) -> None:
+        self.previous_file_names = []
         num_groups = window.num_groups()
         for group in range(num_groups):
             for view in window.views_in_group(group):
                 file_name = view.file_name()
                 if file_name:
                     self.view_to_group[file_name] = group
-                    self.previous_views[self.root_dir].append(file_name)
+                    self.previous_file_names.append(file_name)
                     view.close()
