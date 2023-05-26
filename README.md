@@ -49,5 +49,5 @@ Here is a list of the types:
 
 [HowToUseIt.webm](https://github.com/predragnikolic/sublime-git-diff-view/assets/22029477/3af9654c-664c-4d0c-94bf-faa6af804e5c)
 
-> Note
+> NOTE:
 For other Git commands, like committing, pushing, and pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
