@@ -65,13 +65,13 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         # disable editing the file for showing
         diff_view.set_read_only(True)
 
-        self.add_char_diff(diff_view, git_status)
+        self.add_diff_highlights(diff_view, git_status)
 
         status_view = get_status_view(views)
         if status_view:
             window.focus_view(status_view)
 
-    def add_char_diff(self, diff_view: sublime.View, git_status: GitStatus) -> None:
+    def add_diff_highlights(self, diff_view: sublime.View, git_status: GitStatus) -> None:
         st_bug_first_call_to_find_all_will_not_work_correctly = diff_view.find_all('') # haha, one new ST bug :D, without this line, the bellow diff_view.find_all will not work. Looks like the first call to diff_view.find_all will not work correctly.
         added_lines = diff_view.find_all('^\\+.*')
         removed_lines = diff_view.find_all('^\\-.*')
@@ -79,6 +79,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         add_changes: List[sublime.Region] = []
         remove_changes: List[sublime.Region] = []
         plus_minus_sign_offset = 1
+        # TODO: The way diffs are found is probably not the best... PRs to improve this are welcome
         diffs = list(dl.ndiff(
                 [diff_view.substr(sublime.Region(r.begin() + plus_minus_sign_offset, r.end())) for r in removed_lines],
                 [diff_view.substr(sublime.Region(r.begin() + plus_minus_sign_offset, r.end())) for r in added_lines]))
