@@ -36,8 +36,7 @@ class GitDiffView:
         diff_view = create_diff_view(self.window)
         insert_into_second_column(self.window, diff_view)
         # select first line, Status View
-        status_view_last_position = ViewsManager.status_view_last_position[self.window.id()]
-        cursor_position = status_view_last_position or 0
+        cursor_position = ViewsManager.status_view_last_position.get(self.window.id(), 0)
         sel = status_view.sel()
         sel.clear()
         sel.add(cursor_position)
