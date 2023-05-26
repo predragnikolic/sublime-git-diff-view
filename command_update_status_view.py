@@ -85,7 +85,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
             phantoms.append(phantom)
         help_phantom = sublime.Phantom(sublime.Region(status_view.size(), status_view.size()), f'''<div style="border-top: 1px solid #77777720; color: {comment}">
-            <div style="margin-top: 0.4rem">a - stage|unstage a file</div>
+            <div style="margin-top: 0.4rem">a - stage/unstage a file</div>
             <div style="margin-top: 0.4rem">d - discard changes to a file</div>
             <div style="margin-top: 0.4rem">g - goto a file</div>
         </div>''', sublime.LAYOUT_BLOCK)
