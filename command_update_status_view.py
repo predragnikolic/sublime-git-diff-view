@@ -79,7 +79,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
             readable_modification_type = modification_type_to_readable(modification_type)
             title = f'{readable_modification_type} and STAGED' if is_staged else f'{readable_modification_type} and UNSTAGED'
-            phantom = sublime.Phantom(sublime.Region(point), f'''<div title="{title}" style="font-weight: bold; text-align: center; border-radius: 4px; width: 2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
+            phantom = sublime.Phantom(sublime.Region(point), f'''<div title="{title}" style="font-weight: bold; text-align: center; border-radius: 4px; width: 1.2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
 
