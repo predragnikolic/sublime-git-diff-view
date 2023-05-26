@@ -121,8 +121,11 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                         remove_changes.append(sublime.Region(start_point, end_point))
                     else:
                         add_changes.append(sublime.Region(start_point, end_point))
-        diff_view.add_regions('add_changes', add_changes, "diff.inserted.char")
-        diff_view.add_regions('remove_changes', remove_changes, "diff.deleted.char")
+
+        diff_view.add_regions('git_diff_view.add_bg', added_lines, "diff.inserted")
+        diff_view.add_regions('git_diff_view.removed_bg', removed_lines, "diff.deleted")
+        diff_view.add_regions('git_diff_view.add_char', add_changes, "diff.inserted.char")
+        diff_view.add_regions('git_diff_view.remove_char', remove_changes, "diff.deleted.char")
 
 
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:

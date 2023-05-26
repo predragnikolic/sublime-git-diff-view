@@ -49,6 +49,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
         untracked = status_view.style_for_scope("markup.untracked").get('foreground')
         comment = status_view.style_for_scope("comment").get('foreground')
         renamed = style.get('purplish')
+        background = style.get('background')
 
         for i, git_status in enumerate(git_statuses):
             point = status_view.text_point(i, 0)
@@ -73,7 +74,7 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
 
             is_staged = git_status['is_staged']
             unstaged_styles = f"color: {primary_color}; border: 1px solid {primary_color};"
-            staged_styles = f"color: #333333; background-color: {primary_color}; border: 1px solid {primary_color};"
+            staged_styles = f"color: {background}; background-color: {primary_color}; border: 1px solid {primary_color};"
             styles = staged_styles if is_staged else unstaged_styles
 
             readable_modification_type = modification_type_to_readable(modification_type)
