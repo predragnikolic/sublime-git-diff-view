@@ -1,7 +1,7 @@
 from typing import Callable
 from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
-from .core.git_view import GitView
+from .core.git_diff_view import GitDiffView
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
 from .core.view_manager import SESSION_DIR, ViewsManager
 from .utils import get_line
@@ -48,8 +48,8 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         window = self.view.window()
         if not window:
             return
-        git_view = GitView(window)
-        git_view.close()
+        git_diff_view = GitDiffView(window)
+        git_diff_view.close()
 
         git = Git(window)
         views_manager = ViewsManager(window, git.git_root_dir or "")
@@ -76,8 +76,8 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
         views_manager = ViewsManager(window, git.git_root_dir or "")
         views_manager.prepare()
 
-        git_view = GitView(window)
-        git_view.open()
+        git_diff_view = GitDiffView(window)
+        git_diff_view.open()
 
         STOP_INTERVAL = False
         set_interval(refresh_list)
@@ -120,7 +120,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         on_same_line = line == self.previous_line
         if on_same_line or line is None:
             return
-        git_statuses = GitView.git_statuses[window.id()]
+        git_statuses = GitDiffView.git_statuses[window.id()]
         try:
             git_status = git_statuses[line]
             view.run_command("update_diff_view", {

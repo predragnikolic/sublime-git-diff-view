@@ -70,8 +70,8 @@ class Git:
             })
         statuses = sorted(statuses, key=lambda k: k['file_name'])
         # bad code, fix circular imports (:
-        from .git_view import GitView
-        GitView.git_statuses[self.window.id()] = statuses # store
+        from .git_diff_view import GitDiffView
+        GitDiffView.git_statuses[self.window.id()] = statuses # store
         return statuses
 
     def split_filename_at_arrow(self, file: str) -> Tuple[str, str]:

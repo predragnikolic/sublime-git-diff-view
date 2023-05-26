@@ -1,6 +1,6 @@
 import sublime
 from .core.git_commands import Git
-from .core.git_view import GitView
+from .core.git_diff_view import GitDiffView
 from .utils import get_line
 import sublime_plugin
 
@@ -15,7 +15,7 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
         if line is None:
             return
         git = Git(window)
-        git_statuses = GitView.git_statuses[window.id()]
+        git_statuses = GitDiffView.git_statuses[window.id()]
         git_status = git_statuses[line]
         if not git_status:
             return

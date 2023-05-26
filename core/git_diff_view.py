@@ -9,7 +9,7 @@ import sublime
 WindowId = int
 
 
-class GitView:
+class GitDiffView:
     ''' Shows the git status and git diff. '''
     git_statuses: Dict[WindowId, List[GitStatus]] = {}
     ''' stores the last result of the `git.git_statuses()` call for fast reads'''
@@ -25,7 +25,7 @@ class GitView:
 
     def open(self) -> None:
         ''' Opens the git status view, and git diff view. '''
-        git_statuses = GitView.git_statuses[self.window.id()]
+        git_statuses = GitDiffView.git_statuses[self.window.id()]
         status_view = create_status_view(self.window)
         status_view.run_command('update_status_view', {
             'git_statuses': git_statuses,
