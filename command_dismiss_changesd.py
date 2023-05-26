@@ -19,19 +19,25 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
         git_status = git_statuses[line]
         if not git_status:
             return
-        message = f'Warning: Dismiss all changes to the file "{git_status["file_name"]}?"'
-        if not sublime.ok_cancel_dialog(message, 'Dismiss'):
-            return
-        if git_status["is_staged"]:
-            git.reset_head(git_status["file_name"])
-        if git_status["modification_type"] == '??':
-            git.clean(git_status["file_name"])
-        else:
-            git.checkout(git_status["file_name"])
-        git_statuses = git.git_statuses()
-        self.view.run_command('update_status_view', {
-            'git_statuses': git_statuses,
-        })
-        self.view.run_command("update_diff_view", {
-            'git_status': git_status,
-        })
+
+        def done(option):
+            if option == -1:
+                return
+            # 0 -> Discard changes
+            if git_status["is_staged"]:
+                git.reset_head(git_status["file_name"])
+            if git_status["modification_type"] == '??':
+                git.clean(git_status["file_name"])
+            else:
+                git.checkout(git_status["file_name"])
+            git_statuses = git.git_statuses()
+            self.view.run_command('update_status_view', {
+                'git_statuses': git_statuses,
+            })
+            self.view.run_command("update_diff_view", {
+                'git_status': git_status,
+            })
+
+        self.view.show_popup_menu([
+            'Discard Changes'
+        ], done)

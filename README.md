@@ -9,8 +9,8 @@ Get a quick overview of changes before committing them.
 -   Show all modified files
 -   Show the diff view for a file
 -   Stage/Unstage files
--   Dismiss changes for a file
--   Go to a file
+-   Discard changes to a file
+-   Goto a file
 
 ### Installation 
 
