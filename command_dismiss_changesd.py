@@ -39,5 +39,5 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
             })
 
         self.view.show_popup_menu([
-            'Discard Changes'
+            'Confirm Discard'
         ], done)
