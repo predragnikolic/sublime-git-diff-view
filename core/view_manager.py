@@ -16,7 +16,7 @@ RootDirPath = str
 
 class ViewsManager:
     ''' Responsible for storing views and reopening them later. '''
-
+    status_view_last_position: Dict[WindowId, int] = {}
 
     def __init__(self, window: sublime.Window, root_dir: RootDirPath) -> None:
         self.window: sublime.Window = window

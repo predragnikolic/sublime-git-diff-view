@@ -4,7 +4,7 @@ from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
 from .core.view_manager import SESSION_DIR, ViewsManager
-from .utils import get_line
+from .utils import get_line, get_point
 import sublime
 import sublime_plugin
 import os
@@ -58,6 +58,8 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         STOP_INTERVAL = True
 
 
+
+
 # command: open_git_diff_view
 class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _: sublime.Edit) -> None:
@@ -106,6 +108,10 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         if not ViewsManager.is_git_view_open(window.views()):
             return
         if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
+            point = get_point(view)
+            w = view.window()
+            if view.name() == STATUS_VIEW_NAME and point and w:
+                ViewsManager.status_view_last_position[w.id()] = point
             sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
 
 

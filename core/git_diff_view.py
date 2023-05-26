@@ -1,3 +1,4 @@
+from .view_manager import ViewsManager
 from .layout import two_columns, insert_into_first_column, insert_into_second_column
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import GitStatus
@@ -35,12 +36,15 @@ class GitDiffView:
         diff_view = create_diff_view(self.window)
         insert_into_second_column(self.window, diff_view)
         # select first line, Status View
+        status_view_last_position = ViewsManager.status_view_last_position[self.window.id()]
+        cursor_position = status_view_last_position or 0
         sel = status_view.sel()
         sel.clear()
-        sel.add(0)
-        status_view.show(0)
+        sel.add(cursor_position)
+        status_view.show(cursor_position)
+        line_index, _ = status_view.rowcol(cursor_position)
         # display first line , Git View
-        git_status = git_statuses[0]
+        git_status = git_statuses[line_index]
         if not git_status:
             return
         diff_view.run_command("update_diff_view", {
