@@ -65,13 +65,13 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         # disable editing the file for showing
         diff_view.set_read_only(True)
 
-        self.add_char_diff(diff_view)
+        self.add_char_diff(diff_view, git_status)
 
         status_view = get_status_view(views)
         if status_view:
             window.focus_view(status_view)
 
-    def add_char_diff(self, diff_view: sublime.View) -> None:
+    def add_char_diff(self, diff_view: sublime.View, git_status: GitStatus) -> None:
         st_bug_first_call_to_find_all_will_not_work_correctly = diff_view.find_all('') # haha, one new ST bug :D, without this line, the bellow diff_view.find_all will not work. Looks like the first call to diff_view.find_all will not work correctly.
         added_lines = diff_view.find_all('^\\+.*')
         removed_lines = diff_view.find_all('^\\-.*')
@@ -126,6 +126,9 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         diff_view.add_regions('git_diff_view.removed_bg', removed_lines, "diff.deleted")
         diff_view.add_regions('git_diff_view.add_char', add_changes, "diff.inserted.char")
         diff_view.add_regions('git_diff_view.remove_char', remove_changes, "diff.deleted.char")
+
+        if git_status['modification_type'] == ' D':
+             diff_view.add_regions('git_diff_view.removed_bg', [sublime.Region(0, diff_view.size())], "diff.deleted")
 
 
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
