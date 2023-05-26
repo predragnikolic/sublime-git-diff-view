@@ -126,6 +126,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         on_same_line = line == self.previous_line
         if on_same_line or line is None:
             return
+        status_view.show(line, keep_to_left=True, animate=True)
         git_statuses = GitDiffView.git_statuses[window.id()]
         try:
             git_status = git_statuses[line]
