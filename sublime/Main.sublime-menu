@@ -10,13 +10,6 @@
           {
             "caption": "Git Diff View",
             "children": [
-              { "caption": "Settings",
-                "command": "edit_settings",
-                "args": {
-                  "base_file": "${packages}/GitDiffView/GitDiffView.sublime-settings",
-                  "default": "{\n\t$0\n}\n"
-                }
-              },
               {
                 "caption": "Key Bindings",
                 "command": "edit_settings",

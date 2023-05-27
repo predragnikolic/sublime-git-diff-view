@@ -1,35 +1,28 @@
-# Git Diff View - Sublime Text 3
+# Git Diff View
 
-Get a quick overview of changes before commiting them.
+Get a quick overview of changes before committing them.
 
-![Example](img/showcase.gif)
+![Example](img/showcase.png)
 
 ### Features
 
 -   Show all modified files
 -   Show the diff view for a file
--   Stage/Unstage files (staged are marked with "■", unstaged with "☐")
--   Dismiss changes for a file
--   Go to a file
+-   Stage/Unstage files
+-   Discard changes to a file
+-   Goto a file
 
 ### Installation 
 
-#### Stable Version
-
 Open the command palette and run `Package Control: Install Package`, then select `GitDiffView`.
-
-#### Development Version
-
--   Clone this repository to `sublime-text-3/Packages` folder.
--   Rename the folder to `GitDiffView`.
--   Done. :wink:
 
 ### Instructions
 
-The default keybinding for toggling the view is `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
-The git view won't open if there are no git changes.
+From the command palette select: `Git Diff View: Toggle`.
+Or toggle the git diff view with `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
+The git diff view won't open if there are no git changes.
 
-Inside the `Git Status` view you can use the following keybinds:
+Inside the status view, the following keybindings are available:
 
 ```
   a - stage/unstage a file
@@ -41,28 +34,20 @@ Type of modification will be shown in the git status, next to the file name.
 Here is a list of the types:
 
 ```
-    ?? - Untracked
-     A - Added
-     M - Modified
-     D - Deleted
-     R - Renamed
-     C - Copied
-    UU - Unmerged(Conflict)
+  "??" - Untracked
+  " A" - Added
+  "AM" - Added and Staged
+  " M" - Modified
+  "MM" - Modified and Staged
+  " D" - Deleted
+  " R" - Renamed
+  " C" - Copied
+  "UU" - Unmerged(Conflict)
 ```
 
-### Note
+### Workflow Example
 
-For other Git commands, like commiting, pushing, pulling, see [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).
+[HowToUseIt.webm](https://github.com/predragnikolic/sublime-git-diff-view/assets/22029477/3af9654c-664c-4d0c-94bf-faa6af804e5c)
 
-### Configuration
-
-You can turn on highlight file names in git status view by setting `"highlight_file_names": true` in
-`Preferences > Package Settings > GitDiffView > Settings`.
-
-`highlight_file_names: true`
-
-![Fancy theme](img/theme-fancy.png)
-
-`highlight_file_names: false`
-
-![Default theme](img/theme-default.png)
+> NOTE:
+For other commands like `git commit`, `git push`, `git pull`, use a different plugin like [Git](https://github.com/kemayo/sublime-text-git) or [GitSavvy](https://github.com/divmain/GitSavvy).

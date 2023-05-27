@@ -1,0 +1,17 @@
+=> 0.6.0
+
+
+
+## BREAKING CHANGES
+Sublime Text 3 is no longer supported.
+
+## What's Changed
+- Settings are removed.
+- New UI for staging files
+- Char diff highlights
+- Improvement to the logic responsible to restore old window layout.
+
+## Development Changes
+- Almost a complete rewrite of the plugin.
+- Switched to Python 3.8.
+- Added `mypy` and `flake8`.
