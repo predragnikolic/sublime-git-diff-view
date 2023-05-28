@@ -99,7 +99,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                     start, end = i.span(0)
                     start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
                     end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
-                    start_find_pt = end_point
                     add_changes.append(sublime.Region(start_point, end_point))
 
                 removal_matches = re.finditer(r'\-+', diff_text)
@@ -107,7 +106,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                     start, end = i.span(0)
                     start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
                     end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
-                    start_find_pt = end_point
                     remove_changes.append(sublime.Region(start_point, end_point))
 
                 diff_text_without_leading_tilde = ' ' + diff_text[1:] # diff_text
@@ -116,7 +114,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                     start, end = i.span(0)
                     start_point = diff_view.text_point(row, start + plus_minus_sign_offset)
                     end_point = diff_view.text_point(row, end + plus_minus_sign_offset)
-                    start_find_pt = end_point
 
                     if diff_view.match_selector(start_point, 'markup.deleted.diff'):
                         remove_changes.append(sublime.Region(start_point, end_point))
