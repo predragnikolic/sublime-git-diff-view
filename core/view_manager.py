@@ -29,6 +29,13 @@ class ViewsManager:
         self.last_active_panel:  Optional[str] = None
         self.last_layout:  Optional[Layout] = None
         self.view_to_group: Dict[FileName, int] = {}
+        # create session file if not exists
+        if not path.exists(self.session_file_path):
+            file_path = Path(self.session_file_path)
+            file_path.touch()
+            file = open(file_path, "w+")
+            file.write(json.dumps({}))
+            file.close()
 
     @staticmethod
     def is_git_view_open(views: List[sublime.View]) -> bool:
