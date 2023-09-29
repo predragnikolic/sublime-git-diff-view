@@ -56,7 +56,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             diff_view.set_syntax_file(
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
             diff_output = git.show_deleted_file(file_name)
-        diff_view.replace(edit, sublime.Region(0, diff_view.size()), diff_output)
+        diff_view.run_command('git_diff_view_update_view', {'content': diff_output})
 
         sel = diff_view.sel()
         if sel:
@@ -127,6 +127,11 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 
         if git_status['modification_type'] == ' D':
              diff_view.add_regions('git_diff_view.removed_bg', [sublime.Region(0, diff_view.size())], "diff.deleted")
+
+
+class GitDiffViewUpdateView(sublime_plugin.TextCommand):
+    def run(self, edit, content):
+        self.view.replace(edit, sublime.Region(0, self.view.size()), content)
 
 
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
