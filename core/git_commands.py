@@ -164,7 +164,7 @@ class Git:
 
     def undo_patch(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
-        cmd = [f'git apply -R {file_name}']
+        cmd = [f'git apply -R --cache {file_name}']
         return self.run(cmd)
 
     def run(self, cmd: List[str]) -> str:
