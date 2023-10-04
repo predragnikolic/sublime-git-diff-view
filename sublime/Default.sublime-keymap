@@ -5,6 +5,11 @@
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
     },
     {
+        "keys": ["a"],
+        "command": "git_diff_view_stage_unstage_chunk",
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
+    },
+    {
         "keys": ["d"],
         "command": "git_diff_view_dismiss_changes",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]

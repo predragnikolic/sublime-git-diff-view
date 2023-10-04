@@ -102,6 +102,16 @@ class Git:
             output = self.show_added_file(file_name)
         return output
 
+    def diff_head(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
+        output = ''
+        try:
+            output = diff_head(self.run(cmd))
+        except Exception:
+            output = ''
+        return output
+
     def diff_file_staged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color --staged -- {}'.format(file_name)]
@@ -147,6 +157,16 @@ class Git:
         cmd = ['git clean -f {}'.format(file_name)]
         return self.run(cmd)
 
+    def apply_patch(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = [f'git apply --cache {file_name}']
+        return self.run(cmd)
+
+    def undo_patch(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = [f'git apply -R {file_name}']
+        return self.run(cmd)
+
     def run(self, cmd: List[str]) -> str:
         cwd = self.git_root_dir if self.git_root_dir else self.window.extract_variables()['folder']
         p = subprocess.Popen(cmd,
@@ -171,3 +191,7 @@ def escape_special_characters(file_name: str) -> str:
 
 def remove_diff_head(diff: str) -> str:
     return diff.split("\n", 4)[4]
+
+
+def diff_head(diff: str) -> str:
+    return "\n".join(diff.split("\n", 4)[:4])

@@ -26,6 +26,7 @@ REPLACE_MRU = ...  # type: int
 CLEAR_TO_RIGHT = ...  # type: int
 IGNORECASE = ...  # type: int
 LITERAL = ...  # type: int
+REVERSE = ...  # type: int
 MONOSPACE_FONT = ...  # type: int
 KEEP_OPEN_ON_FOCUS_LOST = ...  # type: int
 HTML = ...  # type: int
