@@ -58,18 +58,10 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             diff_output = git.show_deleted_file(file_name)
         diff_view.run_command('git_diff_view_update_view', {'content': diff_output})
 
-        sel = diff_view.sel()
-        if sel:
-            sel.clear()
-
         # disable editing the file for showing
         diff_view.set_read_only(True)
 
         self.add_diff_highlights(diff_view, git_status)
-
-        status_view = get_status_view(views)
-        if status_view:
-            window.focus_view(status_view)
 
     def add_diff_highlights(self, diff_view: sublime.View, git_status: GitStatus) -> None:
         st_bug_first_call_to_find_all_will_not_work_correctly = diff_view.find_all('') # haha, one new ST bug :D, without this line, the bellow diff_view.find_all will not work. Looks like the first call to diff_view.find_all will not work correctly.
@@ -131,8 +123,11 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 
 class GitDiffViewUpdateView(sublime_plugin.TextCommand):
     def run(self, edit, content):
+        regions = [r for r in self.view.sel()]
         self.view.replace(edit, sublime.Region(0, self.view.size()), content)
-
+        sel = self.view.sel()
+        sel.clear()
+        sel.add_all(regions)
 
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
     window = view.window()
