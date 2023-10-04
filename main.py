@@ -126,6 +126,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         on_same_line = line == self.previous_line
         if on_same_line or line is None:
             return
+        self.previous_line = line
         _, y =status_view.viewport_position()
         status_view.set_viewport_position((0, y)) # make sure that the labels are always visible
         git_statuses = GitDiffView.git_statuses[window.id()]
