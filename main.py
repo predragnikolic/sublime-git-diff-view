@@ -58,8 +58,6 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         STOP_INTERVAL = True
 
 
-
-
 # command: open_git_diff_view
 class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _: sublime.Edit) -> None:
