@@ -23,5 +23,10 @@
         "keys": ["g"],
         "command": "git_diff_view_goto_file",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
+    },
+    {
+        "keys": ["g"],
+        "command": "git_diff_view_goto_hunk",
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     }
 ]
