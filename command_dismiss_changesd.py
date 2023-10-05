@@ -102,9 +102,9 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
                 'git_statuses': git_statuses,
             })
             try:
-                git_status = git_statuses[line]
+                new_git_status = git_statuses[line]
                 self.view.run_command("update_diff_view", {
-                    'git_status': git_status,
+                    'git_status': new_git_status,
                 })
             except:
                 self.view.run_command("update_diff_view", {
