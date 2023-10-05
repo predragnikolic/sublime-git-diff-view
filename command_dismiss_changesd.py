@@ -114,3 +114,4 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
         self.view.show_popup_menu([
             'Confirm Discard'
         ], done)
+        window.focus_view(self.view)
