@@ -51,6 +51,10 @@ class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
                 patch_file.close()
                 if not_staged:
                     git.discard_patch(temp_patch_file)
+                else:
+                    # for staged files first unstage patch
+                    git.unstage_patch(temp_patch_file)
+                    git.discard_patch(temp_patch_file)
             finally:
                 patch_file.close()
                 os.remove(patch_file.name)
@@ -60,14 +64,15 @@ class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
                 'git_statuses': new_git_statuses,
             })
             try:
-                git_status = new_git_statuses[line]
+                new_git_status = new_git_statuses[line]
                 self.view.run_command("update_diff_view", {
-                    'git_status': git_status,
+                    'git_status': new_git_status,
                 })
             except:
                 self.view.run_command("update_diff_view", {
                     'git_status': None,
                 })
+
         self.view.show_popup_menu([
             'Discard Hunk'
         ], done)

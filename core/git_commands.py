@@ -157,7 +157,7 @@ class Git:
         cmd = ['git clean -f {}'.format(file_name)]
         return self.run(cmd)
 
-    def apply_patch(self, file_name: str) -> str:
+    def stage_patch(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = [f'git apply --cache {file_name}']
         return self.run(cmd)
@@ -167,7 +167,7 @@ class Git:
         cmd = [f'git apply --reverse {file_name}']
         return self.run(cmd)
 
-    def undo_patch(self, file_name: str) -> str:
+    def unstage_patch(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = [f'git apply -R --cache {file_name}']
         return self.run(cmd)

@@ -108,13 +108,15 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         if not ViewsManager.is_git_view_open(window.views()):
             return
         if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
-            SelectionChangedEvent.previous_line = None
             point = get_point(view)
             w = view.window()
             if view.name() == STATUS_VIEW_NAME and point and w:
                 ViewsManager.status_view_last_position[w.id()] = point
             sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
 
+    def on_load(self, view: sublime.View):
+        if view.name() in [STATUS_VIEW_NAME]:
+            SelectionChangedEvent.previous_line = None
 
     def on_selection_modified(self, view: sublime.View) -> None:
         if view.name() != STATUS_VIEW_NAME:

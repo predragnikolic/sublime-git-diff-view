@@ -47,9 +47,9 @@ class GitDiffViewStageUnstageChunkCommand(sublime_plugin.TextCommand):
             patch_file.write(patch_content)
             patch_file.close()
             if not_staged:
-                git.apply_patch(temp_patch_file)
+                git.stage_patch(temp_patch_file)
             else:
-                git.undo_patch(temp_patch_file)
+                git.unstage_patch(temp_patch_file)
         finally:
             patch_file.close()
             os.remove(patch_file.name)
