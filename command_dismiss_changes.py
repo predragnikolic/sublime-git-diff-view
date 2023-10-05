@@ -20,7 +20,7 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
         if not git_status:
             return
 
-        def done(option):
+        def done(option: int) -> None:
             if option == -1:
                 return
             # 0 -> Discard changes

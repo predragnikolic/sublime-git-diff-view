@@ -41,7 +41,12 @@ class GitDiffViewGotoHunkCommand(sublime_plugin.TextCommand):
         row = 0
         if start_patch:
             header = diff_view.substr(start_patch).split(' ')  #  ['@@', '-23,5', '+23,10', '@@']
-            row = header[2].replace('-', '').replace('+', '').split(',')[0]  # row = 23
+            row = int(header[2].replace('-', '').replace('+', '').split(',')[0])  # row = 23
         window.run_command('toggle_git_diff_view')
         view = window.open_file(f"{absolute_path_to_file}:{row}", sublime.ENCODED_POSITION)
-        sublime.set_timeout(lambda: window.focus_view(view))
+
+        def deffer_focus_view() -> None:
+            if window:
+                window.focus_view(view)
+
+        sublime.set_timeout(deffer_focus_view)

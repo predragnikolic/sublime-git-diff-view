@@ -10,7 +10,7 @@ import sublime_plugin
 # command: git_diff_view_dismiss_hunk_changes
 class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
     def run(self, _: sublime.Edit) -> None:
-        def done(option):
+        def done(option: int) -> None:
             if option == -1:
                 return
             window = self.view.window()

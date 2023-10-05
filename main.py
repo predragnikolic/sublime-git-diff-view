@@ -105,10 +105,14 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             return
         if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
             point = get_point(view)
-            w = view.window()
-            if view.name() == STATUS_VIEW_NAME and point and w:
-                ViewsManager.status_view_last_position[w.id()] = point
-            sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
+            if view.name() == STATUS_VIEW_NAME and point:
+                ViewsManager.status_view_last_position[window.id()] = point
+
+            def deffer_close_diff_view() -> None:
+                if window:
+                    window.run_command('close_git_diff_view')
+
+            sublime.set_timeout(deffer_close_diff_view)
 
     def on_selection_modified(self, view: sublime.View) -> None:
         if view.name() != STATUS_VIEW_NAME:

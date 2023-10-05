@@ -81,6 +81,8 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                 look_text = diffs[i-1][2:]  #+ +    font-size: 0.9em dsa;
                 diff_text = diff[2:]        #? ^                    ++++
                 look_region = diff_view.find(re.escape(look_text), start_find_pt)
+                if look_region is None:
+                    continue
                 row, _ = diff_view.rowcol(look_region.begin())
                 # for debugging
                 # print('look text', look_text)
@@ -121,7 +123,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 
 
 class GitDiffViewUpdateView(sublime_plugin.TextCommand):
-    def run(self, edit, content):
+    def run(self, edit: sublime.Edit, content: str) -> None:
         self.view.set_read_only(False)
         regions = [r for r in self.view.sel()]
         self.view.replace(edit, sublime.Region(0, self.view.size()), content)
