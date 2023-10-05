@@ -6,7 +6,7 @@
     },
     {
         "keys": ["a"],
-        "command": "git_diff_view_stage_unstage_chunk",
+        "command": "git_diff_view_stage_unstage_hunk",
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     },
     {
