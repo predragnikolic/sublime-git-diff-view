@@ -134,13 +134,13 @@ class Git:
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
-    def add(self, file_name: str) -> str:
+    def stage_file(self, file_name: str) -> str:
         """ stage file """
         file_name = escape_special_characters(file_name)
         cmd = ['git add {}'.format(file_name)]
         return self.run(cmd)
 
-    def reset_head(self, file_name: str) -> str:
+    def unstage_file(self, file_name: str) -> str:
         """ unstage file """
         file_name = escape_special_characters(file_name)
         cmd = ['git reset HEAD -- {}'.format(file_name)]

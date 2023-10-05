@@ -97,7 +97,7 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
                 return
             # 0 -> Discard changes
             if git_status["is_staged"]:
-                git.reset_head(git_status["file_name"])
+                git.unstage_file(git_status["file_name"])
             if git_status["modification_type"] == '??':
                 git.clean(git_status["file_name"])
             else:

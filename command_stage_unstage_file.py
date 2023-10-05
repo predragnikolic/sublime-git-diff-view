@@ -78,9 +78,9 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
         if not git_status:
             return
         if git_status["is_staged"]:
-            git.reset_head(git_status["file_name"])
+            git.unstage_file(git_status["file_name"])
         else:
-            git.add(git_status["file_name"])
+            git.stage_file(git_status["file_name"])
         git_statuses = git.git_statuses()
         self.view.run_command('update_status_view', {
             'git_statuses': git_statuses,
