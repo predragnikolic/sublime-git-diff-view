@@ -128,6 +128,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         line = get_line(status_view)
         on_same_line = line == self.previous_line
         if on_same_line or line is None:
+            print('on_same_line', on_same_line, line, self.previous_line)
             return
         self.previous_line = line
         _, y =status_view.viewport_position()
