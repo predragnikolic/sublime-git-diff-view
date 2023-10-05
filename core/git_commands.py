@@ -149,7 +149,7 @@ class Git:
     def checkout(self, file_name: str) -> str:
         """ dismiss changes """
         file_name = escape_special_characters(file_name)
-        cmd = ['git checkout {}'.format(file_name)]
+        cmd = ['git checkout -- {}'.format(file_name)]
         return self.run(cmd)
 
     def clean(self, file_name: str) -> str:
