@@ -64,6 +64,7 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
 class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
     def run(self, _: sublime.Edit) -> None:
         global STOP_INTERVAL
+        SelectionChangedEvent.previous_line = None
         window = self.view.window()
         if not window:
             return
