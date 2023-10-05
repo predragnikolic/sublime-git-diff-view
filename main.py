@@ -115,7 +115,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
 
     def on_load(self, view: sublime.View):
-        if view.name() in [STATUS_VIEW_NAME]:
+        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
             SelectionChangedEvent.previous_line = None
 
     def on_selection_modified(self, view: sublime.View) -> None:
