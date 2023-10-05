@@ -51,7 +51,6 @@ class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
                 patch_file.close()
                 if not_staged:
                     git.discard_patch(temp_patch_file)
-                    print('run')
             finally:
                 patch_file.close()
                 os.remove(patch_file.name)
@@ -66,7 +65,6 @@ class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
                     'git_status': git_status,
                 })
             except:
-                print('ovde')
                 self.view.run_command("update_diff_view", {
                     'git_status': None,
                 })
