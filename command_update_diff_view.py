@@ -9,9 +9,7 @@ import re
 
 # command: update_diff_view
 class UpdateDiffViewCommand(sublime_plugin.TextCommand):
-    def run(self, edit: sublime.Edit, git_status: GitStatus) -> None:
-        modification_type = git_status['modification_type']
-        file_name = git_status['file_name']
+    def run(self, edit: sublime.Edit, git_status: Optional[GitStatus]) -> None:
         window = self.view.window()
         if not window:
             return
@@ -20,8 +18,12 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         diff_view = get_diff_view(views)
         if not diff_view:
             return
+        if git_status is None:
+            diff_view.run_command('git_diff_view_update_view', {'content': 'No diff'})
+            return
+        modification_type = git_status['modification_type']
+        file_name = git_status['file_name']
         # enable editing the file for editing
-        diff_view.set_read_only(False)
         diff_output = ''
         if 'MM' == modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
@@ -57,9 +59,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
                 'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
             diff_output = git.show_deleted_file(file_name)
         diff_view.run_command('git_diff_view_update_view', {'content': diff_output})
-
-        # disable editing the file for showing
-        diff_view.set_read_only(True)
 
         self.add_diff_highlights(diff_view, git_status)
 
@@ -123,11 +122,14 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
 
 class GitDiffViewUpdateView(sublime_plugin.TextCommand):
     def run(self, edit, content):
+        self.view.set_read_only(False)
         regions = [r for r in self.view.sel()]
         self.view.replace(edit, sublime.Region(0, self.view.size()), content)
         sel = self.view.sel()
         sel.clear()
         sel.add_all(regions)
+        # disable editing the file for showing
+        self.view.set_read_only(True)
 
 def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
     window = view.window()
