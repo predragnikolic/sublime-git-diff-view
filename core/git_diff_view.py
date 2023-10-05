@@ -49,3 +49,4 @@ class GitDiffView:
         diff_view.run_command("update_diff_view", {
             'git_status': git_status,
         })
+        self.window.focus_view(status_view)
