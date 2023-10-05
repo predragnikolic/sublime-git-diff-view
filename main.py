@@ -99,8 +99,6 @@ class ToggleGitDiffViewCommand(sublime_plugin.TextCommand):
 
 
 class SelectionChangedEvent(sublime_plugin.EventListener):
-    previous_line = None
-
     def on_pre_close(self, view: sublime.View) -> None:
         window = view.window()
         if not window:
@@ -114,10 +112,6 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
                 ViewsManager.status_view_last_position[w.id()] = point
             sublime.set_timeout(lambda: window.run_command('close_git_diff_view'))
 
-    def on_load(self, view: sublime.View):
-        if view.name() in [STATUS_VIEW_NAME]:
-            SelectionChangedEvent.previous_line = None
-
     def on_selection_modified(self, view: sublime.View) -> None:
         if view.name() != STATUS_VIEW_NAME:
             return
@@ -126,11 +120,8 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             return
         status_view = view
         line = get_line(status_view)
-        on_same_line = line == self.previous_line
-        if on_same_line or line is None:
-            print('on_same_line', on_same_line, line, self.previous_line)
+        if line is None:
             return
-        self.previous_line = line
         _, y =status_view.viewport_position()
         status_view.set_viewport_position((0, y)) # make sure that the labels are always visible
         git_statuses = GitDiffView.git_statuses[window.id()]
