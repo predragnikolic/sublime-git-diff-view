@@ -6,7 +6,7 @@ def get_line(view: sublime.View) -> Optional[int]:
     point = get_point(view)
     if point is None:
         return None
-    return view.rowcol(point)[0]
+    return view.rowcol(view.line(point).begin())[0]
 
 
 def get_point(view: sublime.View) -> Optional[int]:
