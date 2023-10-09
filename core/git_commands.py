@@ -95,12 +95,7 @@ class Git:
     def diff_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
-        output = ''
-        try:
-            output = remove_diff_head(self.run(cmd))
-        except Exception:
-            output = self.show_added_file(file_name)
-        return output
+        return self.run(cmd)
 
     def diff_head(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
@@ -115,13 +110,13 @@ class Git:
     def diff_file_staged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color --staged -- {}'.format(file_name)]
-        output = remove_diff_head(self.run(cmd))
+        output = remove_first_lines(self.run(cmd), 4)
         return output
 
     def diff_file_unstaged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color -- {}'.format(file_name)]
-        output = remove_diff_head(self.run(cmd))
+        output = remove_first_lines(self.run(cmd), 4)
         return output
 
     def show_added_file(self, file_name: str) -> str:
@@ -194,8 +189,8 @@ def escape_special_characters(file_name: str) -> str:
     return file_name.replace(' ', '\\ ')
 
 
-def remove_diff_head(diff: str) -> str:
-    return diff.split("\n", 4)[4]
+def remove_first_lines(text: str, number_of_lines: int) -> str:
+    return text.split("\n", number_of_lines)[number_of_lines]
 
 
 def diff_head(diff: str) -> str:

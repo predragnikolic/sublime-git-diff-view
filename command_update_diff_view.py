@@ -1,5 +1,5 @@
 from .core.diff_view import get_diff_view
-from .core.git_commands import Git, GitStatus
+from .core.git_commands import Git, GitStatus, remove_first_lines
 from .core.status_view import get_status_view
 from typing import List, Optional
 import sublime
@@ -37,27 +37,26 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             )
         elif 'M' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = git.diff_file(file_name)
+            diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif 'U' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = git.diff_file(file_name)
+            diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif 'A' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = git.diff_file(file_name)
+            diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif 'R' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = git.diff_file(file_name)
+            diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif 'C' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = git.diff_file(file_name)
+            diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif '?' in modification_type:
             syntax = get_syntax(file_name, self.view)
             diff_view.set_syntax_file(syntax or 'Packages/GitDiffView/syntax/GitUntracked.sublime-syntax')
             diff_output = git.show_added_file(file_name)
         elif 'D' in modification_type:
-            diff_view.set_syntax_file(
-                'Packages/GitDiffView/syntax/GitRemoved.sublime-syntax')
-            diff_output = git.show_deleted_file(file_name)
+            diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
+            diff_output = remove_first_lines(git.diff_file(file_name), 5)
         diff_view.run_command('git_diff_view_update_view', {'content': diff_output})
 
         self.add_diff_highlights(diff_view, git_status)
@@ -117,9 +116,6 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         diff_view.add_regions('git_diff_view.removed_bg', removed_lines, "diff.deleted")
         diff_view.add_regions('git_diff_view.add_char', add_changes, "diff.inserted.char")
         diff_view.add_regions('git_diff_view.remove_char', remove_changes, "diff.deleted.char")
-
-        if git_status['modification_type'] == ' D':
-             diff_view.add_regions('git_diff_view.removed_bg', [sublime.Region(0, diff_view.size())], "diff.deleted")
 
 
 class GitDiffViewUpdateView(sublime_plugin.TextCommand):
