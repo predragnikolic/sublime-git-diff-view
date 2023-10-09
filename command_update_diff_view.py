@@ -19,6 +19,10 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
         if not diff_view:
             return
         if git_status is None:
+            diff_view.erase_regions('git_diff_view.add_bg')
+            diff_view.erase_regions('git_diff_view.removed_bg')
+            diff_view.erase_regions('git_diff_view.add_char')
+            diff_view.erase_regions('git_diff_view.remove_char')
             diff_view.run_command('git_diff_view_update_view', {'content': 'No diff'})
             return
         modification_type = git_status['modification_type']
