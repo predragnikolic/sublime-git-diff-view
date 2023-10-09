@@ -43,7 +43,7 @@ class UpdateDiffViewCommand(sublime_plugin.TextCommand):
             diff_output = remove_first_lines(git.diff_file(file_name), 4)
         elif 'A' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
-            diff_output = remove_first_lines(git.diff_file(file_name), 4)
+            diff_output = remove_first_lines(git.diff_file(file_name), 5)
         elif 'R' in modification_type:
             diff_view.set_syntax_file('Packages/Diff/Diff.sublime-syntax')
             diff_output = remove_first_lines(git.diff_file(file_name), 4)
