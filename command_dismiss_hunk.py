@@ -1,4 +1,6 @@
 import os
+
+from .command_update_diff_view import update_diff_view
 from .core.status_view import get_status_view
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
@@ -66,13 +68,9 @@ class GitDiffViewDismissHunkChangesCommand(sublime_plugin.TextCommand):
             })
             try:
                 new_git_status = new_git_statuses[line]
-                self.view.run_command("update_diff_view", {
-                    'git_status': new_git_status,
-                })
+                update_diff_view(self.view, new_git_status)
             except:
-                self.view.run_command("update_diff_view", {
-                    'git_status': None,
-                })
+                update_diff_view(self.view, None)
 
         self.view.show_popup_menu([
             'Discard Hunk'

@@ -1,3 +1,4 @@
+from .command_update_diff_view import update_diff_view
 import sublime
 from .core.git_commands import Git
 from .core.status_view import get_status_view
@@ -60,6 +61,4 @@ class GitDiffViewStageUnstageHunkCommand(sublime_plugin.TextCommand):
         status_view.run_command('update_status_view', {
             'git_statuses': new_git_statuses,
         })
-        diff_view.run_command("update_diff_view", {
-            'git_status': new_git_status,
-        })
+        update_diff_view(self.view, new_git_status)

@@ -1,4 +1,6 @@
 from typing import Callable
+
+from .command_update_diff_view import update_diff_view
 from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
@@ -129,12 +131,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         git_statuses = GitDiffView.git_statuses[window.id()]
         try:
             git_status = git_statuses[line]
-            view.run_command("update_diff_view", {
-                'git_status': git_status,
-            })
+            update_diff_view(view, git_status)
         except:
-            view.run_command("update_diff_view", {
-                'git_status': None,
-            })
-
+            update_diff_view(view, None)
 

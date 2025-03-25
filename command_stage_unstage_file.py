@@ -3,7 +3,7 @@ from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .utils import get_line
 import sublime_plugin
-
+from .command_update_diff_view import update_diff_view
 
 # command: git_diff_view_stage_unstage
 class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
@@ -27,6 +27,4 @@ class GitDiffViewStageUnstageCommand(sublime_plugin.TextCommand):
         self.view.run_command('update_status_view', {
             'git_statuses': git_statuses,
         })
-        self.view.run_command("update_diff_view", {
-            'git_status': git_status,
-        })
+        update_diff_view(self.view, git_status)
