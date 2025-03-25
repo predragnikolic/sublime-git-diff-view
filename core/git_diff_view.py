@@ -1,8 +1,9 @@
 from ..command_update_diff_view import update_diff_view
 from .view_manager import ViewsManager
-from .layout import two_columns, insert_into_first_column, insert_into_second_column
+from .layout import insert_into_first_column, insert_into_second_column, insert_into_third_column, three_columns
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import GitStatus
+from .commit_view import COMMIT_VIEW_NAME, create_commit_view
 from .status_view import STATUS_VIEW_NAME, create_status_view
 from typing import Dict, List
 import sublime
@@ -22,20 +23,22 @@ class GitDiffView:
     def close(self) -> None:
         ''' Closes the git status view and git diff view. '''
         for view in self.window.views():
-            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
+            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME, COMMIT_VIEW_NAME]:
                 view.close()
 
     def open(self) -> None:
         ''' Opens the git status view, and git diff view. '''
         git_statuses = GitDiffView.git_statuses[self.window.id()]
+        commit_view = create_commit_view(self.window)
+        insert_into_first_column(self.window, commit_view)
         status_view = create_status_view(self.window)
         status_view.run_command('update_status_view', {
             'git_statuses': git_statuses,
         })
-        two_columns(self.window)
-        insert_into_first_column(self.window, status_view)
+        three_columns(self.window)
+        insert_into_second_column(self.window, status_view)
         diff_view = create_diff_view(self.window)
-        insert_into_second_column(self.window, diff_view)
+        insert_into_third_column(self.window, diff_view)
         # select first line, Status View
         cursor_position = ViewsManager.status_view_last_position.get(self.window.id(), 0)
         sel = status_view.sel()

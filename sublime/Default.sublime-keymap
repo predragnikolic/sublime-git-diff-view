@@ -5,7 +5,7 @@
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
     },
     {
-        "keys": ["space"],
+        "keys": [" "],
         "command": "git_diff_view_stage_unstage",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
     },
@@ -15,7 +15,7 @@
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     },
     {
-        "keys": ["space"],
+        "keys": [" "],
         "command": "git_diff_view_stage_unstage_hunk",
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     },

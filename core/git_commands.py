@@ -40,6 +40,10 @@ class Git:
         self.git_root_dir = None
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
 
+    def get_last_3_commits(self) -> str:
+        cmd = ['git log -3 --format="%s\\n%b\\n--DELIMITER--"']
+        return self.run(cmd)
+        
     def git_statuses(self) -> List[GitStatus]:
         statuses: List[GitStatus] = []
         # array of staged statuses

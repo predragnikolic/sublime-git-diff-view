@@ -1,10 +1,13 @@
+from __future__ import annotations
 from typing import Callable
+
 
 from .command_update_diff_view import update_diff_view
 from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
+from .core.commit_view import COMMIT_VIEW_NAME
 from .core.view_manager import SESSION_DIR, ViewsManager
 from .utils import get_line, get_point
 import sublime
@@ -106,7 +109,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             return
         if not ViewsManager.is_git_view_open(window.views()):
             return
-        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
+        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME, COMMIT_VIEW_NAME]:
             point = get_point(view)
             if view.name() == STATUS_VIEW_NAME and point:
                 ViewsManager.status_view_last_position[window.id()] = point
@@ -133,6 +136,38 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         try:
             git_status = git_statuses[line]
             update_diff_view(view, git_status)
-        except:
+        except Exception:
             update_diff_view(view, None)
+
+
+class CommitViewListener(sublime_plugin.ViewEventListener):
+    def on_query_completions(self, prefix: str, locations: list[int]):
+        w = self.view.window()
+        if self.view.name() != COMMIT_VIEW_NAME or not w:
+            return None
+
+        git = Git(w)
+        commits_data = git.get_last_3_commits().split('--DELIMITER--\n')
+        print('commits_data', commits_data)
+        cl = sublime.CompletionList()
+        completions = []
+
+        for data in commits_data:
+            if not data.strip():
+                continue
+            lines = data.split('\n')
+            message = lines[0]
+            description = '\n'.join(lines[1:]).strip() if len(lines) > 1 else ""
+            if description:
+                completion = message + "\n\n" + description
+            else:
+                completion = message
+            completions.append(sublime.CompletionItem(
+                trigger=message,
+                completion=completion,
+                completion_format=sublime.COMPLETION_FORMAT_TEXT,
+                annotation="last commit message + description"
+            ))
+        cl.set_completions(completions, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
+        return cl
 
