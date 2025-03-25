@@ -22,7 +22,7 @@ class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         global stop_event
         # If a previous request is running, stop it
-        if stop_event.is_set() == False:
+        if not stop_event.is_set():
             stop_event.set()
 
 
