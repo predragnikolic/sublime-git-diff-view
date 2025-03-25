@@ -147,28 +147,10 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
             return None
 
         git = Git(w)
-        commits_data = git.get_last_3_commits().split('--DELIMITER--\n')
-        print('commits_data', commits_data)
         cl = sublime.CompletionList()
-        completions = []
-
-        for data in commits_data:
-            if not data.strip():
-                continue
-            lines = data.split('\n')
-            message = lines[0]
-            description = '\n'.join(lines[1:]).strip() if len(lines) > 1 else ""
-            if description:
-                completion = message + "\n\n" + description
-            else:
-                completion = message
-            completions.append(sublime.CompletionItem(
-                trigger=message,
-                completion=completion,
-                completion_format=sublime.COMPLETION_FORMAT_TEXT,
-                annotation="last commit message + description"
-            ))
-        cl.set_completions(completions, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
+        cl.set_completions([
+            sublime.CompletionItem.command_completion("Generate Message With AI", "git_diff_view_generate_message", {})
+        ], flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
 
 
