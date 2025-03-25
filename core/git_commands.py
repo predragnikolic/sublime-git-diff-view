@@ -105,6 +105,13 @@ class Git:
         cmd = ['git diff --name-only --cached']
         return self.run(cmd)
 
+    def diff_all_changes(self) -> str:
+        cmd = ['git diff']
+        return self.run(cmd)
+
+    def diff_staged(self) -> str:
+        cmd = ['git diff --staged']
+        return self.run(cmd)
 
     def diff_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
