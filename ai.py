@@ -17,6 +17,15 @@ OLLAMA_MODEL = "qwen2.5-coder"
 # Event to signal stopping the stream
 stop_event = threading.Event()
 
+
+class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        global stop_event
+        # If a previous request is running, stop it
+        if stop_event.is_set() == False:
+            stop_event.set()
+
+
 prompt = """
 You are a pro at generating git commit messages.
 The commit message correctly explains the diff. 

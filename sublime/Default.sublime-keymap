@@ -53,5 +53,10 @@
         "keys": ["primary+enter"],
         "command": "git_diff_view_open_commit_modal",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.git-diff-view.commit-message"}]
-    }
+    },
+    { 
+        "keys": ["primary+c"], 
+        "command": "git_diff_view_generate_message_cancel", 
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.git-diff-view.commit-message"}]
+    },
 ]
