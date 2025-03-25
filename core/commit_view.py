@@ -16,7 +16,7 @@ def get_commit_view(views: List[sublime.View]) -> Optional[sublime.View]:
 def create_commit_view(window: sublime.Window) -> sublime.View:
     view = window.new_file()
     # configure view
-    view.set_syntax_file("Packages/Markdown/Markdown.sublime-syntax")
+    view.set_syntax_file("Packages/GitDiffView/syntax/GitDiffCommitMessage.sublime-syntax")
     view.settings().set('highlight_line', False)
     view.settings().set("line_numbers", False)
     view.settings().set("scroll_past_end", False)

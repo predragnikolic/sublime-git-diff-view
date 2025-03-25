@@ -1,0 +1,9 @@
+%YAML 1.2
+---
+name: GitDiffCommitMessage
+version: 2
+hidden: true
+file_extensions:
+  - gcm           # stands for Git Removed Format
+scope: text.git-diff-view.commit-message   # Used to add scopes to the Git Status View
+extends: Packages/Markdown/Markdown.sublime-syntax
