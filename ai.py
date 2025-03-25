@@ -18,7 +18,11 @@ OLLAMA_MODEL = "qwen2.5-coder"
 stop_event = threading.Event()
 
 prompt = """
-Create a one-line, short, concise, human readable, correct commit message that describe the following git diff. Put no quotes around, and make sure that you correctly inherit the intention behind the diff.
+Make sure that the commit message correctly explains the diff, that is the most important thing. 
+Use as few words to describe the diff.
+The commit message will be short, concise, human readable, and correct describe the following git diff. 
+Put no quotes around. 
+If you see a mistake, write a short text to explain the error and stop.
 """
 
 
