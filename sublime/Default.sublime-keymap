@@ -1,6 +1,11 @@
 [
- 	{
+    {
         "keys": ["a"],
+        "command": "git_diff_view_stage_unstage",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
+    },
+    {
+        "keys": ["space"],
         "command": "git_diff_view_stage_unstage",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
     },
@@ -10,12 +15,27 @@
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     },
     {
+        "keys": ["space"],
+        "command": "git_diff_view_stage_unstage_hunk",
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
+    },
+    {
         "keys": ["d"],
         "command": "git_diff_view_dismiss_changes",
         "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
     }, 
     {
+        "keys": ["backspace"],
+        "command": "git_diff_view_dismiss_changes",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.gsf"}]
+    }, 
+    {
         "keys": ["d"],
+        "command": "git_diff_view_dismiss_hunk_changes",
+        "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
+    },
+    {
+        "keys": ["backspace"],
         "command": "git_diff_view_dismiss_hunk_changes",
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
     },
