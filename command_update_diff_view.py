@@ -9,10 +9,6 @@ import os
 
 
 def update_diff_view(view: sublime.View, git_status: Optional[GitStatus]):
-    sublime.set_timeout_async(lambda: update_diff_view_async(view, git_status))
-
-
-def update_diff_view_async(view: sublime.View, git_status: Optional[GitStatus]):
     window = view.window()
     if not window:
         return
