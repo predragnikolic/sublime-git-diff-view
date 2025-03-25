@@ -48,5 +48,10 @@
         "keys": ["g"],
         "command": "git_diff_view_goto_hunk",
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
+    },
+    {
+        "keys": ["primary+enter"],
+        "command": "git_diff_view_open_commit_modal",
+        "context": [{"key": "selector", "operator": "equal", "operand": "text.git-diff-view.commit-message"}]
     }
 ]

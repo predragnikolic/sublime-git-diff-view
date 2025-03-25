@@ -43,6 +43,11 @@ class Git:
     def get_last_3_commits(self) -> str:
         cmd = ['git log -3 --format="%s\\n%b\\n--DELIMITER--"']
         return self.run(cmd)
+
+    def commit(self, message: str) -> str:
+        escaped_message = message.replace('"', r'\"')
+        cmd = [f'NO_COLOR=1 git commit -m "{escaped_message}"']
+        return self.run(cmd)
         
     def git_statuses(self) -> List[GitStatus]:
         statuses: List[GitStatus] = []
@@ -194,12 +199,13 @@ class Git:
                              cwd=cwd,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
                              shell=True)
-        output, stderr = p.communicate()
-        if (stderr):
-            print(f'GitDiffView: An error happened while running this command "{cmd}".', stderr)
-            raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {stderr}')
+        output, _ = p.communicate()
+        if p.returncode == 1:
+            decoded_error = output.decode('utf-8')
+            print(f'GitDiffView: An error happened while running this command "{cmd}".', decoded_error)
+            raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {decoded_error}')
         return output.decode('utf-8')
 
 

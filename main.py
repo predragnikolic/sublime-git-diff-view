@@ -171,3 +171,40 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         cl.set_completions(completions, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
 
+
+class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
+    def run(self, edit: sublime.Edit):
+        items = [['Commit'], ['Commit - Amend']]
+        def on_done(i):
+            if i < 0:
+                return
+            window = self.view.window()
+            if not window:
+                return
+            git = Git(window)
+            selected = items[i]
+            commit_message = self.view.substr(sublime.Region(0, self.view.size()))
+            if selected[0] == 'Commit':
+                if not commit_message.strip():
+                    self.view.show_popup('<p>Message Required</p>', flags=sublime.PopupFlags.HIDE_ON_MOUSE_MOVE_AWAY | sublime.PopupFlags.HIDE_ON_CHARACTER_EVENT)
+                    return
+                output = ''
+                try:
+                    output = git.commit(commit_message)
+                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
+                    panel.run_command('append', {
+                        "characters": output
+                    })
+                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
+                except Exception as e:
+                    output = str(e)
+                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
+                    panel.run_command('append', {
+                        "characters": output
+                    })
+                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
+                    return
+                # everything is ok close the diff view
+                window.run_command('close_git_diff_view')
+
+        self.view.show_popup_menu([item[0] for item in items], on_done=on_done)
