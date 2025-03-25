@@ -5,8 +5,15 @@ import sublime
 import sublime_plugin
 import difflib as dl
 import re
+from .event_loop import run_future
+import os
+
 
 def update_diff_view(view: sublime.View, git_status: Optional[GitStatus]):
+    sublime.set_timeout_async(lambda: update_diff_view_async(view, git_status))
+
+
+def update_diff_view_async(view: sublime.View, git_status: Optional[GitStatus]):
     window = view.window()
     if not window:
         return
@@ -134,7 +141,10 @@ def get_syntax(file_name: str, view: sublime.View) -> Optional[str]:
     window = view.window()
     if not window:
         return None
+    if not os.path.exists(file_name):
+        return None
     tmp_buffer = window.open_file(file_name, sublime.TRANSIENT)
+    tmp_buffer.set_scratch(True)
     # Even if is_loading() is true the view's settings can be
     # retrieved; settings assigned before open_file() returns.
     syntax = str(tmp_buffer.settings().get("syntax", ""))
