@@ -149,7 +149,7 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         git = Git(w)
         cl = sublime.CompletionList()
         cl.set_completions([
-            sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {})
+            sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", ""))
         ], flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
 
