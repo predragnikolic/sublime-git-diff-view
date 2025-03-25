@@ -5,7 +5,6 @@ import sublime
 import sublime_plugin
 import difflib as dl
 import re
-from .event_loop import run_future
 import os
 
 
@@ -67,7 +66,8 @@ def update_diff_view_async(view: sublime.View, git_status: Optional[GitStatus]):
         diff_output = remove_first_lines(git.diff_file(file_name), 5)
     diff_view.run_command('git_diff_view_update_view', {'content': diff_output})
 
-    add_diff_highlights(diff_view)
+    if view.size() < 30_000:
+        add_diff_highlights(diff_view)
 
 def add_diff_highlights(diff_view: sublime.View) -> None:
     st_bug_first_call_to_find_all_will_not_work_correctly = diff_view.find_all('') # haha, one new ST bug :D, without this line, the bellow diff_view.find_all will not work. Looks like the first call to diff_view.find_all will not work correctly.

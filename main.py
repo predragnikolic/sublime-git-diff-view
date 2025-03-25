@@ -67,6 +67,7 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
         window = self.view.window()
         if not window:
             return
+        Git.reset_command_cache()
         git = Git(window)
         # open GitView
         # array of dict that holds information about
