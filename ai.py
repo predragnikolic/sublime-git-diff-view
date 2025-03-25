@@ -48,7 +48,7 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
         final_prompt = prompt + f"Here is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
         print('final_prompt', final_prompt)
         # If a previous request is running, stop it
-        if stop_event.is_set() == False:
+        if not stop_event.is_set():
             stop_event.set()
         self.view.replace(edit, sublime.Region(0, self.view.size()), '')
         stop_event=threading.Event()
