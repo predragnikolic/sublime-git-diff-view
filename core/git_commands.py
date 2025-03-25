@@ -40,6 +40,7 @@ class Git:
         self.git_root_dir = None
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
 
+
     def commit(self, message: str) -> str:
         escaped_message = message.replace('"', r'\"')
         cmd = [f'NO_COLOR=1 git commit -m "{escaped_message}"']
