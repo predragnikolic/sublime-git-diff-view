@@ -156,7 +156,7 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
 
 class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
     def run(self, edit: sublime.Edit):
-        items = [['Commit'], ['Commit - Amend']]
+        items = ['Commit', 'Commit - Amend']
         def on_done(i):
             if i < 0:
                 return
@@ -166,7 +166,7 @@ class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
             git = Git(window)
             selected = items[i]
             commit_message = self.view.substr(sublime.Region(0, self.view.size()))
-            if selected[0] == 'Commit':
+            if selected == 'Commit':
                 error_message = ''
                 if not commit_message.strip():
                     error_message = 'Message Required'
@@ -194,5 +194,24 @@ class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
                     return
                 # everything is ok close the diff view
                 window.run_command('close_git_diff_view')
+            if selected == 'Commit - Amend':
+                output = ''
+                try:
+                    output = git.commit_amend()
+                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
+                    panel.run_command('append', {
+                        "characters": output
+                    })
+                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
+                except Exception as e:
+                    output = str(e)
+                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
+                    panel.run_command('append', {
+                        "characters": output
+                    })
+                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
+                    return
+                # everything is ok close the diff view
+                window.run_command('close_git_diff_view')
 
-        self.view.show_popup_menu([item[0] for item in items], on_done=on_done)
+        self.view.show_popup_menu(items, on_done=on_done)

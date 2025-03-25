@@ -27,12 +27,12 @@ GitStatus = TypedDict('GitStatus', {
 class Git:
     ''' Responsible for running git commands throughout `subprocess`
     and returning it's output. '''
-    _diff_file_cache = {}
+    # _diff_file_cache = {}
     _show_added_file_cache = {}
 
     @staticmethod
     def reset_command_cache():
-        Git._diff_file_cache = {}
+        # Git._diff_file_cache = {}
         Git._show_added_file_cache = {}
 
     def __init__(self, window: sublime.Window) -> None:
@@ -44,6 +44,10 @@ class Git:
     def commit(self, message: str) -> str:
         escaped_message = message.replace('"', r'\"')
         cmd = [f'NO_COLOR=1 git commit -m "{escaped_message}"']
+        return self.run(cmd)
+
+    def commit_amend(self) -> str:
+        cmd = ['git commit --amend --no-edit']
         return self.run(cmd)
         
     def git_statuses(self) -> List[GitStatus]:
@@ -115,11 +119,11 @@ class Git:
 
     def diff_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
-        if file_name in Git._diff_file_cache:
-            return Git._diff_file_cache[file_name]
+        # if file_name in Git._diff_file_cache:
+            # return Git._diff_file_cache[file_name]
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         result = self.run(cmd)
-        Git._diff_file_cache[file_name] = result
+        # Git._diff_file_cache[file_name] = result
         return result
 
     def diff_head(self, file_name: str) -> str:
