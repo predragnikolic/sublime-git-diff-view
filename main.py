@@ -167,8 +167,14 @@ class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
             selected = items[i]
             commit_message = self.view.substr(sublime.Region(0, self.view.size()))
             if selected[0] == 'Commit':
+                error_message = ''
                 if not commit_message.strip():
-                    self.view.show_popup('<p>Message Required</p>', flags=sublime.PopupFlags.HIDE_ON_MOUSE_MOVE_AWAY | sublime.PopupFlags.HIDE_ON_CHARACTER_EVENT)
+                    error_message = 'Message Required'
+                git_statuses = GitDiffView.git_statuses[window.id()]
+                if not git_statuses:
+                    error_message = 'Nothing to commit'
+                if error_message:
+                    self.view.show_popup(f'<p>{error_message}</p>', flags=sublime.PopupFlags.HIDE_ON_MOUSE_MOVE_AWAY | sublime.PopupFlags.HIDE_ON_CHARACTER_EVENT)
                     return
                 output = ''
                 try:
