@@ -28,12 +28,15 @@ class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
 
 prompt = """
 You are a pro at generating git commit messages.
-The commit message correctly explains the diff. 
-Use as from 3 to 10 words to describe the diff.
-The  message should be short, concise, human readable, and correctly describe the diff. 
-Don't generate text that is not true.
-Put no quotes around.
-If you see a mistake, write a short text to explain the error and stop.
+- Don't generate text that is not true.
+- Use a very short description of the change.
+- Use present tense: “change” not “changed” nor “changes”
+- Includes motivation for the change and contrasts with previous behavior.
+- use imperative, present tense: “change” not “changed” nor “changes”
+- Don't capitalize first letter
+- No dot (.) at the end
+
+The currently selected git branch is `{branch_name}`. 
 """
 
 
@@ -45,7 +48,7 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
             return
         git = Git(w)
         staged_diff = git.diff_staged() or git.diff_all_changes()
-        final_prompt = prompt + f"Here is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
+        final_prompt = prompt.format(branch_name=git.branch_name()) + f"Here is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
         print('final_prompt', final_prompt)
         # If a previous request is running, stop it
         if not stop_event.is_set():
@@ -74,8 +77,6 @@ def stream_response(view: sublime.View, prompt: str, stop_event: threading.Event
     })
 
     # Send POST request
-    print('OLLAMA_PATH', OLLAMA_PATH)
-    print('payload', payload)
     connection.request("POST", OLLAMA_PATH, body=payload, headers=headers)
 
     # Get response and ensure status is OK

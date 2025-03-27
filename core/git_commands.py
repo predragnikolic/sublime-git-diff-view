@@ -40,7 +40,14 @@ class Git:
         self.git_root_dir = None
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
 
+    # def get_last_10_commits(self) -> str:
+    #     cmd = ['git log -10 --format="%s"']
+    #     return self.run(cmd)
 
+    def branch_name(self):
+        cmd = ['git rev-parse --abbrev-ref HEAD']
+        return self.run(cmd).strip()
+        
     def commit(self, message: str) -> str:
         escaped_message = message.replace('"', r'\"')
         cmd = [f'NO_COLOR=1 git commit -m "{escaped_message}"']
