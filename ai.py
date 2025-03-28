@@ -26,30 +26,17 @@ class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
             stop_event.set()
 
 
-prompt = """
-You are a pro at generating git commit messages.
-- Don't generate text that is not true.
-- Use a very short description of the change.
-- Use present tense: “change” not “changed” nor “changes”
-- Includes motivation for the change and contrasts with previous behavior.
-- use imperative, present tense: “change” not “changed” nor “changes”
-- Don't capitalize first letter
-- No dot (.) at the end
-
-The currently selected git branch is `{branch_name}`. 
-"""
 
 
 class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global stop_event, prompt
+        global stop_event
         w = self.view.window()
         if not w:
             return
         git = Git(w)
         staged_diff = git.diff_staged() or git.diff_all_changes()
-        final_prompt = prompt.format(branch_name=git.branch_name()) + f"Here is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
-        print('final_prompt', final_prompt)
+        final_prompt = f"You are a pro at generating short concise correct git commit messages subjects text.\nHere is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
