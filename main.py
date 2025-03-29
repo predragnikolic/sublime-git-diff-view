@@ -210,6 +210,8 @@ class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
                     window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
                     return
                 # everything is ok close the diff view
-                window.run_command('close_git_diff_view')
+                git_statuses = git.git_statuses()
+                if not git_statuses:
+                    window.run_command('close_git_diff_view')
 
         self.view.show_popup_menu(items, on_done=on_done)
