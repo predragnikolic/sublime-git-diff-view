@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
 import re
 import subprocess
@@ -169,16 +170,18 @@ class Git:
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
-    def stage_file(self, file_name: str) -> str:
+    def stage_files(self, file_names: list[str]) -> str:
         """ stage file """
-        file_name = escape_special_characters(file_name)
-        cmd = ['git add {}'.format(file_name)]
+        file_name = [escape_special_characters(file_name) for file_name in file_names]
+        cmd = [f'git add {" ".join(file_name)}']
+        print('cmd', cmd)
         return self.run(cmd)
 
-    def unstage_file(self, file_name: str) -> str:
+    def unstage_files(self, file_names: list[str]) -> str:
         """ unstage file """
-        file_name = escape_special_characters(file_name)
-        cmd = ['git reset HEAD -- {}'.format(file_name)]
+        file_name = [escape_special_characters(file_name) for file_name in file_names]
+        cmd = [f'git reset HEAD -- {" ".join(file_name)}']
+        print('cmd', cmd)
         return self.run(cmd)
 
     def checkout(self, file_name: str) -> str:
