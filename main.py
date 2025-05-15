@@ -144,10 +144,14 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         if not self.view.match_selector(0, 'text.git-commit'):
             return 
         w = self.view.window()
-        cl = sublime.CompletionList()
-        cl.set_completions([
+        items: list[sublime.CompletionValue] = [
             sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", ""))
-        ], flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
+        ]
+        commit_template: list[tuple[str, str]] = self.view.settings().get('commit_template', []) or []
+        for label, snippet in commit_template:
+            items.append(sublime.CompletionItem.snippet_completion(label, snippet))
+        cl = sublime.CompletionList()
+        cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
 
 
