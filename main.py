@@ -7,7 +7,6 @@ from .core.diff_view import DIFF_VIEW_NAME
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .core.status_view import get_status_view, STATUS_VIEW_NAME
-from .core.commit_view import COMMIT_VIEW_NAME
 from .core.view_manager import SESSION_DIR, ViewsManager
 from .utils import get_line, get_point
 import sublime
@@ -109,7 +108,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             return
         if not ViewsManager.is_git_view_open(window.views()):
             return
-        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME, COMMIT_VIEW_NAME]:
+        if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
             point = get_point(view)
             if view.name() == STATUS_VIEW_NAME and point:
                 ViewsManager.status_view_last_position[window.id()] = point
@@ -142,9 +141,9 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 class CommitViewListener(sublime_plugin.ViewEventListener):
     def on_query_completions(self, prefix: str, locations: list[int]):
+        if not self.view.match_selector(0, 'text.git-commit'):
+            return 
         w = self.view.window()
-        if self.view.name() != COMMIT_VIEW_NAME or not w:
-            return None
         cl = sublime.CompletionList()
         cl.set_completions([
             sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", ""))

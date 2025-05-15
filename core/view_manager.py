@@ -1,6 +1,5 @@
 from os import path
 
-from .commit_view import COMMIT_VIEW_NAME
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
 from typing import Any, Dict, List, Optional
@@ -42,7 +41,7 @@ class ViewsManager:
     @staticmethod
     def is_git_view_open(views: List[sublime.View]) -> bool:
         for view in views:
-            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME, COMMIT_VIEW_NAME]:
+            if view.name() in [STATUS_VIEW_NAME, DIFF_VIEW_NAME]:
                 return True
         return False
 

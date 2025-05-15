@@ -4,10 +4,10 @@ import sublime
 def three_columns(window: sublime.Window) -> None:
     ''' Set two column layout. '''
     grid = {
-            "cols": [0.0, 0.3, 1.0],
-            "rows": [0.0, 0.2, 1.0],
-            "cells": [[0, 0, 1, 1], [0, 1, 1, 2], [1, 0, 2, 2]]
-        }
+        "cols": [0.0, 0.3, 1.0],
+        "rows": [0.0, 1.0],
+        "cells": [[0, 0, 1, 1], [1, 0, 2, 1]]
+    }
     window.run_command('set_layout', grid)
 
 def insert_into_first_column(window: sublime.Window, view: sublime.View) -> None:
