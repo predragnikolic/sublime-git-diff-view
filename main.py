@@ -147,9 +147,13 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         items: list[sublime.CompletionValue] = [
             sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", ""))
         ]
-        commit_template: list[tuple[str, str]] = self.view.settings().get('commit_template', []) or []
-        for label, snippet in commit_template:
-            items.append(sublime.CompletionItem.snippet_completion(label, snippet))
+        commit_template: list[str] = self.view.settings().get('commit_template', []) or []
+        for snippet in commit_template:
+            expanded_snippet = sublime.expand_variables(snippet, {
+                'CURRENT_BRANCH': 'YES-213-dsadad'
+            })
+            print('expanded_snippet', expanded_snippet)
+            items.append(sublime.CompletionItem.snippet_completion(str(expanded_snippet), str(expanded_snippet)))
         cl = sublime.CompletionList()
         cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
