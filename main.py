@@ -12,6 +12,13 @@ from .utils import get_line, get_point
 import sublime
 import sublime_plugin
 import os
+import re
+
+def extract_ticket_id(branch_name):
+    match = re.search(r"[A-Za-z]+[-_]?\d+", branch_name)
+    if match:
+        return match.group(0)
+    return None
 
 
 STOP_INTERVAL = False
@@ -144,16 +151,15 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         if not self.view.match_selector(0, 'text.git-commit'):
             return 
         w = self.view.window()
-        items: list[sublime.CompletionValue] = [
-            sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", ""))
-        ]
-        commit_template: list[str] = self.view.settings().get('commit_template', []) or []
-        for snippet in commit_template:
-            expanded_snippet = sublime.expand_variables(snippet, {
-                'CURRENT_BRANCH': 'YES-213-dsadad'
-            })
-            print('expanded_snippet', expanded_snippet)
-            items.append(sublime.CompletionItem.snippet_completion(str(expanded_snippet), str(expanded_snippet)))
+        items: list[sublime.CompletionValue] = []
+        # add ticket id completion item
+        if w:
+            git = Git(w)
+            ticket_id = extract_ticket_id(git.branch_name())
+            if ticket_id:
+                items.append(sublime.CompletionItem(ticket_id))
+        # add generate message with AI
+        items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", "")))
         cl = sublime.CompletionList()
         cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
