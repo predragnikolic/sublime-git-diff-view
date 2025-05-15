@@ -3,9 +3,6 @@ import sublime
 import http.client
 import json
 import threading
-import re
-from pathlib import Path
-import os
 from .core.git_commands import Git
 
 # Ollama server endpoint details
