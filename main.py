@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-
+from .ai import Ollama
 
 from .command_update_diff_view import update_diff_view
 from .core.diff_view import DIFF_VIEW_NAME
@@ -159,7 +159,8 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
             if ticket_id:
                 items.append(sublime.CompletionItem(ticket_id))
         # add generate message with AI
-        items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", "")))
+        if Ollama.is_installed:
+            items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", "")))
         cl = sublime.CompletionList()
         cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl

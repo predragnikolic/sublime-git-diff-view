@@ -1,20 +1,29 @@
 from __future__ import annotations
+from typing import Iterator, Literal
 import sublime_plugin 
 import sublime
-import http.client
 import json
 import threading
 from .core.git_commands import Git
 import requests
 
-# Ollama server endpoint details
-OLLAMA_HOST = "localhost"
-OLLAMA_PORT = 11434
-OLLAMA_PATH = "/api/generate"
-OLLAMA_MODEL = "qwen2.5-coder"
-
 # Event to signal stopping the stream
 stop_event = threading.Event()
+
+class Ollama:
+    base_url= "http://localhost:11434"
+    model="qwen2.5-coder"
+    is_installed= False
+
+
+class IsOllamaInstalled(sublime_plugin.EventListener):
+    def on_init(self, views):
+        def is_ollama_installed():
+            res = requests.get(Ollama.base_url)
+            Ollama.is_installed = res.status_code == 200
+            print('Ollama.is_installed', Ollama.is_installed)
+        t = threading.Thread(target=is_ollama_installed)
+        t.start()
 
 
 class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
@@ -25,11 +34,10 @@ class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
             stop_event.set()
 
 
-
-
+last_generated_text = ''
 class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global stop_event
+        global stop_event, last_generated_text
         w = self.view.window()
         if not w:
             return
@@ -39,49 +47,30 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
-        self.view.replace(edit, sublime.Region(0, self.view.size()), '')
+        text_region = self.view.find(last_generated_text, 0)
+        if text_region:
+            self.view.replace(edit, text_region, '')
         stop_event=threading.Event()
-        t = threading.Thread(target=stream_response, args=(self.view,final_prompt, stop_event))
+        t = threading.Thread(target=stream_response, args=(self.view, final_prompt, stop_event))
         t.start()
 
 
-def stream_response(view: sublime.View, prompt: str, stop_event: threading.Event):
-    headers = {"Content-Type": "application/json"}
+def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event):
+    global last_generated_text
     payload = {
-        "model": OLLAMA_MODEL,
+        "model": Ollama.model,
         "prompt": prompt,
         "stream": True,
     }
-
     try:
-        with requests.post(OLLAMA_PATH, json=payload, headers=headers, stream=True) as response:
-            response.raise_for_status()  # Raise an exception for bad status codes
-
-            text_result = ""
-            for chunk in response.iter_lines():
-                if stop_event.is_set():
-                    break
-
-                if chunk:
-                    try:
-                        chunk_text = chunk.decode("utf-8")
-                        chunk_json = json.loads(chunk_text)
-                        text_chunk = chunk_json.get("response", "")
-                        text_result += text_chunk
-
-                        # Use Sublime Text API on the main thread.
-                        def append_to_view():
-                            view.run_command("append", {
-                                'characters': text_chunk,
-                                'force': False,
-                                'scroll_to_end': True
-                            })
-
-                        sublime.set_timeout_async(append_to_view, 0)
-
-
-                    except json.JSONDecodeError:
-                        print("Failed to decode JSON chunk:", chunk)
+        last_generated_text = ''
+        for text_chunk in stream('post', f"{Ollama.base_url}/api/generate", payload, stop_event):
+            last_generated_text+=text_chunk
+            view.run_command("insert", {
+                'characters': text_chunk,
+                'force': False,
+                'scroll_to_end': True
+            })
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to Ollama API: {e}")
         return
@@ -94,15 +83,19 @@ def get_point(view: sublime.View):
     return region.b
 
 
-def fetch(method: str, path: str, headers: dict[str, str], payload: dict | None = None, ) -> http.client.HTTPResponse:
-    connection = http.client.HTTPConnection(host, port)
-    try:
-        if payload:
-            connection.request(method, path, body=payload, headers=headers)
-        else:
-            connection.request(method, path, headers=headers)
-        return connection.getresponse()
-    except Exception as e:
-        print(f"Error during HTTP request: {e}")
-        connection.close()  # Ensure connection is closed on error.
-        return None  # Explicitly return None on error
+def stream(method: Literal['get', 'post'], url: str, data: dict, stop_event: threading.Event | None=None) -> Iterator[str]:
+    headers = {"Content-Type": "application/json"}
+    with requests.request(method, url, json=data, headers=headers, stream=True) as response:
+        response.raise_for_status()
+        for chunk in response.iter_lines():
+            if stop_event and stop_event.is_set():
+                break
+            if chunk:
+                try:
+                    chunk_text = chunk.decode("utf-8")
+                    chunk_json = json.loads(chunk_text)
+                    text = chunk_json.get("response", "")  # Extract the text
+                    yield text
+                except json.JSONDecodeError:
+                    print("Failed to decode JSON chunk:", chunk)
+                    break
