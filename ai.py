@@ -75,17 +75,10 @@ def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event)
         print(f"Error connecting to Ollama API: {e}")
         return
 
-def get_point(view: sublime.View):
-    sel = view.sel()
-    region = sel[0] if sel else None
-    if region is None:
-        return
-    return region.b
-
 
 def stream(method: Literal['get', 'post'], url: str, data: dict, stop_event: threading.Event | None=None) -> Iterator[str]:
     headers = {"Content-Type": "application/json"}
-    with requests.request(method, url, json=data, headers=headers, stream=True) as response:
+    with requests.request(method, url, json=data, headers=headers, stream=True, timeout=10) as response:
         response.raise_for_status()
         for chunk in response.iter_lines():
             if stop_event and stop_event.is_set():
