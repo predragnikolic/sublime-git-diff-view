@@ -11,18 +11,44 @@ import requests
 stop_event = threading.Event()
 
 class Ollama:
-    base_url= "http://localhost:11434"
+    url= "http://localhost:11434"
     model="qwen2.5-coder"
     is_installed= False
 
 
 class IsOllamaInstalled(sublime_plugin.EventListener):
     def on_init(self, views):
-        def is_ollama_installed():
-            res = requests.get(Ollama.base_url)
-            Ollama.is_installed = res.status_code == 200
-        t = threading.Thread(target=is_ollama_installed)
-        t.start()
+        v = sublime.active_window().active_view()
+        if not v:
+            return
+        ollama_settings: dict = v.settings().get("git_diff_view.ollama", {})
+        Ollama.url = ollama_settings.get('url', "http://localhost:11434")
+        Ollama.model = ollama_settings.get('model', '')
+        res = requests.get(Ollama.url)
+        if res.status_code != 200:
+            print(f'GitDiffView: Ollama is not running on {Ollama.url}.')
+            return
+        print(f'GitDiffView: Ollama is running on {Ollama.url}.')
+        # list models available locally
+        res = requests.get(f"{Ollama.url}/api/tags")
+
+        def strip_after_colon(input_string: str):
+            """
+             ['deepseek-r1:7b', 'qwen2.5-coder:latest', 'phi3.5:3.8b-mini-instruct-q8_0']
+             ->
+            ['deepseek-r1', 'qwen2.5-coder', 'phi3.5']
+            """
+            colon_index = input_string.find(':')
+            if colon_index != -1:
+                return input_string[:colon_index]
+            else:
+                return input_string
+
+        available_models = [strip_after_colon(model['name']) for model in res.json()['models']]
+        if Ollama.model not in available_models:
+            print(f'GitDiffView: Model "{Ollama.model}" not found.\n\tUse one of the available models: {available_models}\n\tand set it in Preferences.sublime-settings: `"git_diff_view.ollama": {{ "model": "MODEL" }}`')
+            return
+        print(f'GitDiffView: Using model "{Ollama.model}."')
 
 
 class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
@@ -42,7 +68,20 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
             return
         git = Git(w)
         staged_diff = git.diff_staged() or git.diff_all_changes()
-        final_prompt = f"Generate short concise correct git commit message.\nThe diff is\n```{staged_diff}\n```\nHere is the commit message text:\n"
+        branch_name = git.branch_name()
+        user_prompt = self.view.settings().get("git_diff_view.commit_message_prompt") or "Generate a short, concise and correct git commit message."
+        prompt = f"""Generate a git commit message. The git diff is
+```
+{staged_diff}
+```
+The branch name is '{branch_name}', extract info from the name if needed.
+
+The prompt is:
+```
+{user_prompt}
+```
+** The Commit Message based on the prompt is **
+-"""
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
@@ -50,7 +89,7 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
         if text_region:
             self.view.replace(edit, text_region, '')
         stop_event=threading.Event()
-        t = threading.Thread(target=stream_response, args=(self.view, final_prompt, stop_event))
+        t = threading.Thread(target=stream_response, args=(self.view, prompt, stop_event))
         t.start()
 
 
@@ -63,7 +102,7 @@ def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event)
     }
     try:
         last_generated_text = ''
-        for text_chunk in stream('post', f"{Ollama.base_url}/api/generate", payload, stop_event):
+        for text_chunk in stream('post', f"{Ollama.url}/api/generate", payload, stop_event):
             last_generated_text+=text_chunk
             view.run_command("insert", {
                 'characters': text_chunk,
