@@ -62,7 +62,7 @@ class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
-            text_region = self.view.find(LAST_GENERATED_TEXT, 0)
+            text_region = self.view.find(LAST_GENERATED_TEXT, 0, flags=sublime.FindFlags.LITERAL)
             if text_region:
                 self.view.replace(edit, text_region, '')
 
@@ -83,7 +83,7 @@ The git diff is:
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
-        text_region = self.view.find(LAST_GENERATED_TEXT, 0)
+        text_region = self.view.find(LAST_GENERATED_TEXT, 0, flags=sublime.FindFlags.LITERAL)
         if text_region:
             self.view.replace(edit, text_region, '')
         stop_event=threading.Event()
