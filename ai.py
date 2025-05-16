@@ -51,12 +51,17 @@ class IsOllamaInstalled(sublime_plugin.EventListener):
         print(f'GitDiffView: Using model "{Ollama.model}."')
 
 
+last_generated_text = ''
 class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global stop_event
+        global stop_event, last_generated_text
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
+            text_region = self.view.find(last_generated_text, 0)
+            if text_region:
+                self.view.replace(edit, text_region, '')
+
 
 
 last_generated_text = ''
