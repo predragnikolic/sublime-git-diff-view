@@ -100,7 +100,7 @@ def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event)
     }
     try:
         LAST_GENERATED_TEXT = ''
-        last_point = get_point(view) or 0
+        last_point = 0
         for text_chunk in stream('post', f"{Ollama.url}/api/generate", payload, stop_event):
             LAST_GENERATED_TEXT+=text_chunk
             view.run_command("git_diff_view_insert_text", {
