@@ -174,14 +174,12 @@ class Git:
         """ stage file """
         file_name = [escape_special_characters(file_name) for file_name in file_names]
         cmd = [f'git add {" ".join(file_name)}']
-        print('cmd', cmd)
         return self.run(cmd)
 
     def unstage_files(self, file_names: list[str]) -> str:
         """ unstage file """
         file_name = [escape_special_characters(file_name) for file_name in file_names]
         cmd = [f'git reset HEAD -- {" ".join(file_name)}']
-        print('cmd', cmd)
         return self.run(cmd)
 
     def checkout(self, file_name: str) -> str:

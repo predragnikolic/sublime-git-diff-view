@@ -21,7 +21,6 @@ class IsOllamaInstalled(sublime_plugin.EventListener):
         def is_ollama_installed():
             res = requests.get(Ollama.base_url)
             Ollama.is_installed = res.status_code == 200
-            print('Ollama.is_installed', Ollama.is_installed)
         t = threading.Thread(target=is_ollama_installed)
         t.start()
 
