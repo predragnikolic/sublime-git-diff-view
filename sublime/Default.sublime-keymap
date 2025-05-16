@@ -48,10 +48,5 @@
         "keys": ["g"],
         "command": "git_diff_view_goto_hunk",
         "context": [{"key": "selector", "operator": "equal", "operand": "source.diff"}]
-    },
-    { 
-        "keys": ["primary+c"], 
-        "command": "git_diff_view_generate_message_cancel", 
-        "context": [{"key": "selector", "operator": "equal", "operand": "text.git-commit | git-savvy.make-commit"}]
-    },
+    }
 ]
