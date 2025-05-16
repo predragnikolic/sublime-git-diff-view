@@ -157,10 +157,10 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
             git = Git(w)
             ticket_id = extract_ticket_id(git.branch_name())
             if ticket_id:
-                items.append(sublime.CompletionItem(ticket_id))
+                items.append(sublime.CompletionItem(ticket_id, annotation='GitDiffView'))
         # add generate message with AI
         if Ollama.is_installed:
-            items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, kind=(sublime.KindId.SNIPPET, "AI", "")))
+            items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, annotation='GitDiffView', kind=(sublime.KindId.SNIPPET, "AI", "")))
         cl = sublime.CompletionList()
         cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
