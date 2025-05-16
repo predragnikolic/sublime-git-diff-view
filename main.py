@@ -148,7 +148,7 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
 
 class CommitViewListener(sublime_plugin.ViewEventListener):
     def on_query_completions(self, prefix: str, locations: list[int]):
-        if not self.view.match_selector(0, 'text.git-commit'):
+        if not self.view.match_selector(0, 'text.git-commit | git-savvy.make-commit'):
             return 
         w = self.view.window()
         items: list[sublime.CompletionValue] = []
