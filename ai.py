@@ -43,7 +43,7 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
             return
         git = Git(w)
         staged_diff = git.diff_staged() or git.diff_all_changes()
-        final_prompt = f"You are a pro at generating short concise correct git commit messages subjects text.\nHere is the diff\n```{staged_diff}\n```\nHere is the commit message text:\n"
+        final_prompt = f"Generate short concise correct git commit message.\nThe diff is\n```{staged_diff}\n```\nHere is the commit message text:\n"
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
