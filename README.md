@@ -2,15 +2,15 @@
 
 Get a quick overview of changes before committing them.
 
-![Example](img/showcase.png)
-
 ### Features
 
--   Show all modified files
--   Show the diff view for a file
--   Stage/Unstage files or hunks
--   Discard changes to a file or hunk
+-   Show modified files (AKA "Status View")
+-   View diff for a file. (AKA "Diff View")
+-   Stage/Unstage files/hunks
+-   Discard changes to files/hunks
 -   Goto a file
+
+![Example](img/showcase.png)
 
 ### Getting Started
 
