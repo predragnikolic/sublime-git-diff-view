@@ -4,6 +4,8 @@ import sublime_plugin
 import sublime
 import json
 import threading
+
+from .utils import get_point
 from .core.git_commands import Git
 import requests
 
@@ -98,17 +100,22 @@ def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event)
     }
     try:
         LAST_GENERATED_TEXT = ''
+        last_point = get_point(view) or 0
         for text_chunk in stream('post', f"{Ollama.url}/api/generate", payload, stop_event):
             LAST_GENERATED_TEXT+=text_chunk
-            view.run_command("insert", {
+            view.run_command("git_diff_view_insert_text", {
                 'characters': text_chunk,
-                'force': False,
-                'scroll_to_end': True
+                'last_point': last_point,
             })
+            last_point += len(text_chunk)
+
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to Ollama API: {e}")
         return
 
+class GitDiffViewInsertTextCommand(sublime_plugin.TextCommand):
+    def run(self, edit, characters: str, last_point: int):
+        self.view.insert(edit, last_point, characters)
 
 def stream(method: Literal['get', 'post'], url: str, data: dict, stop_event: threading.Event | None=None) -> Iterator[str]:
     headers = {"Content-Type": "application/json"}
