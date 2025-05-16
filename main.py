@@ -14,7 +14,7 @@ import sublime_plugin
 import os
 import re
 
-def extract_ticket_id(branch_name):
+def extract_ticket_id(branch_name: str):
     match = re.search(r"[A-Za-z]+[-_]?\d+", branch_name)
     if match:
         return match.group(0)

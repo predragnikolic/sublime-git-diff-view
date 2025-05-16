@@ -49,6 +49,7 @@ class IsOllamaInstalled(sublime_plugin.EventListener):
             print(f'GitDiffView: Model "{Ollama.model}" not found.\n\tUse one of the available models: {available_models}\n\tand set it in Preferences.sublime-settings: `"git_diff_view.ollama": {{ "model": "MODEL" }}`')
             return
         print(f'GitDiffView: Using model "{Ollama.model}."')
+        Ollama.is_installed = True
 
 
 LAST_GENERATED_TEXT = ''
@@ -75,9 +76,8 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
         user_prompt = self.view.settings().get("git_diff_view.commit_message_prompt") or "Generate a short, concise and correct git commit message."
         prompt = f"""{user_prompt}
 The git diff is:
-```
 {staged_diff}
-```"""
+"""
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
