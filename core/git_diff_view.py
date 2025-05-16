@@ -1,6 +1,6 @@
 from ..command_update_diff_view import update_diff_view
 from .view_manager import ViewsManager
-from .layout import insert_into_first_column, insert_into_second_column, three_columns
+from .layout import insert_into_first_column, insert_into_second_column, two_columns
 from .diff_view import create_diff_view, DIFF_VIEW_NAME
 from .git_commands import GitStatus
 from .status_view import STATUS_VIEW_NAME, create_status_view
@@ -32,7 +32,7 @@ class GitDiffView:
         status_view.run_command('update_status_view', {
             'git_statuses': git_statuses,
         })
-        three_columns(self.window)
+        two_columns(self.window)
         insert_into_first_column(self.window, status_view)
         diff_view = create_diff_view(self.window)
         insert_into_second_column(self.window, diff_view)

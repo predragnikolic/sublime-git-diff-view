@@ -14,12 +14,6 @@ import sublime_plugin
 import os
 import re
 
-def extract_ticket_id(branch_name: str):
-    match = re.search(r"[A-Za-z]+[-_]?\d+", branch_name)
-    if match:
-        return match.group(0)
-    return None
-
 
 STOP_INTERVAL = False
 def set_interval(fn: Callable) -> None:
@@ -146,6 +140,13 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
             update_diff_view(view, None)
 
 
+def extract_ticket_id(branch_name: str):
+    match = re.search(r"[A-Za-z]+[-_]?\d+", branch_name)
+    if match:
+        return match.group(0)
+    return None
+
+
 class CommitViewListener(sublime_plugin.ViewEventListener):
     def on_query_completions(self, prefix: str, locations: list[int]):
         if not self.view.match_selector(0, 'text.git-commit | git-savvy.make-commit'):
@@ -165,67 +166,3 @@ class CommitViewListener(sublime_plugin.ViewEventListener):
         cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
         return cl
 
-
-class GitDiffViewOpenCommitModal(sublime_plugin.TextCommand):
-    def run(self, edit: sublime.Edit):
-        items = ['Commit', 'Commit - Amend']
-        def on_done(i):
-            if i < 0:
-                return
-            window = self.view.window()
-            if not window:
-                return
-            git = Git(window)
-            selected = items[i]
-            commit_message = self.view.substr(sublime.Region(0, self.view.size()))
-            if selected == 'Commit':
-                error_message = ''
-                if not commit_message.strip():
-                    error_message = 'Message Required'
-                git_statuses = GitDiffView.git_statuses[window.id()]
-                if not git_statuses:
-                    error_message = 'Nothing to commit'
-                if error_message:
-                    self.view.show_popup(f'<p>{error_message}</p>', flags=sublime.PopupFlags.HIDE_ON_MOUSE_MOVE_AWAY | sublime.PopupFlags.HIDE_ON_CHARACTER_EVENT)
-                    return
-                output = ''
-                try:
-                    output = git.commit(commit_message)
-                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
-                    panel.run_command('append', {
-                        "characters": output
-                    })
-                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
-                except Exception as e:
-                    output = str(e)
-                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
-                    panel.run_command('append', {
-                        "characters": output
-                    })
-                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
-                    return
-                # everything is ok close the diff view
-                window.run_command('close_git_diff_view')
-            if selected == 'Commit - Amend':
-                output = ''
-                try:
-                    output = git.commit_amend()
-                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
-                    panel.run_command('append', {
-                        "characters": output
-                    })
-                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
-                except Exception as e:
-                    output = str(e)
-                    panel = window.create_output_panel('git_diff_view_commit', unlisted=False)
-                    panel.run_command('append', {
-                        "characters": output
-                    })
-                    window.run_command("show_panel", {"panel": "output.git_diff_view_commit"})
-                    return
-                # everything is ok close the diff view
-                git_statuses = git.git_statuses()
-                if not git_statuses:
-                    window.run_command('close_git_diff_view')
-
-        self.view.show_popup_menu(items, on_done=on_done)

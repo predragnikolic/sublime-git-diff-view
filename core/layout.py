@@ -1,7 +1,7 @@
 import sublime
 
 
-def three_columns(window: sublime.Window) -> None:
+def two_columns(window: sublime.Window) -> None:
     ''' Set two column layout. '''
     grid = {
         "cols": [0.0, 0.3, 1.0],
