@@ -68,20 +68,12 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
             return
         git = Git(w)
         staged_diff = git.diff_staged() or git.diff_all_changes()
-        branch_name = git.branch_name()
         user_prompt = self.view.settings().get("git_diff_view.commit_message_prompt") or "Generate a short, concise and correct git commit message."
-        prompt = f"""Generate a git commit message. The git diff is
+        prompt = f"""{user_prompt}
+The git diff is:
 ```
 {staged_diff}
-```
-The branch name is '{branch_name}', extract info from the name if needed.
-
-The prompt is:
-```
-{user_prompt}
-```
-** The Commit Message based on the prompt is **
--"""
+```"""
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
