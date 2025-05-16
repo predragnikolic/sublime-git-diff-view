@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import Callable
-from .ai import Ollama
 
 from .command_update_diff_view import update_diff_view
 from .core.diff_view import DIFF_VIEW_NAME
@@ -145,24 +144,4 @@ def extract_ticket_id(branch_name: str):
     if match:
         return match.group(0)
     return None
-
-
-class CommitViewListener(sublime_plugin.ViewEventListener):
-    def on_query_completions(self, prefix: str, locations: list[int]):
-        if not self.view.match_selector(0, 'text.git-commit | git-savvy.make-commit'):
-            return 
-        w = self.view.window()
-        items: list[sublime.CompletionValue] = []
-        # add ticket id completion item
-        if w:
-            git = Git(w)
-            ticket_id = extract_ticket_id(git.branch_name())
-            if ticket_id:
-                items.append(sublime.CompletionItem(ticket_id, annotation='GitDiffView'))
-        # add generate message with AI
-        if Ollama.is_installed:
-            items.append(sublime.CompletionItem.command_completion("Generate Message", "git_diff_view_generate_message", {}, annotation='GitDiffView', kind=(sublime.KindId.SNIPPET, "AI", "")))
-        cl = sublime.CompletionList()
-        cl.set_completions(items, flags=sublime.AutoCompleteFlags.INHIBIT_WORD_COMPLETIONS)
-        return cl
 
