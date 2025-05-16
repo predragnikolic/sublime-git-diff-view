@@ -5,7 +5,6 @@ import sublime
 import json
 import threading
 
-from .utils import get_point
 from .core.git_commands import Git
 import requests
 
