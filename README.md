@@ -8,27 +8,29 @@ Get a quick overview of changes before committing them.
 
 -   Show all modified files
 -   Show the diff view for a file
--   Stage/Unstage files
--   Discard changes to a file
+-   Stage/Unstage files or hunks
+-   Discard changes to a file or hunk
 -   Goto a file
 
-### Installation 
+### Getting Started
 
 Open the command palette and run `Package Control: Install Package`, then select `GitDiffView`.
 
-### Instructions
-
-From the command palette select: `Git Diff View: Toggle`.
-Or toggle the git diff view with `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac).
+Toggle the git diff view with `ctrl+shift+g`(Linux) or `alt+shift+g`(Mac) or via the command palette by selecting: `Git Diff View: Toggle`.
 The git diff view won't open if there are no git changes.
 
-Inside the status view, the following keybindings are available:
 
-```
-  a - stage/unstage a file
-  d - dismiss changes to a file
-  g - go to a file
-```
+### Keybindings in Status View (the right view)
+
+- <kbd>a</kbd> / <kbd>space</kbd> - stage/unstage file
+- <kbd>d</kbd> / <kbd>backspace</kbd> - dismiss file changes
+- <kbd>g</kbd> - open file
+
+
+### Keybindings in Diff View (the left view)
+
+- <kbd>a</kbd> / <kbd>space</kbd> - stage/unstage hunk
+- <kbd>d</kbd> / <kbd>backspace</kbd> - dismiss hunk change
 
 Type of modification will be shown in the git status, next to the file name.
 Here is a list of the types:
