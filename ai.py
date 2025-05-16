@@ -51,23 +51,22 @@ class IsOllamaInstalled(sublime_plugin.EventListener):
         print(f'GitDiffView: Using model "{Ollama.model}."')
 
 
-last_generated_text = ''
+LAST_GENERATED_TEXT = ''
+
 class GitDiffViewGenerateMessageCancelCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global stop_event, last_generated_text
+        global stop_event, LAST_GENERATED_TEXT
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
-            text_region = self.view.find(last_generated_text, 0)
+            text_region = self.view.find(LAST_GENERATED_TEXT, 0)
             if text_region:
                 self.view.replace(edit, text_region, '')
 
 
-
-last_generated_text = ''
 class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        global stop_event, last_generated_text
+        global stop_event, LAST_GENERATED_TEXT
         w = self.view.window()
         if not w:
             return
@@ -82,7 +81,7 @@ The git diff is:
         # If a previous request is running, stop it
         if not stop_event.is_set():
             stop_event.set()
-        text_region = self.view.find(last_generated_text, 0)
+        text_region = self.view.find(LAST_GENERATED_TEXT, 0)
         if text_region:
             self.view.replace(edit, text_region, '')
         stop_event=threading.Event()
@@ -91,16 +90,16 @@ The git diff is:
 
 
 def stream_response(view:sublime.View, prompt: str, stop_event: threading.Event):
-    global last_generated_text
+    global LAST_GENERATED_TEXT
     payload = {
         "model": Ollama.model,
         "prompt": prompt,
         "stream": True,
     }
     try:
-        last_generated_text = ''
+        LAST_GENERATED_TEXT = ''
         for text_chunk in stream('post', f"{Ollama.url}/api/generate", payload, stop_event):
-            last_generated_text+=text_chunk
+            LAST_GENERATED_TEXT+=text_chunk
             view.run_command("insert", {
                 'characters': text_chunk,
                 'force': False,
