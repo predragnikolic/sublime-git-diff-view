@@ -1,9 +1,11 @@
+from __future__ import annotations
 import sublime_plugin 
 import sublime
 import http.client
 import json
 import threading
 from .core.git_commands import Git
+import requests
 
 # Ollama server endpoint details
 OLLAMA_HOST = "localhost"
@@ -44,59 +46,45 @@ class GitDiffViewGenerateMessageCommand(sublime_plugin.TextCommand):
 
 
 def stream_response(view: sublime.View, prompt: str, stop_event: threading.Event):
-    connection = http.client.HTTPConnection(OLLAMA_HOST, OLLAMA_PORT)
-    headers = {
-        "Content-Type": "application/json",
-    }
-
-    # Request payload as JSON string
-    payload = json.dumps({
+    headers = {"Content-Type": "application/json"}
+    payload = {
         "model": OLLAMA_MODEL,
         "prompt": prompt,
-        # "options": {
-        #     "stop": [],
-        # },
         "stream": True,
-        # "raw": True,
-    })
+    }
 
-    # Send POST request
-    connection.request("POST", OLLAMA_PATH, body=payload, headers=headers)
+    try:
+        with requests.post(OLLAMA_PATH, json=payload, headers=headers, stream=True) as response:
+            response.raise_for_status()  # Raise an exception for bad status codes
 
-    # Get response and ensure status is OK
-    response = connection.getresponse()
-    if response.status != 200:
-        print("Failed to connect to Ollama API:", response.status)
-        print(response)
+            text_result = ""
+            for chunk in response.iter_lines():
+                if stop_event.is_set():
+                    break
+
+                if chunk:
+                    try:
+                        chunk_text = chunk.decode("utf-8")
+                        chunk_json = json.loads(chunk_text)
+                        text_chunk = chunk_json.get("response", "")
+                        text_result += text_chunk
+
+                        # Use Sublime Text API on the main thread.
+                        def append_to_view():
+                            view.run_command("append", {
+                                'characters': text_chunk,
+                                'force': False,
+                                'scroll_to_end': True
+                            })
+
+                        sublime.set_timeout_async(append_to_view, 0)
+
+
+                    except json.JSONDecodeError:
+                        print("Failed to decode JSON chunk:", chunk)
+    except requests.exceptions.RequestException as e:
+        print(f"Error connecting to Ollama API: {e}")
         return
-
-    # Read and decode the response in chunks
-    text_result = ""
-    while not stop_event.is_set():
-        # Read a chunk of data
-        chunk = response.readline()
-        
-        # Break if no more data
-        if not chunk:
-            break
-
-        # Decode and parse JSON response if chunk is not empty
-        chunk_text = chunk.decode("utf-8").strip()
-        if chunk_text:
-            try:
-                chunk_json = json.loads(chunk_text)
-                text_chunk = chunk_json.get("response", "")
-                text_result += text_chunk
-                view.run_command("append", {
-                    'characters': text_chunk,
-                    'force': False,
-                    'scroll_to_end': True
-                })
-            except json.JSONDecodeError:
-                print("Failed to decode JSON chunk:", chunk_text)
-
-    # Close the connection
-    connection.close()
 
 def get_point(view: sublime.View):
     sel = view.sel()
@@ -106,3 +94,15 @@ def get_point(view: sublime.View):
     return region.b
 
 
+def fetch(method: str, path: str, headers: dict[str, str], payload: dict | None = None, ) -> http.client.HTTPResponse:
+    connection = http.client.HTTPConnection(host, port)
+    try:
+        if payload:
+            connection.request(method, path, body=payload, headers=headers)
+        else:
+            connection.request(method, path, headers=headers)
+        return connection.getresponse()
+    except Exception as e:
+        print(f"Error during HTTP request: {e}")
+        connection.close()  # Ensure connection is closed on error.
+        return None  # Explicitly return None on error
