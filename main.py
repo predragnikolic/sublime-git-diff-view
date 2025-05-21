@@ -138,10 +138,3 @@ class SelectionChangedEvent(sublime_plugin.EventListener):
         except Exception:
             update_diff_view(view, None)
 
-
-def extract_ticket_id(branch_name: str):
-    match = re.search(r"[A-Za-z]+[-_]?\d+", branch_name)
-    if match:
-        return match.group(0)
-    return None
-

@@ -20,11 +20,6 @@ def insert_into_second_column(window: sublime.Window, view: sublime.View) -> Non
     insert_into_column(window, 1, view)
 
 
-def insert_into_third_column(window: sublime.Window, view: sublime.View) -> None:
-    ''' Insert into second column a view. '''
-    insert_into_column(window, 2, view)
-
-
 def insert_into_column(window: sublime.Window, column: int, view: sublime.View) -> None:
     ''' Insert into a given column a view.
     Where column index starts at `0`. '''
