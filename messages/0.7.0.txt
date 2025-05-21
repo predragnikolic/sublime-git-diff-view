@@ -1,0 +1,10 @@
+=> 0.7.0
+
+## What's Changed
+- Stage/Unstage hunks in diff view.
+- Select multiple files to stage/unstage in status view.
+- Add new keybindings:
+    - 'space' - stage/unstage
+    - 'backspace' - discard changes
+- Performance improvements.
+
