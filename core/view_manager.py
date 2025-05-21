@@ -1,4 +1,5 @@
 from os import path
+
 from .diff_view import DIFF_VIEW_NAME
 from .status_view import STATUS_VIEW_NAME
 from typing import Any, Dict, List, Optional

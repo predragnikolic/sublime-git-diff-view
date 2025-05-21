@@ -82,14 +82,14 @@ class UpdateStatusViewCommand(sublime_plugin.TextCommand):
             phantom = sublime.Phantom(sublime.Region(point), f'''<div title="{title}" style="font-weight: bold; text-align: center; border-radius: 4px; width: 1.2em; padding:0 0.1rem; margin-right: 0.4em; {styles}">
                 <div>{git_status['modification_type'].strip()}</div>
             </div>''', sublime.LAYOUT_INLINE)
+            help_phantom = sublime.Phantom(sublime.Region(status_view.size(), status_view.size()), f'''<div style="border-top: 1px solid #77777720; color: {comment}">
+                <div style="margin-top: 0.4rem">a - stage/unstage a file</div>
+                <div style="margin-top: 0.4rem">d - discard changes to a file</div>
+                <div style="margin-top: 0.4rem">g - goto a file</div>
+            </div>''', sublime.LAYOUT_BLOCK)
+            phantoms.append(help_phantom)
 
             phantoms.append(phantom)
-        help_phantom = sublime.Phantom(sublime.Region(status_view.size(), status_view.size()), f'''<div style="border-top: 1px solid #77777720; color: {comment}">
-            <div style="margin-top: 0.4rem">a - stage/unstage a file</div>
-            <div style="margin-top: 0.4rem">d - discard changes to a file</div>
-            <div style="margin-top: 0.4rem">g - goto a file</div>
-        </div>''', sublime.LAYOUT_BLOCK)
-        phantoms.append(help_phantom)
         self.phantom_set.update(phantoms)
         if active_view:
             window.focus_view(active_view)

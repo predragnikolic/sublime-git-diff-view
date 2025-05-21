@@ -1,3 +1,4 @@
+from .core.status_view import get_status_view
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .utils import get_line
@@ -7,12 +8,16 @@ import sublime_plugin
 
 
 # command: git_diff_view_goto_file
-class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
+class GitDiffViewGotoHunkCommand(sublime_plugin.TextCommand):
     def run(self, _: sublime.Edit) -> None:
+        diff_view = self.view
         window = self.view.window()
         if not window:
             return
-        line = get_line(self.view)
+        status_view = get_status_view(window.views())
+        if not status_view:
+            return
+        line = get_line(status_view)
         if line is None:
             return
         git = Git(window)
@@ -28,11 +33,20 @@ class GitDiffViewGotoFileCommand(sublime_plugin.TextCommand):
             return
         absolute_path_to_file = path.join(git.git_root_dir,
                                           git_status["file_name"])
+        sel = diff_view.sel()
+        if not sel:
+            return
+        cursor = sel[0].b
+        start_patch = diff_view.find('^@@.+@@', cursor, sublime.REVERSE)
+        row = 0
+        if start_patch:
+            header = diff_view.substr(start_patch).split(' ')  #  ['@@', '-23,5', '+23,10', '@@']
+            row = int(header[2].replace('-', '').replace('+', '').split(',')[0])  # row = 23
         window.run_command('toggle_git_diff_view')
-        view = window.open_file(absolute_path_to_file)
 
-        def deffer_focus_view() -> None:
-            if window:
+        def deffer_goto_file():
+            if window.is_valid():
+                view = window.open_file(f"{absolute_path_to_file}:{row}", sublime.ENCODED_POSITION)
                 window.focus_view(view)
 
-        sublime.set_timeout(deffer_focus_view)
+        sublime.set_timeout(deffer_goto_file, 50)

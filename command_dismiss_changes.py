@@ -1,3 +1,4 @@
+from .command_update_diff_view import update_diff_view
 from .core.git_commands import Git
 from .core.git_diff_view import GitDiffView
 from .utils import get_line
@@ -20,12 +21,12 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
         if not git_status:
             return
 
-        def done(option):
+        def done(option: int) -> None:
             if option == -1:
                 return
             # 0 -> Discard changes
             if git_status["is_staged"]:
-                git.reset_head(git_status["file_name"])
+                git.unstage_files([git_status["file_name"]])
             if git_status["modification_type"] == '??':
                 git.clean(git_status["file_name"])
             else:
@@ -34,10 +35,13 @@ class GitDiffViewDismissChangesCommand(sublime_plugin.TextCommand):
             self.view.run_command('update_status_view', {
                 'git_statuses': git_statuses,
             })
-            self.view.run_command("update_diff_view", {
-                'git_status': git_status,
-            })
+            try:
+                new_git_status = git_statuses[line]
+                update_diff_view(self.view, new_git_status)
+            except:
+                update_diff_view(self.view, None)
 
         self.view.show_popup_menu([
             'Confirm Discard'
         ], done)
+        window.focus_view(self.view)

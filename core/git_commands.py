@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
 import re
 import subprocess
@@ -27,11 +28,22 @@ GitStatus = TypedDict('GitStatus', {
 class Git:
     ''' Responsible for running git commands throughout `subprocess`
     and returning it's output. '''
+    # _diff_file_cache = {}
+    _show_added_file_cache = {}
+
+    @staticmethod
+    def reset_command_cache():
+        # Git._diff_file_cache = {}
+        Git._show_added_file_cache = {}
 
     def __init__(self, window: sublime.Window) -> None:
         self.window = window
         self.git_root_dir = None
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
+
+    def branch_name(self):
+        cmd = ['git rev-parse --abbrev-ref HEAD']
+        return self.run(cmd).strip()
 
     def git_statuses(self) -> List[GitStatus]:
         statuses: List[GitStatus] = []
@@ -92,59 +104,95 @@ class Git:
         cmd = ['git diff --name-only --cached']
         return self.run(cmd)
 
+    def diff_all_changes(self) -> str:
+        cmd = ['git diff']
+        return self.run(cmd)
+
+    def diff_staged(self) -> str:
+        cmd = ['git diff --staged']
+        return self.run(cmd)
+
     def diff_file(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        # if file_name in Git._diff_file_cache:
+            # return Git._diff_file_cache[file_name]
+        cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
+        result = self.run(cmd)
+        # Git._diff_file_cache[file_name] = result
+        return result
+
+    def diff_head(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color HEAD -- {}'.format(file_name)]
         output = ''
         try:
-            output = remove_diff_head(self.run(cmd))
+            output = diff_head(self.run(cmd))
         except Exception:
-            output = self.show_added_file(file_name)
+            output = ''
         return output
 
     def diff_file_staged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color --staged -- {}'.format(file_name)]
-        output = remove_diff_head(self.run(cmd))
+        output = remove_first_lines(self.run(cmd), 4)
         return output
 
     def diff_file_unstaged(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git diff --no-color -- {}'.format(file_name)]
-        output = remove_diff_head(self.run(cmd))
+        output = remove_first_lines(self.run(cmd), 4)
         return output
 
     def show_added_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
+        if file_name in Git._show_added_file_cache:
+            return Git._show_added_file_cache[file_name]
         cmd = ['cat {}'.format(file_name)]
-        return self.run(cmd)
+        result = self.run(cmd)
+        Git._show_added_file_cache[file_name] = result
+        return result
 
     def show_deleted_file(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git show HEAD:{}'.format(file_name)]
         return self.run(cmd)
 
-    def add(self, file_name: str) -> str:
+    def stage_files(self, file_names: list[str]) -> str:
         """ stage file """
-        file_name = escape_special_characters(file_name)
-        cmd = ['git add {}'.format(file_name)]
+        file_name = [escape_special_characters(file_name) for file_name in file_names]
+        cmd = [f'git add {" ".join(file_name)}']
         return self.run(cmd)
 
-    def reset_head(self, file_name: str) -> str:
+    def unstage_files(self, file_names: list[str]) -> str:
         """ unstage file """
-        file_name = escape_special_characters(file_name)
-        cmd = ['git reset HEAD -- {}'.format(file_name)]
+        file_name = [escape_special_characters(file_name) for file_name in file_names]
+        cmd = [f'git reset HEAD -- {" ".join(file_name)}']
         return self.run(cmd)
 
     def checkout(self, file_name: str) -> str:
         """ dismiss changes """
         file_name = escape_special_characters(file_name)
-        cmd = ['git checkout {}'.format(file_name)]
+        cmd = ['git checkout -- {}'.format(file_name)]
         return self.run(cmd)
 
     def clean(self, file_name: str) -> str:
         file_name = escape_special_characters(file_name)
         cmd = ['git clean -f {}'.format(file_name)]
+        return self.run(cmd)
+
+    def stage_patch(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = [f'git apply --cache {file_name}']
+        return self.run(cmd)
+
+    def discard_patch(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = [f'git apply --reverse {file_name}']
+        return self.run(cmd)
+
+    def unstage_patch(self, file_name: str) -> str:
+        file_name = escape_special_characters(file_name)
+        cmd = [f'git apply -R --cache {file_name}']
         return self.run(cmd)
 
     def run(self, cmd: List[str]) -> str:
@@ -154,12 +202,13 @@ class Git:
                              cwd=cwd,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
                              shell=True)
-        output, stderr = p.communicate()
-        if (stderr):
-            print(f'GitDiffView: An error happened while running this command "{cmd}".', stderr)
-            raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {stderr}')
+        output, _ = p.communicate()
+        if p.returncode == 1:
+            decoded_error = output.decode('utf-8')
+            print(f'GitDiffView: An error happened while running this command "{cmd}".', decoded_error)
+            raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {decoded_error}')
         return output.decode('utf-8')
 
 
@@ -169,5 +218,9 @@ def escape_special_characters(file_name: str) -> str:
     return file_name.replace(' ', '\\ ')
 
 
-def remove_diff_head(diff: str) -> str:
-    return diff.split("\n", 4)[4]
+def remove_first_lines(text: str, number_of_lines: int) -> str:
+    return text.split("\n", number_of_lines)[number_of_lines]
+
+
+def diff_head(diff: str) -> str:
+    return "\n".join(diff.split("\n", 4)[:4])
