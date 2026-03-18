@@ -59,6 +59,7 @@ class CloseGitDiffViewCommand(sublime_plugin.TextCommand):
         views_manager = ViewsManager(window, git.git_root_dir or "")
         views_manager.restore()
 
+        Git.clear_root_dir_cache(window.id())
         STOP_INTERVAL = True
 
 

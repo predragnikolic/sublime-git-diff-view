@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import List, Literal, Optional, Tuple, TypedDict, cast
+import os
 import re
 import subprocess
 import sublime
@@ -30,16 +31,37 @@ class Git:
     and returning it's output. '''
     # _diff_file_cache = {}
     _show_added_file_cache = {}
+    _git_root_dir_cache: dict = {}
 
     @staticmethod
     def reset_command_cache():
         # Git._diff_file_cache = {}
         Git._show_added_file_cache = {}
 
-    def __init__(self, window: sublime.Window) -> None:
+    def __init__(self, window: sublime.Window, root_dir: Optional[str] = None) -> None:
         self.window = window
         self.git_root_dir = None
+        if root_dir:
+            self.initial_cwd = root_dir
+            self.git_root_dir = root_dir
+            return
+        cached = Git._git_root_dir_cache.get(window.id())
+        if cached:
+            self.initial_cwd = cached
+            self.git_root_dir = cached
+            return
+        active_view = window.active_view()
+        active_file = active_view.file_name() if active_view else None
+        if active_file:
+            self.initial_cwd = os.path.dirname(active_file)
+        else:
+            self.initial_cwd = window.extract_variables().get('folder', '')
         self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
+        Git._git_root_dir_cache[window.id()] = self.git_root_dir
+
+    @staticmethod
+    def clear_root_dir_cache(window_id: int) -> None:
+        Git._git_root_dir_cache.pop(window_id, None)
 
     def branch_name(self):
         cmd = ['git rev-parse --abbrev-ref HEAD']
@@ -196,7 +218,7 @@ class Git:
         return self.run(cmd)
 
     def run(self, cmd: List[str]) -> str:
-        cwd = self.git_root_dir if self.git_root_dir else self.window.extract_variables()['folder']
+        cwd = self.git_root_dir if self.git_root_dir else self.initial_cwd
         p = subprocess.Popen(cmd,
                              bufsize=-1,
                              cwd=cwd,
