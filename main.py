@@ -71,7 +71,11 @@ class OpenGitDiffViewCommand(sublime_plugin.TextCommand):
         if not window:
             return
         Git.reset_command_cache()
+        Git.clear_root_dir_cache(window.id())
         git = Git(window)
+        if not git.git_root_dir:
+            window.status_message('GitDiffView: Not a git repository.')
+            return
         # open GitView
         # array of dict that holds information about
         # the file, type of modification, and if the file is staged

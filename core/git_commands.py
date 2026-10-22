@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, Optional, Tuple, TypedDict, cast
+from typing import Dict, List, Literal, Optional, Tuple, TypedDict, cast
 import os
 import re
 import subprocess
@@ -31,33 +31,33 @@ class Git:
     and returning it's output. '''
     # _diff_file_cache = {}
     _show_added_file_cache = {}
-    _git_root_dir_cache: dict = {}
+    _git_root_dir_cache: Dict[int, str] = {}
 
     @staticmethod
     def reset_command_cache():
         # Git._diff_file_cache = {}
         Git._show_added_file_cache = {}
 
-    def __init__(self, window: sublime.Window, root_dir: Optional[str] = None) -> None:
+    def __init__(self, window: sublime.Window) -> None:
         self.window = window
-        self.git_root_dir = None
-        if root_dir:
-            self.initial_cwd = root_dir
-            self.git_root_dir = root_dir
+        self.git_root_dir: Optional[str] = Git._git_root_dir_cache.get(window.id())
+        if self.git_root_dir:
             return
-        cached = Git._git_root_dir_cache.get(window.id())
-        if cached:
-            self.initial_cwd = cached
-            self.git_root_dir = cached
-            return
-        active_view = window.active_view()
-        active_file = active_view.file_name() if active_view else None
-        if active_file:
-            self.initial_cwd = os.path.dirname(active_file)
-        else:
-            self.initial_cwd = window.extract_variables().get('folder', '')
-        self.git_root_dir = str(self.run(['git rev-parse --show-toplevel']).strip())
-        Git._git_root_dir_cache[window.id()] = self.git_root_dir
+        for cwd in self._candidate_dirs():
+            root = find_git_root(cwd)
+            if root:
+                self.git_root_dir = root
+                Git._git_root_dir_cache[window.id()] = root
+                return
+
+    def _candidate_dirs(self) -> List[str]:
+        dirs: List[str] = []
+        view = self.window.active_view()
+        file_name = view.file_name() if view else None
+        if file_name:
+            dirs.append(os.path.dirname(file_name))
+        dirs.extend(self.window.folders())
+        return dirs
 
     @staticmethod
     def clear_root_dir_cache(window_id: int) -> None:
@@ -218,10 +218,11 @@ class Git:
         return self.run(cmd)
 
     def run(self, cmd: List[str]) -> str:
-        cwd = self.git_root_dir if self.git_root_dir else self.initial_cwd
+        if not self.git_root_dir:
+            raise Exception('GitDiffView: Not a git repository.')
         p = subprocess.Popen(cmd,
                              bufsize=-1,
-                             cwd=cwd,
+                             cwd=self.git_root_dir,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.STDOUT,
@@ -232,6 +233,18 @@ class Git:
             print(f'GitDiffView: An error happened while running this command "{cmd}".', decoded_error)
             raise Exception(f'GitDiffView: An error happened while running this command "{cmd}". {decoded_error}')
         return output.decode('utf-8')
+
+
+def find_git_root(cwd: str) -> Optional[str]:
+    if not os.path.isdir(cwd):
+        return None
+    p = subprocess.run(['git', 'rev-parse', '--show-toplevel'],
+                       cwd=cwd,
+                       stdout=subprocess.PIPE,
+                       stderr=subprocess.DEVNULL)
+    if p.returncode != 0:
+        return None
+    return p.stdout.decode('utf-8').strip() or None
 
 
 def escape_special_characters(file_name: str) -> str:
